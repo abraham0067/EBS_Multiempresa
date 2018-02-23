@@ -1,0 +1,189 @@
+/* 
+    Document   : estilos
+    Created on : 12/10/2012, 03:22:35 PM
+    Author     : Lily
+    Description:
+        Purpose of the stylesheet follows.
+*/
+.colorMenu {
+	background: -moz-linear-gradient(top, rgba(34, 102, 100, 0.86) 0%,
+		rgba(40, 115, 122, 0.87) 49%, rgba(46, 142, 141, 0.89) 100% );
+	/* FF3.6+ */
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, rgba(34,
+		102, 100, 0.86) ), color-stop(49%, rgba(40, 115, 122, 0.87) ),
+		color-stop(100%, rgba(46, 142, 141, 0.89) ) ); /* Chrome,Safari4+ */
+	background: -webkit-linear-gradient(top, rgba(34, 102, 100, 0.86) 0%,
+		rgba(40, 115, 122, 0.87) 49%, rgba(46, 142, 141, 0.89) 100% );
+	/* Chrome10+,Safari5.1+ */
+	background: -o-linear-gradient(top, rgba(34, 102, 100, 0.86) 0%,
+		rgba(40, 115, 122, 0.87) 49%, rgba(46, 142, 141, 0.89) 100% );
+	/* Opera 11.10+ */
+	background: -ms-linear-gradient(top, rgba(34, 102, 100, 0.86) 0%,
+		rgba(40, 115, 122, 0.87) 49%, rgba(46, 142, 141, 0.89) 100% );
+	/* IE10+ */
+	background: linear-gradient(to bottom, rgba(34, 102, 100, 0.86) 0%,
+		rgba(40, 115, 122, 0.87) 49%, rgba(46, 142, 141, 0.89) 100% );
+	/* W3C */
+	filter: progid:DXImageTransform.Microsoft.gradient(  startColorstr='#db226664',
+		endColorstr='#e32e8e8d', GradientType=0 ); /* IE6-9 */
+}
+
+.tituloL {
+	font-family: "Arial";
+	font-size: 18px;
+	font-weight: bold;
+	font-style: inherit;
+	color: #48989F;
+}
+
+.tituloIni {
+	font-family: "Arial";
+	font-size: 24px;
+	font-weight: bold;
+	font-style: inherit;
+	color: #E6E6E6;
+	text-shadow: 1px 0px 0px rgba(255, 255, 255, 1);
+}
+
+.titulo {
+	font-family: "Century Gothic", Geneva, Arial, Helvetica, sans-serif;
+	font-size: 14px;
+	text-decoration: none;
+	font-style: normal;
+	font-weight: bold;
+	color: #FBF5EF;
+}
+
+.texlabel {
+	ont-family: "arial,sans-serif";
+	font-size: 12px;
+	font-weight: bold;
+	font-style: inherit;
+	color: #48989F;
+}
+
+.texlink {
+	ont-family: "arial,sans-serif";
+	font-size: 12px;
+	font-weight: normal;
+	font-style: inherit;
+	color: #48989F;
+}
+
+.botonBus {
+	border-width: 2px;
+	border-color: #F7D7B7;
+	background-color: #E47609;
+	color: #FAFAFA;
+	font-size: 10pt;
+	font-family: "Century Gothic";
+	font-weight: 700;
+	-webkit-border-radius: 20px 20px 20px 20px;
+	border-radius: 20px 20px 20px 20px;
+}
+
+.boton {
+	background-color: #A4A4A4;
+	color: white;
+	border-width: 2px;
+	font-size: 10pt;
+	font-family: "Century Gothic";
+	font-weight: 700;
+	/*text-shadow: 0px 0px 5px rgba(255, 255, 255, 1);*/
+	font-size: 10pt;
+}
+
+.textomenu {
+	font-family: "Century Gothic", Geneva, Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	text-decoration: none;
+	font-style: normal;
+	color: white;
+}
+
+.textocuerpo {
+	font-family: "Century Gothic", Geneva, Arial;
+	font-size: 14px;
+	text-decoration: none;
+	font-style: normal;
+	color: #000000;
+}
+
+.text {
+	font-family: "Century Gothic", Geneva, Arial;
+	font-size: 11px;
+	text-decoration: none;
+	font-style: normal;
+	color: #000000;
+	background-color: #FBF5EF;
+}
+
+.textRuta {
+	font-family: "Helvetica";
+	font-weight: normal;
+	font-size: 12px;
+	color: #000000;
+}
+
+.textBus {
+	font-family: "Arial";
+	font-weight: normal;
+	font-size: 14px;
+	color: #1C1C1C;
+}
+
+.Linea {
+	background-color: #48989F;
+	font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
+	font-weight: normal;
+	font-size: 13px;
+	color: white;
+}
+
+.textoFromChic {
+	font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
+	font-weight: normal;
+	font-size: 12px;
+	color: #152E3C;
+}
+
+
+.error {
+	font-family: "Century Gothic", Geneva, Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	text-decoration: none;
+	font-style: normal;
+	font-weight: normal;
+	color: #FF9966;
+}
+
+.obligatorio {
+	font-family: "Century Gothic";
+	font-size: 12px;
+	font-weight: normal;
+	font-style: normal;
+	color: #FF9966;
+}
+
+
+
+.ejem {
+	font-family: "Century Gothic", Geneva, Arial, Helvetica, sans-serif;
+	font-size: 10px;
+	text-decoration: none;
+	color: #FF9966;
+}
+
+.texto-logo {
+	color: #2A1B0A;
+	font-size: 10px;
+}
+
+.captcha {
+	font-family: "Century Gothic", Geneva, Arial, Helvetica, sans-serif;
+	font-size: 16px;
+	font-weight: bold;
+	font-style: italic;
+	color: white;
+}
+

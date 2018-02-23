@@ -1,0 +1,32 @@
+<ui:composition 
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <h:form>
+        <p:menubar model="#{managedBeanDynamicMenu.menubar}" >
+            <f:facet name="options" class="right_content">
+                <p:commandButton id="cmLogout" action="#{managedBeanLogin.logout()}" ajax="false" icon="fa fa-fw fa-sign-out" value="Salir" ></p:commandButton>
+            </f:facet>
+        </p:menubar>
+        <p:panelGrid columns="2" layout="grid" columnClasses="ui-grid-col-9, ui-grid-col-3"  >
+            <p:column>
+                <p:outputLabel class="infoSection" value="Empresa:  "  />
+                <p:outputLabel class="infoSection" value="#{macceso.getEmpresa().getRazonSocial()}" style="font-weight: bold;" />
+                <p:spacer width="17" />
+                <p:outputLabel class="infoSection" value="Usuario:  "  />
+                <p:outputLabel class="infoSection" value="#{usernick}"  style="font-weight: bold;"/>
+                <p:spacer width="17" />
+            </p:column>
+            <!--
+            <p:selectOneMenu id="somEmp"  value="#{managedBeanEmpresasAsignadas.idEmpresa}" effect="fade" style="width: 98%;" panelStyle="width:500px;" filter="true" filterMatchMode="contains">
+                <f:selectItem itemLabel="Click para cambiar de empresa global" itemValue="-1" noSelectionOption="true" />
+                <f:selectItems value="#{managedBeanEmpresasAsignadas.empresasAsignadas}" var="empresa"  itemValue="#{empresa.id}" itemLabel="#{empresa.RFC_Empresa()}" />
+                <p:ajax oncomplete="valueChangeListener"   listener="#{managedBeanEmpresasAsignadas.cambiarEmpresaEnSesion()}" update="@all" />
+            </p:selectOneMenu>
+            -->
+        </p:panelGrid>
+    </h:form>
+</ui:composition>

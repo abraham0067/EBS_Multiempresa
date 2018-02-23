@@ -1,0 +1,107 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+                template="./../../templates/templateContent.xhtml">
+
+    <ui:define name="breadcrum">
+        <p:breadCrumb class="breadcrumbStyle" style="padding: 1px 1px 1px 1px;">
+            <p:menuitem value="Inicio" url="#"/>
+            <p:menuitem value="Administraci&oacute;n" url="#" />
+            <p:menuitem value="Parametros" url="#" />
+        </p:breadCrumb>
+    </ui:define>
+
+    <ui:define name="controls">
+        <h:form id="frmControls">
+            <!--Confirm dialog para  borrar el parametro-->
+            <p:confirmDialog message="¿Esta seguro de borrar el parametro?"
+                             showEffect="fade"
+                             hideEffect="fade" 
+                             widgetVar="confirmDelete"
+                             styleClass="dialogBoxCustom">
+                <p:commandButton title="YesButton" 
+                                 value="Si"
+                                 process="@this"
+                                 update="messages,frmContent:dtListParam"
+                                 onclick="PF('confirmDelete').hide()"
+                                 action="#{managedBeanParametros.borrarParametro()}" 
+                                 oncomplete="PF('confirmDelete').hide()" />
+                <p:commandButton title="NoButton" 
+                                 value="No" 
+                                 oncomplete="PF('confirmDelete').hide()"/>
+            </p:confirmDialog>
+            <!--Confirm dialog para  extraer el reporte-->
+            <p:confirmDialog message="¿Esta seguro de modificar el parametro?"
+                             showEffect="fade"
+                             hideEffect="fade" 
+                             widgetVar="confirmMod" styleClass="dialogBoxCustom">
+                <p:commandButton title="YesButton" 
+                                 value="Si"
+                                 process="@this"
+                                 update="messages,frmContent:dtListParam"
+                                 onclick="PF('confirmDelete').hide()"
+                                 action="#{managedBeanParametros.redirectModificacionParametro()}" 
+                                 oncomplete="PF('confirmMod').hide()" />
+                <p:commandButton title="NoButton" 
+                                 value="No" 
+                                 oncomplete="PF('confirmMod').hide()"/>
+            </p:confirmDialog>
+            <p:growl id="messages" showDetail="false" autoUpdate="false" life="16000" />
+            <p:panelGrid columns="8" style="width: 100%;" 
+                         columnClasses="ui-grid-col-2,ui-grid-col-3,ui-grid-col-2,ui-grid-col-1,ui-grid-col-1,ui-grid-col-1,ui-grid-col-1,ui-grid-col-1"
+                         layout="grid">
+                <p:outputLabel/>
+                <p:outputLabel/>
+                <p:outputLabel/>
+                <p:outputLabel/>
+                <p:outputLabel/>
+                <p:commandButton value="Registrar" action="#{managedBeanParametros.redirectNuevoParametro()}" />
+                <p:commandButton value="Modificar" onclick="PF('confirmMod').show()"  update="messages"/>
+                <p:commandButton value="Borrar"  onclick="PF('confirmDelete').show()"  update="messages"/>
+            </p:panelGrid>
+        </h:form>
+    </ui:define>
+
+    <ui:define name="content">
+        <h:form id="frmContent" >
+            <p:growl id="messages" showDetail="false" autoUpdate="false" life="16000" />
+            <p:dataTable id="dtListParam" value="#{managedBeanParametros.listaParametros}" var="tmp" resizableColumns="false" 
+                         resizeMode="expand" scrollRows="20" scrollHeight="520" scrollable="false" liveScroll="true" rowKey="#{tmp.id}"
+                         selection="#{managedBeanParametros.configSelected}"   emptyMessage="..." style="font-size: 11px;" 
+                         disabledTextSelection="false" paginator="true" rows="25">
+                <p:ajax event="rowSelectRadio" process="@this,dtListParam" update="dtListParam"></p:ajax>
+                <f:facet name="header">
+                    Se encontraron #{fn:length(managedBeanParametros.listaParametros)} registros.
+                </f:facet>
+                <!--Columna de seleccion-->
+                <p:column resizable="false" selectionMode="single"  width="3%" class="customCell">
+                </p:column>
+                <p:column headerText="Dato" class="customCell" width="150" style="text-align: left;">
+                    <p:outputLabel value="#{tmp.dato}"/>
+                </p:column>
+                <p:column headerText="Valor" class="customCell" style="text-align: left;">
+                    <p:outputLabel value="#{tmp.valor}"/>
+                </p:column>
+                <p:column headerText="Ruta" class="customCell" width="250" style="text-align: left;">
+                    <p:outputLabel  value="#{tmp.ruta}"/>
+                </p:column>
+                <p:column  headerText="Clasificacion" class="customCell" width="150" style="text-align: left;">
+                    <p:outputLabel value="#{tmp.clasificacion}"/>
+                </p:column>
+                <p:column headerText="Fecha" class="customCell" width="100">
+                    <p:outputLabel value="#{tmp.FechaF()}"/>
+                </p:column>
+                <f:facet name="footer">
+                    Se encontraron #{fn:length(managedBeanParametros.listaParametros)} registros.
+                </f:facet>
+            </p:dataTable>
+        </h:form>
+    </ui:define>
+
+</ui:composition>

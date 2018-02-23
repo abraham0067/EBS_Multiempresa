@@ -1,0 +1,85 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:h="http://xmlns.jcp.org/jsf/html">
+
+    <h:body>
+        <ui:composition template="./../templates/templateContent.xhtml">
+
+            <ui:define name="breadcrum">
+                <p:breadCrumb class="breadcrumbStyle" style="padding: 1px 1px 1px 1px;">
+                    <p:menuitem value="Inicio" url="#" />
+                    <p:menuitem value="Facturas" url="#" />
+                    <p:menuitem value="Facturas CFDI" url="#" />
+                    <p:menuitem value="Materiales" url="#" />
+                </p:breadCrumb>
+            </ui:define>
+
+            <ui:define name="controls">
+                <p:panelGrid columns="5" columnClasses="ui-grid-col-4, ui-grid-col-1,ui-grid-col-2,ui-grid-col-1,ui-grid-col-4" styleClass="ui-noborder" layout="grid">
+                    <h:outputText  />
+                    <h:outputText value="No. Factura:" />
+                    <h:outputText value="#{managedBeanConsultaCFDI.selectedMCFD.id}" />                    
+                    <p:commandButton id="clReturn" action="#{managedBeanConsultaCFDI.redirectConsultaCFDI()}" value="Regresar"/>
+                </p:panelGrid>
+
+            </ui:define>
+
+            <ui:define name="content">
+                <ui:debug  />
+                <h:form id="frmMateriales" enctype="multipart/form-data">
+                    <!--Confirm dialog para la confirmacion de materiales-->
+                    <p:confirmDialog message="¿Desea guardar estos cambios en el documento?" 
+                                     showEffect="fade"
+                                     hideEffect="fade"
+                                     styleClass="dialogBoxCustom"
+                                     appendTo="@(body)"
+                                     widgetVar="confirmModif">
+                        <p:commandButton title="YesButton" 
+                                         value="Si"
+                                         ajax="false"
+                                         update="messages"
+                                         action="#{managedBeanConsultaCFDI.guardarMaterialCFDI()}" 
+                                         onclick="PF('confirmModif').hide()"
+                                         oncomplete="PF('confirmModif').hide()" />
+                        <p:commandButton title="NoButton" 
+                                         value="No" 
+                                         oncomplete="PF('confirmModif').hide()"/>
+                    </p:confirmDialog>
+                    <p:panelGrid columns="4" columnClasses="ui-grid-col-4, ui-grid-col-2,ui-grid-col-4,ui-grid-col-2" 
+                                 layout="grid" styleClass="ui-panelgrid-blank, ui-noborder" >
+                        <p:outputLabel></p:outputLabel>
+                        <p:outputLabel value="Nùmero de Cajas:"></p:outputLabel>
+                        <p:inputText  value="#{managedBeanConsultaCFDI.materialData.numCajas}"></p:inputText>
+                        <p:outputLabel ></p:outputLabel>
+
+                        <p:outputLabel></p:outputLabel>
+                        <p:outputLabel value="Material:"></p:outputLabel>
+                        <p:inputText value="#{managedBeanConsultaCFDI.materialData.material}" ></p:inputText>
+                        <p:outputLabel></p:outputLabel>
+
+                        <p:outputLabel></p:outputLabel>
+                        <p:outputLabel value="Recibo:"></p:outputLabel>
+                        <p:inputText value="#{managedBeanConsultaCFDI.materialData.recibo}"></p:inputText>
+                        <p:outputLabel></p:outputLabel>
+
+                        <p:outputLabel></p:outputLabel>
+                        <p:outputLabel value="Fecha de recibo:" ></p:outputLabel>
+                        <p:inputMask mask="9999-99-99"  value="#{managedBeanConsultaCFDI.materialData.reciboFecha}"></p:inputMask>
+                        <p:outputLabel></p:outputLabel>
+
+                        <p:outputLabel></p:outputLabel>
+                        <p:commandButton value="Registrar"  onclick="PF('confirmModif').show()"/>
+                        <p:outputLabel></p:outputLabel>
+                        <p:outputLabel></p:outputLabel>
+
+                    </p:panelGrid>
+                </h:form>
+            </ui:define>
+
+        </ui:composition>
+    </h:body>
+</html>

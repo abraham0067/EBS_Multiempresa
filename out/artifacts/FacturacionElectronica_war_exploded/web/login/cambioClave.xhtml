@@ -1,0 +1,68 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <body>
+        <!--
+        
+        Cambio de clave por primera vez
+        
+        -->
+        <ui:composition template="./../templates/templateLogin.xhtml">
+
+            <ui:define name="content">
+                <div >
+                    <h:form><!--style="background-image: url('/EBS_Multiempresa/resources/img/background1.png');"-->
+                        <p:growl id="mssgs" autoUpdate="false" life="16000" showDetail="false"/>
+                        <p:panel id="panel" class="panelCentered" header="Activar usuario" style="width: 500px;" >
+                            <p:outputLabel id="olResp" value="#{managedBeanControlUser.mensaje}"/>
+                            <h:panelGrid columns="2" cellpadding="5" columnClasses="ui-grid-col-3, ui-grid-col-9" style="width: 98%;">
+                                <p:outputLabel for="olEmp" value="Empresa:" />
+                                <p:outputLabel id="olEmp" value="#{managedBeanControlUser.acceso.empresa.rfcOrigen}" ></p:outputLabel>
+                                <p:outputLabel for="olUs" value="Usuario:" />
+                                <p:outputLabel id="olUs" value="#{managedBeanControlUser.acceso.usuario}" ></p:outputLabel>
+                                <p:outputLabel for="olTu" value="Tipo de usuario:" />
+                                <p:outputLabel id="olTu" value="#{managedBeanControlUser.acceso.perfil.tipoUser}" ></p:outputLabel>
+                                <!--Usar un token en vez de pedir una contraseña o un codigo, el token expira despues de un tiempo  especificado-->
+                                <p:outputLabel for="pPa" value="Password(Enviado por correo):"/>
+                                <p:password id="pPa" value="#{managedBeanControlUser.passant}" required="true"
+                                            title="La clave la puede encontrar en el correo que se le envio" >
+                                    <p:tooltip id="toolTipFocus3" for="pPa" showEvent="focus" hideEvent="blur" />
+                                </p:password>
+                                <p:outputLabel for="pNp1" value="Nuevo password:" />
+                                <p:password id="pNp1" value="#{managedBeanControlUser.newpass}" required="true" match="pNp2"
+                                            validatorMessage="El password 1 debe ser igual al password 2.">
+                                    <p:tooltip id="toolTipFocus1" for="pNp1" showEvent="focus" hideEvent="blur" >
+                                        <p:outputLabel value="Ingrese una contraseña de minimo 8 caracteres" />
+                                        <br/>
+                                        <p:outputLabel value="letras y numeros, una mayuscula al menos " />
+                                        <br/>
+                                        <p:outputLabel value="y un simbolo como puede ser # $ % =" />
+                                    </p:tooltip>
+                                </p:password>
+                                <p:outputLabel for="pNp2" value="Confirme nuevo password:" />
+                                <p:password id="pNp2"  value="#{managedBeanControlUser.confinewpass}" required="true"
+                                            title="Debe ser igual al valor que ingreso en el campo anterior">
+                                    <p:tooltip id="toolTipFocus2" for="pNp2" showEvent="focus" hideEvent="blur" />
+                                </p:password>
+                                <!--
+                                <p:captcha id="cptchFilter" validatorMessage="El captcha es incorrecto." label="Captcha" language="es" theme="clean" 
+                                           requiredMessage="Ingrese el captcha." secure="true"/>
+                                <p:outputLabel/>
+                                -->
+                                <p:commandButton  value="Guardar Cambios" process="@form" update="panel:, mssgs" ajax="false" action="#{managedBeanControlUser.guardaCambioContrasenia()}"/>
+                                <p:commandButton  value="Cancelar" immediate="true"  action="#{managedBeanControlUser.redirectLoginImmediate()}"/>
+                            </h:panelGrid>
+                        </p:panel>
+                    </h:form>
+                </div>
+            </ui:define>
+
+        </ui:composition>
+
+    </body>
+</html>

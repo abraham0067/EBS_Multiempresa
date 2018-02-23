@@ -1,0 +1,17 @@
+/*
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+*/
+/* 
+    Created on : 29-ene-2016, 16:14:21
+    Author     : Eduardo C. Flores Ambrosio <Eduardo at EB&S>
+*/
+
+.ui-widget input, .ui-widget select, .ui-widget textarea, .ui-widget button{
+    min-width: 100px;
+}
+.ui-panelgrid .ui-panelgrid-footer {
+    text-align: right;
+    padding: 2px 5px;
+}

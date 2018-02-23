@@ -1,0 +1,79 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="./../../templates/templateContent.xhtml"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:fn="http://java.sun.com/jsp/jstl/functions">
+
+    <ui:define name="breadcrum">
+        <p:breadCrumb class="breadcrumbStyle" style="padding: 1px 1px 1px 1px;">
+            <p:menuitem value="Inicio" url="#"/>
+            <p:menuitem value="Administraci&oacute;n" url="#" />
+            <p:menuitem value="Catalogos" url="#" />
+            <p:menuitem value="Conceptos" url="#" />
+            <p:menuitem value="Creación/Modificación de conceptos de facturación." url="#" />
+        </p:breadCrumb>
+    </ui:define>
+
+    <ui:define name="controls">
+    </ui:define>
+
+    <ui:define name="content">
+        <h:form id="frmContent">
+            <p:growl id="messages" autoUpdate="false" showDetail="false" life="16000"/>
+            <p:panelGrid columns="6" columnClasses="ui-grid-col-4,ui-grid-col-2,ui-grid-col-2,ui-grid-col-2,ui-grid-col-1,ui-grid-col-1"
+                         layout="grid">
+                <p:outputLabel value=""/>
+                <p:outputLabel value=""/>
+                <p:outputLabel value=""/>
+                <p:outputLabel value=""/>
+                <p:commandButton value="Guardar" icon="fa fa-fw fa-save"  actionListener="#{managedBeanConceptos.guardarConcepto()}"  ajax="false" update="messages"  />
+                <!--process="fuLogo,emisor,itRFCEmp,itRazonEmp,
+                                 itPaisEmp,itCalleEmp,itNombre,itCorreo" update="msgs"-->
+                <p:commandButton value="Regresar" icon="fa fa-fw fa-arrow-left" action="#{managedBeanConceptos.redirectConsultaConceptos()}" process="@this"/>
+            </p:panelGrid>
+            <p:panel header="Pac-Empresa" style="margin-bottom:10px;">
+                <p:panelGrid id="pgPacEmp" columns="4" columnClasses="ui-grid-col-2,ui-grid-col-4,ui-grid-col-2,ui-grid-col-4"
+                    layout="grid">
+                    <c:if test="#{managedBeanConceptos.currentOperation eq 0}">
+                        <p:outputLabel value="Empresa:" for="somEmpresas" />
+                        <p:selectOneMenu id="somEmpresas" value="#{managedBeanConceptos.idEmpresaSelect}" style="width: 90%;" required="true" requiredMessage="Debe seleccionar una empresa." 
+                                         filter="true" filterMatchMode="contains">
+                            <f:selectItem itemLabel="Selecciona una empresa" itemValue="-1" noSelectionOption="true"/>
+                            <f:selectItems value="#{managedBeanEmpresasAsignadas.empresasAsignadas}" var="emp" itemLabel="#{emp.RFC_Empresa()}" itemValue="#{emp.id}"/>
+                            <p:ajax event="change" process="somEmpresas"/>
+                        </p:selectOneMenu>
+                    </c:if>
+                    <!--Modificacion-->
+                    <c:if test="#{managedBeanConceptos.currentOperation eq 1}">
+                        <p:outputLabel value="Empresa:" for="itEmpresa" />
+                        <p:inputText id="itEmpresa"  value="#{managedBeanConceptos.concepto.empresa.RFC_Empresa()}" readonly="true" disabled="true" style="width: 90%;"/>
+                    </c:if>
+                    <p:outputLabel/>
+                    <p:outputLabel/>
+                    <p:outputLabel value="Concepto de facturación:" for="itConcept"/>
+                    <p:inputText id="itConcept" value="#{managedBeanConceptos.concepto.conceptofacturacion}" required="true" requiredMessage="El concepto de facturación es obligatorio." style="width: 90%;"/>
+                    <p:outputLabel/>
+                    <p:outputLabel/>
+                    <p:outputLabel value="Clave del concepto:" for="itClave"/>
+                    <p:inputText id="itClave" value="#{managedBeanConceptos.concepto.claveconcepto}" style="width: 90%;"/>
+                    <p:outputLabel/>
+                    <p:outputLabel/>
+                    <p:outputLabel value="Unidad de medida:" for="itUnidadMedida"/>
+                    <p:inputText id="itUnidadMedida" value="#{managedBeanConceptos.concepto.unidadMedida}" style="width: 90%;" required="true" requiredMessage="La unidad de medida es necesaria."/>
+                    <p:outputLabel/>
+                    <p:outputLabel/>
+                    <p:outputLabel value="Precio unitario:" for="itPrecioUnit"/>
+                    <p:inputText id="itPrecioUnit" value="#{managedBeanConceptos.concepto.precioUnitario}" required="true" requiredMessage="El precio unitario es obligatorio." style="width: 90%;"/>
+                    <p:outputLabel/>
+                    <p:outputLabel/>
+                </p:panelGrid>
+            </p:panel>
+        </h:form>
+    </ui:define>
+
+</ui:composition>

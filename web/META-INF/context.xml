@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Context path="/FacturacionElectronica" reloadable="false">
+  <!--Reloadable scan for changes in the WEB-INF, libs, and classes directories
+    if you want scan other directories yuo can use 
+    <WatchedResource>path/to/watched/resource</WatchedResource> - See more at: https://www.mulesoft.com/tcat/tomcat-reload#sthash.T0TrDCpn.dpuf
+    
+    !!!! BUT REMEMBER  reloadable is ONLY FOR DEVELOPMENT STAGE 
+    NOT USE IN PRODUCTION!!!!!
+    -->
+    <!-- Configuracion para el servidor de pruebas conexxion sin uso de gestor de conexiones a BD    
+    <Resource auth="Container" driverClassName="com.mysql.jdbc.Driver" testWhileIdle="true" testOnBorrow="true" 
+              testOnReturn="false" validationQuery="SELECT 1" validationInterval="30000" logAbandoned="true" maxActive="40" 
+              maxIdle="2" maxWait="5000" name="jdbc/EMISION" password="e4bhse12" removeAbandoned="true" removeAbandonedTimeout="100" 
+              type="javax.sql.DataSource" url="jdbc:mysql://localhost:3306/FACCORP_APL?autoReconnect=true" username="emision"/>
+    
+    <Resource auth="Container" driverClassName="com.mysql.jdbc.Driver" testWhileIdle="true" testOnBorrow="true" 
+              testOnReturn="false" validationQuery="SELECT 1" validationInterval="30000" logAbandoned="true" maxActive="40" 
+              maxIdle="2" maxWait="5000" name="jdbc/EMISION_APL" password="e4bhse12" removeAbandoned="true" removeAbandonedTimeout="100" 
+              type="javax.sql.DataSource" url="jdbc:mysql://localhost:3306/FACCORP_APL?autoReconnect=true" username="emision_apl"/>
+              -->
+    <!-- Pools configuradas en el tomcat, uso de gestor de conexiones, configurado en server.xml dentro de la carpeta de tomcat -->
+    <ResourceLink global="jdbc/Emision" name="jdbc/Emision" type="javax.sql.DataSource"/>
+    <ResourceLink global="jdbc/Emision_apl" name="jdbc/Emision_apl" type="javax.sql.DataSource"/>
+    
+
+</Context>

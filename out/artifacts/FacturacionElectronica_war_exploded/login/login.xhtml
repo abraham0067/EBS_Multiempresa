@@ -1,0 +1,110 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+<head>
+    <script type="text/javascript" src='https://www.google.com/recaptcha/api.js'></script>
+</head>
+<body>
+<ui:composition template="./../templates/templateIndex.xhtml">
+    <ui:define name="top">
+        <p:graphicImage library="img" name="ebs_logo.png" alt="EBS"
+                        height="50px"></p:graphicImage><!--Imagen modificada-->
+        <p:outputLabel value="VERSION DE PRUEBAS" style=" color:#83fc28; float: bottom; font-size: 25;"
+                       rendered="#{managedBeanLogin.isProduction eq false}"/><!--MENSAJE PARA ENTORNO DE PRUEBAS-->
+    </ui:define>
+    <ui:define name="left">
+        <div style="float: left; padding-left: 10%; ">
+            <h:form>
+                <p:growl id="msgs" life="16000" showDetail="false"/>
+                <br/>
+                <br/>
+                <br/>
+                <br/>
+                <p:outputLabel value="Iniciar Sesión" styleClass="customLabelLogin"/>
+                <br/>
+                <br/>
+                <p:panel class="panelCentered" id="panel" style="width: 470px;">
+                    <p:focus context="panel"/>
+                    <p:inputText id="userID" value="#{managedBeanLogin.userNick}" styleClass="customInputLogin"
+                                 required="true"
+                                 requiredMessage="El nombre de usuario es obligatorio." label="Ingrese su usuario"
+                                 maxlength="20" autocomplete="off">
+                        <p:watermark for="userID" value="Ingrese su usuario" id="watermark1"/>
+                    </p:inputText>
+                    <br/>
+                    <br/>
+                    <p:password id="pass" value="#{managedBeanLogin.password}" styleClass="customInputLogin"
+                                required="true"
+                                requiredMessage="La contrase&ntilde;a es obligatoria." label="Contrase&ntilde;a"
+                                maxlength="50" autocomplete="off">
+                        <p:watermark for="pass" value="Ingrese su contraseña" id="watermark2"/>
+                    </p:password>
+
+                    <f:facet name="footer">
+                        <!--
+                        <p:captcha id="cptchFilter"  validatorMessage="El captcha es incorrecto." label="Captcha" language="es" theme="clean"
+                                   requiredMessage="Resuelva el captcha." secure="true"/>
+                        -->
+                        <p:commandButton value="Iniciar sesión" ajax="false" styleClass="customButton"
+                                         action="#{managedBeanLogin.login()}" update="msgs" icon="fa fa-fw fa-sign-in"/>
+                        <br/>
+                        <br/>
+                    <!--
+                    <p:commandButton value="Registro" immediate="true"
+                             action="#{managedBeanLogin.redirectAutoregistroPage()}"
+                             icon="fa fa-fw fa-group"/>
+                             -->
+            <p:spacer width="75" height="10"/>
+            <p:link id="clRec" value="¿Olvido su contraseña?" outcome="recovery"></p:link>
+        </f:facet>
+        <p:outputLabel/>
+        <p:outputLabel id="ulResp" value="#{managedBeanLogin.mensaje}" style="color: red;"/>
+    </p:panel>
+</h:form>
+<!--AJAX STATUS-->
+            <p:dialog widgetVar="statusDialog" modal="true" position="center" draggable="false" closable="false"
+                      resizable="false" showHeader="false">
+                <p:graphicImage library="img" name="ajaxloadingbar.gif" alt="Procesando..."></p:graphicImage>
+            </p:dialog><br/>
+            <br/>
+            <br/>
+            <br/>
+            <br/>
+            <br/>
+            <br/>
+            <br/>
+            <br/>
+            <br/>
+            <br/>
+            <br/>
+            <br/>
+            <br/>
+        </div>
+    </ui:define>
+    <ui:define name="right">
+        <h:form>
+            <p:growl id="msgs" life="16000" showDetail="false"/>
+            <br/>
+            <br/>
+            <br/>
+            <p:outputLabel value=" "/><br/>
+            Facturación Electrónica<br/>
+            <p class="textSmall">
+                Electronic Bills &amp; Services<br/>
+                Enhancing Business Automation
+            </p>
+            <!--
+            <p:commandButton value="Demo Online" update="msgs" styleClass="customButtonTwo" action="#{managedBeanLogin.loginUsingEmpresaDemo()}" />
+            -->
+        </h:form>
+    </ui:define>
+
+</ui:composition>
+
+</body>
+</html>

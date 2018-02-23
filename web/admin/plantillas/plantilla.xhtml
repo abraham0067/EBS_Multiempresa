@@ -1,0 +1,87 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+                template="./../../templates/templateContent.xhtml">
+
+    <ui:define name="breadcrum">
+        <p:breadCrumb class="breadcrumbStyle" style="padding: 1px 1px 1px 1px;">
+            <p:menuitem value="Inicio" url="#"/>
+            <p:menuitem value="Administraci&oacute;n" url="#" />
+            <p:menuitem value="Plantillas" url="#" />
+            <p:menuitem value="Plantilla" url="#" />
+        </p:breadCrumb>
+    </ui:define>
+
+    <ui:define name="controls">
+    </ui:define>
+
+    <ui:define name="content">
+        <h:form id="frmPlantilla" enctype="multipart/form-data">
+            <p:growl id="msgs" showDetail="false" autoUpdate="false" life="16000" />
+            <p:panelGrid columns="6" columnClasses="ui-grid-col-4,ui-grid-col-2,ui-grid-col-2,ui-grid-col-2,ui-grid-col-1,ui-grid-col-1"
+                         layout="grid">
+                <p:outputLabel value=""/>
+                <p:outputLabel value=""/>
+                <p:outputLabel value=""/>
+                <p:outputLabel value=""/>
+                <p:commandButton value="Guardar" icon="fa fa-fw fa-save"
+                                 actionListener="#{managedBeanPlantillas.guardarPlantilla()}"
+                                 ajax="false" update="msgs"
+                                process="@this, itNombre, fuPlantilla, fuImgPlan, itRootPath, isActivarP"/>
+                <!--process="fuLogo,emisor,itRFCEmp,itRazonEmp,
+                                 itPaisEmp,itCalleEmp,itNombre,itCorreo" update="msgs"-->
+                <p:commandButton value="Regresar" icon="fa fa-fw fa-arrow-left" action="#{managedBeanPlantillas.redirectConsultarPlantillas()}"
+                                 process="@this"/>
+            </p:panelGrid>
+            <p:panel header="Asignación de plantillas" style="margin-bottom:10px;">
+                <p:panelGrid columns="4" columnClasses="ui-grid-col-2,ui-grid-col-4,ui-grid-col-2,ui-grid-col-4"
+                             layout="grid">
+                    <p:outputLabel value="Empresa:"/>
+                    <!--Creacion-->
+                    <c:if test="#{managedBeanPlantillas.currentOperation eq 0}">
+                        <p:selectOneMenu id="somEmpresas" value="#{managedBeanPlantillas.idEmpresaSelect}" style="width: 90%;"
+                                         filter="true" filterMatchMode="contains">
+                            <f:selectItem itemLabel="Selecciona una empresa" itemValue="-1" noSelectionOption="true"/>
+                            <f:selectItems value="#{managedBeanEmpresasAsignadas.empresasAsignadas}" var="emp"
+                                           itemLabel="#{emp.RFC_Empresa()}" itemValue="#{emp.id}"/>
+                            <p:ajax event="change" process="somEmpresas"/>
+                        </p:selectOneMenu>
+                    </c:if>
+                    <!--Modificacion-->
+                    <c:if test="#{managedBeanPlantillas.currentOperation eq 1}">
+                        <p:outputLabel value="#{managedBeanPlantillas.empresaPlantilla.RFC_Empresa()}" style="width: 90%;"/>
+                    </c:if>
+                    <p:outputLabel value=""/>
+                    <p:outputLabel value=""/>
+                    <p:outputLabel value="Nombre:" for="itNombre"/>
+                    <p:inputText id="itNombre" value="#{managedBeanPlantillas.plantillaSelected.nombre}" required="true"
+                                 requiredMessage="El nombre de la plantilla es obligatorio." style="width: 90%;"/>
+                    <p:outputLabel value="Version plantilla:"/>
+                    <p:inputText value="#{managedBeanPlantillas.plantillaSelected.version}" required="true" style="width: 15%;"/>
+                    <p:outputLabel value="Plantilla:" for="fuPlantilla"/>
+                    <p:fileUpload id="fuPlantilla"  value="#{managedBeanPlantillas.fuPlantilla}" mode="simple" auto="true"
+                                  allowTypes="/(\.|\/)(zip)$/"  skinSimple="true" required="true" label="Elegir" />
+                    <p:outputLabel value=""/>
+                    <p:outputLabel value=""/>
+                    <p:outputLabel value="Imagen de plantilla(Opcional):" for="fuImgPlan" />
+                    <p:fileUpload id="fuImgPlan"  value="#{managedBeanPlantillas.fuImgPlantilla}" mode="simple" auto="true"
+                                  allowTypes="/(\.|\/)(gif|jpe?g|png)$/"  skinSimple="true" required="false" label="Elegir" />
+                    <p:outputLabel value=""/>
+                    <p:outputLabel value=""/>
+                    <p:outputLabel value="Root Path:" for="itRootPath"/>
+                    <p:inputText id="itRootPath" value="#{managedBeanPlantillas.plantillaSelected.rootPath}" required="true"
+                                 requiredMessage="Por favor agrege el roothpath" style="width: 90%;"/>
+                    <p:outputLabel value="Activar plantilla" />
+                    <p:inputSwitch id="isActivarP"  value="#{managedBeanPlantillas.activarPlantilla}" offLabel="No" onLabel="Si"/>
+                </p:panelGrid>
+            </p:panel>
+        </h:form>
+    </ui:define>
+
+</ui:composition>

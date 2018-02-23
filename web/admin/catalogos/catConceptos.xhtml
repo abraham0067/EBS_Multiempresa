@@ -1,0 +1,134 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="./../../templates/templateContent.xhtml"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:fn="http://java.sun.com/jsp/jstl/functions">
+
+    <ui:define name="breadcrum">
+        <p:breadCrumb class="breadcrumbStyle" style="padding: 1px 1px 1px 1px;">
+            <p:menuitem value="Inicio" url="#"/>
+            <p:menuitem value="Administraci&oacute;n" url="#" />
+            <p:menuitem value="Catalogos" url="#" />
+            <p:menuitem value="Conceptos" url="#" />
+        </p:breadCrumb>
+    </ui:define>
+
+    <ui:define name="controls">
+        <ui:debug />
+        <h:form id="frmAdminConceptos" >
+            <p:confirmDialog message="¿Esta seguro de borrar el concepto de facturación?"
+                             showEffect="fade"
+                             hideEffect="fade"
+                             styleClass="dialogBoxCustom"
+                             widgetVar="confirmDelete" >
+                <p:commandButton title="YesButton" 
+                                 value="Si"
+                                 process="@this"
+                                 update="messages,frmContent:dtListConceptos "
+                                 onclick="PF('confirmDelete').hide()"
+                                 action="#{managedBeanConceptos.borrarConcepto()}" 
+                                 oncomplete="PF('confirmDelete').hide()" />
+                <p:commandButton title="NoButton" 
+                                 value="No" 
+                                 oncomplete="PF('confirmDelete').hide()"/>
+            </p:confirmDialog>
+            <p:confirmDialog message="¿Está seguro de que desea modificar el concepto de facturación?"
+                             showEffect="fade"
+                             hideEffect="fade"
+                             styleClass="dialogBoxCustom"
+                             widgetVar="confirmMod"
+                             position="top" modal="true">
+                <p:commandButton title="YesButton" 
+                                 value="Si"
+                                 ajax="false"
+                                 update="messages"
+                                 onclick="PF('confirmMod').hide()"
+                                 action="#{managedBeanConceptos.redirectModificacionConcepto()}"
+                                 oncomplete="PF('confirmMod').hide()" />
+                <p:commandButton title="NoButton" 
+                                 value="No" 
+                                 oncomplete="PF('confirmMod').hide()"/>
+            </p:confirmDialog>
+            <p:growl id="messages" showDetail="false" sticky="false" autoUpdate="true" life="16000" />
+            <p:panelGrid id="pgConceptos" columns="8" style="width: 100%;" 
+                         columnClasses="ui-grid-col-2,ui-grid-col-1,ui-grid-col-3,ui-grid-col-2,ui-grid-col-1,ui-grid-col-1,ui-grid-col-1,ui-grid-col-1"
+                         layout="grid">
+                <p:outputLabel/>
+                <p:outputLabel value="Empresa:" for="somEmpresas"/>
+                <p:selectOneMenu id="somEmpresas" value="#{managedBeanConceptos.idEmpresaSelect}" style="width: 80%;" required="true" requiredMessage="Debe seleccionar una empresa." 
+                                 filter="true" filterMatchMode="contains" panelStyle="width:500px;">
+                    <f:selectItem itemLabel="Elige una empresa..." itemValue="-1" />
+                    <f:selectItems value="#{managedBeanEmpresasAsignadas.empresasAsignadas}" var="emp" itemLabel="#{emp.RFC_Empresa()}" itemValue="#{emp.id}"/>
+                    <p:ajax event="change" process="somEmpresas"/>
+                </p:selectOneMenu>
+                <p:outputLabel/>
+                <p:outputLabel/>
+                <p:outputLabel/>
+                <p:outputLabel/>
+                <p:outputLabel/>
+                <p:outputLabel/>
+                <p:outputLabel value="Tipo de busqueda:"/>
+                <p:selectOneMenu id="somBusq" value="#{managedBeanConceptos.tipoBusqueda}" style="width: 80%;" required="true" requiredMessage="Debe seleccionar una empresa" 
+                                 filter="true" filterMatchMode="contains">
+                    <f:selectItem itemLabel="Todos" itemValue="Ninguno"/>
+                    <f:selectItem itemLabel="Concepto de facturación" itemValue="conceptofacturacion"/>
+                    <f:selectItem itemLabel="Clave Concepto" itemValue="claveconcepto"/>
+                    <p:ajax event="change" process="somBusq"/>
+                </p:selectOneMenu>
+                <p:inputText value="#{managedBeanConceptos.paramBusqueda}"/>
+                <p:outputLabel/>
+                <p:outputLabel/>
+                <p:outputLabel/>
+                <p:outputLabel/>
+
+                <f:facet name="footer">
+                    <p:commandButton value="Buscar" icon="fa fa-fw fa-search" action="#{managedBeanConceptos.buscarConceptos()}" update="pgConceptos,somEmpresas,frmContent:dtListConceptos"/>
+                    <p:commandButton value="Registrar" action="#{managedBeanConceptos.redirectCreacionConcepto()}" />
+                    <p:commandButton value="Modificar" onclick="PF('confirmMod').show()"  update="messages"/>
+                    <p:commandButton value="Borrar"  onclick="PF('confirmDelete').show()"  update="messages"/>
+                </f:facet>
+
+            </p:panelGrid>
+        </h:form>
+    </ui:define>
+
+    <ui:define name="content">
+        <h:form id="frmContent" >
+            <p:dataTable id="dtListConceptos" value="#{managedBeanConceptos.conceptos}" var="tmp" resizableColumns="false"
+                         paginator="true" rowsPerPageTemplate="25" rows="25" resizeMode="expand" scrollRows="18" scrollHeight="520" scrollable="false" liveScroll="true" rowKey="#{tmp.id}"
+                         selection="#{managedBeanConceptos.concepto}"  emptyMessage="..." style="font-size: 11px;"
+                         disabledTextSelection="false">
+                <p:ajax event="rowSelectRadio" process="@this,dtListConceptos" update="dtListConceptos"></p:ajax>
+                <f:facet name="header">
+                    Se encontraron #{fn:length(managedBeanConceptos.conceptos)} registros.
+                </f:facet>
+                <p:column selectionMode="single" resizable="false" width="3%" class="customCell">
+                </p:column>
+                <p:column headerText="R.F.C. de la empresa" class="customCell" width="100" >
+                    <p:outputLabel value="#{tmp.empresa.rfcOrigen}"/>
+                </p:column>
+                <p:column  headerText="Concepto de facturación" class="customCell" style="text-align: left;">
+                    <p:outputLabel value="#{tmp.conceptofacturacion}"/>
+                </p:column>
+                <p:column headerText="Clave del concepto" class="customCell" width="175">
+                    <p:outputLabel value="#{tmp.claveconcepto}" />                           
+                </p:column>
+                <p:column headerText="Unidad" class="customCell" width="125">
+                    <p:outputLabel value="#{tmp.unidadMedida}" />                           
+                </p:column>
+                <p:column headerText="Precio unitario" class="customCell" width="200" style="text-align: right;">
+                    <p:outputLabel value="#{tmp.precioUnitario}" />                           
+                </p:column>
+                <f:facet name="footer">
+                    Se encontraron #{fn:length(managedBeanConceptos.conceptos)} registros.
+                </f:facet>
+            </p:dataTable>
+        </h:form>
+    </ui:define>
+
+</ui:composition>

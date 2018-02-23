@@ -1,0 +1,20 @@
+<component name="ArtifactManager">
+  <artifact type="exploded-war" name="FacturacionElectronica:war exploded">
+    <output-path>$PROJECT_DIR$/out/artifacts/FacturacionElectronica_war_exploded</output-path>
+    <root id="root">
+      <element id="directory" name="WEB-INF">
+        <element id="directory" name="classes">
+          <element id="module-output" name="EBS_Multiempresa" />
+        </element>
+        <element id="directory" name="lib">
+          <element id="library" level="project" name="lib" />
+          <element id="library" level="project" name="antlr:antlr:2.7.7" />
+          <element id="library" level="project" name="joda-time:joda-time:2.9.9" />
+        </element>
+        <element id="file-copy" path="$PROJECT_DIR$/web/WEB-INF/web.xml" />
+      </element>
+      <element id="javaee-facet-resources" facet="EBS_Multiempresa/web/Web" />
+      <element id="dir-copy" path="$PROJECT_DIR$" />
+    </root>
+  </artifact>
+</component>

@@ -1,0 +1,365 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="ebs_multiempresa" default="all">
+  
+  
+  <property file="build.properties"/>
+  <!-- Uncomment the following property if no tests compilation is needed -->
+  <!-- 
+  <property name="skip.tests" value="true"/>
+   -->
+  
+  <!-- Compiler options -->
+  
+  <property name="compiler.debug" value="on"/>
+  <property name="compiler.generate.no.warnings" value="off"/>
+  <property name="compiler.args" value=""/>
+  <property name="compiler.max.memory" value="700m"/>
+  <patternset id="ignored.files">
+    <exclude name="**/*.hprof/**"/>
+    <exclude name="**/*.pyc/**"/>
+    <exclude name="**/*.pyo/**"/>
+    <exclude name="**/*.rbc/**"/>
+    <exclude name="**/*.yarb/**"/>
+    <exclude name="**/*~/**"/>
+    <exclude name="**/.DS_Store/**"/>
+    <exclude name="**/.git/**"/>
+    <exclude name="**/.hg/**"/>
+    <exclude name="**/.svn/**"/>
+    <exclude name="**/CVS/**"/>
+    <exclude name="**/__pycache__/**"/>
+    <exclude name="**/_svn/**"/>
+    <exclude name="**/vssver.scc/**"/>
+    <exclude name="**/vssver2.scc/**"/>
+  </patternset>
+  <patternset id="library.patterns">
+    <include name="*.egg"/>
+    <include name="*.jar"/>
+    <include name="*.ear"/>
+    <include name="*.swc"/>
+    <include name="*.war"/>
+    <include name="*.zip"/>
+    <include name="*.ane"/>
+  </patternset>
+  <patternset id="compiler.resources">
+    <exclude name="**/?*.java"/>
+    <exclude name="**/?*.form"/>
+    <exclude name="**/?*.class"/>
+    <exclude name="**/?*.groovy"/>
+    <exclude name="**/?*.scala"/>
+    <exclude name="**/?*.flex"/>
+    <exclude name="**/?*.kt"/>
+    <exclude name="**/?*.clj"/>
+    <exclude name="**/?*.aj"/>
+  </patternset>
+  
+  
+  <!-- Project Libraries -->
+  
+  <path id="library.antlr:antlr:2.7.7.classpath">
+    <pathelement location="${path.variable.maven_repository}/antlr/antlr/2.7.7/antlr-2.7.7.jar"/>
+  </path>
+  
+  <path id="library.joda-time:joda-time:2.9.9.classpath">
+    <pathelement location="${basedir}/lib/joda-time-2.9.9.jar"/>
+  </path>
+  
+  <path id="library.kotlinjavaruntime.classpath">
+    <pathelement location="${basedir}/lib/kotlin-reflect.jar"/>
+  </path>
+  
+  <path id="library.lib.classpath">
+    <fileset dir="${basedir}/lib">
+      <patternset refid="library.patterns"/>
+    </fileset>
+  </path>
+  
+  <path id="library.org.projectlombok:lombok:1.16.16.classpath">
+    <pathelement location="${path.variable.maven_repository}/org/projectlombok/lombok/1.16.16/lombok-1.16.16.jar"/>
+  </path>
+  
+  
+  <!-- Application Server Libraries -->
+  
+  <path id="library.tomcat_8.0.30.classpath">
+    <pathelement location="C:/apache-tomcat-8.0.30/lib/jsp-api.jar"/>
+    <pathelement location="C:/apache-tomcat-8.0.30/lib/servlet-api.jar"/>
+  </path>
+  
+  <!-- Modules -->
+  
+  
+  <!-- Module EBS_Multiempresa -->
+  
+  <dirname property="module.ebs_multiempresa.basedir" file="${ant.file}"/>
+  
+  
+  
+  <property name="compiler.args.ebs_multiempresa" value="-encoding UTF-8 -source 1.8 -target 1.8 ${compiler.args}"/>
+  
+  <property name="ebs_multiempresa.output.dir" value="${module.ebs_multiempresa.basedir}/out/production/EBS_Multiempresa"/>
+  <property name="ebs_multiempresa.testoutput.dir" value="${module.ebs_multiempresa.basedir}/out/test/EBS_Multiempresa"/>
+  
+  <path id="ebs_multiempresa.module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
+  
+  <path id="ebs_multiempresa.module.production.classpath">
+    <path refid="library.tomcat_8.0.30.classpath"/>
+    <path refid="library.lib.classpath"/>
+    <path refid="library.org.projectlombok:lombok:1.16.16.classpath"/>
+    <path refid="library.kotlinjavaruntime.classpath"/>
+    <path refid="library.joda-time:joda-time:2.9.9.classpath"/>
+    <path refid="library.antlr:antlr:2.7.7.classpath"/>
+  </path>
+  
+  <path id="ebs_multiempresa.runtime.production.module.classpath">
+    <pathelement location="${ebs_multiempresa.output.dir}"/>
+    <path refid="library.lib.classpath"/>
+    <path refid="library.org.projectlombok:lombok:1.16.16.classpath"/>
+    <path refid="library.kotlinjavaruntime.classpath"/>
+    <path refid="library.joda-time:joda-time:2.9.9.classpath"/>
+    <path refid="library.antlr:antlr:2.7.7.classpath"/>
+  </path>
+  
+  <path id="ebs_multiempresa.module.classpath">
+    <pathelement location="${ebs_multiempresa.output.dir}"/>
+    <path refid="library.tomcat_8.0.30.classpath"/>
+    <path refid="library.lib.classpath"/>
+    <path refid="library.org.projectlombok:lombok:1.16.16.classpath"/>
+    <path refid="library.kotlinjavaruntime.classpath"/>
+    <path refid="library.joda-time:joda-time:2.9.9.classpath"/>
+    <path refid="library.antlr:antlr:2.7.7.classpath"/>
+  </path>
+  
+  <path id="ebs_multiempresa.runtime.module.classpath">
+    <pathelement location="${ebs_multiempresa.testoutput.dir}"/>
+    <pathelement location="${ebs_multiempresa.output.dir}"/>
+    <path refid="library.tomcat_8.0.30.classpath"/>
+    <path refid="library.lib.classpath"/>
+    <path refid="library.org.projectlombok:lombok:1.16.16.classpath"/>
+    <path refid="library.kotlinjavaruntime.classpath"/>
+    <path refid="library.joda-time:joda-time:2.9.9.classpath"/>
+    <path refid="library.antlr:antlr:2.7.7.classpath"/>
+  </path>
+  
+  
+  <patternset id="excluded.from.module.ebs_multiempresa">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  
+  <patternset id="excluded.from.compilation.ebs_multiempresa">
+    <patternset refid="excluded.from.module.ebs_multiempresa"/>
+  </patternset>
+  
+  <path id="ebs_multiempresa.module.sourcepath">
+    <dirset dir="${module.ebs_multiempresa.basedir}">
+      <include name="resources"/>
+      <include name="src"/>
+      <include name="src/java"/>
+    </dirset>
+  </path>
+  
+  
+  <target name="compile.module.ebs_multiempresa" depends="compile.module.ebs_multiempresa.production,compile.module.ebs_multiempresa.tests" description="Compile module EBS_Multiempresa"/>
+  
+  <target name="compile.module.ebs_multiempresa.production" description="Compile module EBS_Multiempresa; production classes">
+    <mkdir dir="${ebs_multiempresa.output.dir}"/>
+    <javac destdir="${ebs_multiempresa.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true">
+      <compilerarg line="${compiler.args.ebs_multiempresa}"/>
+      <bootclasspath refid="ebs_multiempresa.module.bootclasspath"/>
+      <classpath refid="ebs_multiempresa.module.production.classpath"/>
+      <src refid="ebs_multiempresa.module.sourcepath"/>
+      <patternset refid="excluded.from.compilation.ebs_multiempresa"/>
+    </javac>
+    
+    <copy todir="${ebs_multiempresa.output.dir}">
+      <fileset dir="${module.ebs_multiempresa.basedir}/resources">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+      <fileset dir="${module.ebs_multiempresa.basedir}/src">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+      <fileset dir="${module.ebs_multiempresa.basedir}/src/java">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+    </copy>
+  </target>
+  
+  <target name="compile.module.ebs_multiempresa.tests" depends="compile.module.ebs_multiempresa.production" description="compile module EBS_Multiempresa; test classes" unless="skip.tests"/>
+  
+  <target name="clean.module.ebs_multiempresa" description="cleanup module">
+    <delete dir="${ebs_multiempresa.output.dir}"/>
+    <delete dir="${ebs_multiempresa.testoutput.dir}"/>
+  </target>
+  
+  <target name="init" description="Build initialization">
+    <!-- Perform any build initialization in this target -->
+  </target>
+  
+  <target name="clean" depends="clean.module.ebs_multiempresa, clean.artifact.ebs_multiempresa:war_exploded" description="cleanup all"/>
+  
+  <target name="build.modules" depends="init, clean, compile.module.ebs_multiempresa" description="build all modules"/>
+  
+  <target name="init.artifacts">
+    <property name="artifacts.temp.dir" value="${basedir}/__artifacts_temp"/>
+    <property name="artifact.output.ebs_multiempresa:war_exploded" value="${basedir}/out/artifacts/EBS_Multiempresa_war_exploded"/>
+    <property name="artifact.output.facturacionelectronica" value="${basedir}/out/artifacts/FacturacionElectronica"/>
+    <mkdir dir="${artifacts.temp.dir}"/>
+    <property name="temp.jar.path.FacturacionElectronica.war" value="${artifacts.temp.dir}/FacturacionElectronica.war"/>
+  </target>
+  
+  <target name="clean.artifact.ebs_multiempresa:war_exploded" description="clean EBS_Multiempresa:war exploded artifact output">
+    <delete dir="${artifact.output.ebs_multiempresa:war_exploded}"/>
+  </target>
+  
+  <target name="artifact.ebs_multiempresa:war_exploded" depends="init.artifacts, compile.module.ebs_multiempresa" description="Build &#39;EBS_Multiempresa:war exploded&#39; artifact">
+    <mkdir dir="${artifact.output.ebs_multiempresa:war_exploded}"/>
+    <mkdir dir="${artifact.output.ebs_multiempresa:war_exploded}/WEB-INF"/>
+    <mkdir dir="${artifact.output.ebs_multiempresa:war_exploded}/WEB-INF/classes"/>
+    <copy todir="${artifact.output.ebs_multiempresa:war_exploded}/WEB-INF/classes">
+      <fileset dir="${ebs_multiempresa.output.dir}"/>
+    </copy>
+    <mkdir dir="${artifact.output.ebs_multiempresa:war_exploded}/WEB-INF/lib"/>
+    <copy file="${basedir}/lib/jpa.jar" tofile="${artifact.output.ebs_multiempresa:war_exploded}/WEB-INF/lib/jpa.jar"/>
+    <copy file="${basedir}/lib/axis.jar" tofile="${artifact.output.ebs_multiempresa:war_exploded}/WEB-INF/lib/axis.jar"/>
+    <copy file="${basedir}/lib/jdom.jar" tofile="${artifact.output.ebs_multiempresa:war_exploded}/WEB-INF/lib/jdom.jar"/>
+    <copy file="${basedir}/lib/saaj.jar" tofile="${artifact.output.ebs_multiempresa:war_exploded}/WEB-INF/lib/saaj.jar"/>
+    <copy file="${basedir}/lib/pd4ml.jar" tofile="${artifact.output.ebs_multiempresa:war_exploded}/WEB-INF/lib/pd4ml.jar"/>
+    <copy file="${basedir}/lib/xalan.jar" tofile="${artifact.output.ebs_multiempresa:war_exploded}/WEB-INF/lib/xalan.jar"/>
+    <copy file="${basedir}/lib/jaxrpc.jar" tofile="${artifact.output.ebs_multiempresa:war_exploded}/WEB-INF/lib/jaxrpc.jar"/>
+    <copy file="${basedir}/lib/keyapp.jar" tofile="${artifact.output.ebs_multiempresa:war_exploded}/WEB-INF/lib/keyapp.jar"/>
+    <copy file="${basedir}/lib/wsdl4j.jar" tofile="${artifact.output.ebs_multiempresa:war_exploded}/WEB-INF/lib/wsdl4j.jar"/>
+    <copy file="${basedir}/lib/asm-3.1.jar" tofile="${artifact.output.ebs_multiempresa:war_exploded}/WEB-INF/lib/asm-3.1.jar"/>
+    <copy file="${basedir}/lib/barcode.jar" tofile="${artifact.output.ebs_multiempresa:war_exploded}/WEB-INF/lib/barcode.jar"/>
+    <copy file="${basedir}/lib/javacsv.jar" tofile="${artifact.output.ebs_multiempresa:war_exploded}/WEB-INF/lib/javacsv.jar"/>
+    <copy file="${basedir}/lib/jta-1.1.jar" tofile="${artifact.output.ebs_multiempresa:war_exploded}/WEB-INF/lib/jta-1.1.jar"/>
+    <copy file="${basedir}/lib/axis-1.4.jar" tofile="${artifact.output.ebs_multiempresa:war_exploded}/WEB-INF/lib/axis-1.4.jar"/>
+    <copy file="${basedir}/lib/jaxb-api.jar" tofile="${artifact.output.ebs_multiempresa:war_exploded}/WEB-INF/lib/jaxb-api.jar"/>
+    <copy file="${basedir}/lib/jaxb-xjc.jar" tofile="${artifact.output.ebs_multiempresa:war_exploded}/WEB-INF/lib/jaxb-xjc.jar"/>
+    <copy file="${basedir}/lib/jstl-1.2.jar" tofile="${artifact.output.ebs_multiempresa:war_exploded}/WEB-INF/lib/jstl-1.2.jar"/>
+    <copy file="${basedir}/lib/javax.ejb.jar" tofile="${artifact.output.ebs_multiempresa:war_exploded}/WEB-INF/lib/javax.ejb.jar"/>
+    <copy file="${basedir}/lib/javax.jms.jar" tofile="${artifact.output.ebs_multiempresa:war_exploded}/WEB-INF/lib/javax.jms.jar"/>
+    <copy file="${basedir}/lib/jaxb-impl.jar" tofile="${artifact.output.ebs_multiempresa:war_exploded}/WEB-INF/lib/jaxb-impl.jar"/>
+    <copy file="${basedir}/lib/oro-2.0.8.jar" tofile="${artifact.output.ebs_multiempresa:war_exploded}/WEB-INF/lib/oro-2.0.8.jar"/>
+    <copy file="${basedir}/lib/activation.jar" tofile="${artifact.output.ebs_multiempresa:war_exploded}/WEB-INF/lib/activation.jar"/>
+    <copy file="${basedir}/lib/gson-2.6.2.jar" tofile="${artifact.output.ebs_multiempresa:war_exploded}/WEB-INF/lib/gson-2.6.2.jar"/>
+    <copy file="${basedir}/lib/hibernate3.jar" tofile="${artifact.output.ebs_multiempresa:war_exploded}/WEB-INF/lib/hibernate3.jar"/>
+    <copy file="${basedir}/lib/jasypt-1.5.jar" tofile="${artifact.output.ebs_multiempresa:war_exploded}/WEB-INF/lib/jasypt-1.5.jar"/>
+    <copy file="${basedir}/lib/javax.mail.jar" tofile="${artifact.output.ebs_multiempresa:war_exploded}/WEB-INF/lib/javax.mail.jar"/>
+    <copy file="${basedir}/lib/jaxb1-impl.jar" tofile="${artifact.output.ebs_multiempresa:war_exploded}/WEB-INF/lib/jaxb1-impl.jar"/>
+    <copy file="${basedir}/lib/ognl-3.0.1.jar" tofile="${artifact.output.ebs_multiempresa:war_exploded}/WEB-INF/lib/ognl-3.0.1.jar"/>
+    <copy file="${basedir}/lib/PagosAddOn.jar" tofile="${artifact.output.ebs_multiempresa:war_exploded}/WEB-INF/lib/PagosAddOn.jar"/>
+    <copy file="${basedir}/lib/cglib-2.1.3.jar" tofile="${artifact.output.ebs_multiempresa:war_exploded}/WEB-INF/lib/cglib-2.1.3.jar"/>
+    <copy file="${basedir}/lib/derbyclient.jar" tofile="${artifact.output.ebs_multiempresa:war_exploded}/WEB-INF/lib/derbyclient.jar"/>
+    <copy file="${basedir}/lib/dom4j-1.6.1.jar" tofile="${artifact.output.ebs_multiempresa:war_exploded}/WEB-INF/lib/dom4j-1.6.1.jar"/>
+    <copy file="${basedir}/lib/el-impl-2.2.jar" tofile="${artifact.output.ebs_multiempresa:war_exploded}/WEB-INF/lib/el-impl-2.2.jar"/>
+    <copy file="${basedir}/lib/javax.faces.jar" tofile="${artifact.output.ebs_multiempresa:war_exploded}/WEB-INF/lib/javax.faces.jar"/>
+    <copy file="${basedir}/lib/asm-tree-3.1.jar" tofile="${artifact.output.ebs_multiempresa:war_exploded}/WEB-INF/lib/asm-tree-3.1.jar"/>
+    <copy file="${basedir}/lib/c3p0-0.9.5.2.jar" tofile="${artifact.output.ebs_multiempresa:war_exploded}/WEB-INF/lib/c3p0-0.9.5.2.jar"/>
+    <copy file="${basedir}/lib/delta-1.0.10.jar" tofile="${artifact.output.ebs_multiempresa:war_exploded}/WEB-INF/lib/delta-1.0.10.jar"/>
+    <copy file="${basedir}/lib/log4j-1.2.14.jar" tofile="${artifact.output.ebs_multiempresa:war_exploded}/WEB-INF/lib/log4j-1.2.14.jar"/>
+    <copy file="${basedir}/lib/esapi-2.1.0.1.jar" tofile="${artifact.output.ebs_multiempresa:war_exploded}/WEB-INF/lib/esapi-2.1.0.1.jar"/>
+    <copy file="${basedir}/lib/ezmorph-1.0.6.jar" tofile="${artifact.output.ebs_multiempresa:war_exploded}/WEB-INF/lib/ezmorph-1.0.6.jar"/>
+    <copy file="${basedir}/lib/GenCFDIClient.jar" tofile="${artifact.output.ebs_multiempresa:war_exploded}/WEB-INF/lib/GenCFDIClient.jar"/>
+    <copy file="${basedir}/lib/javax.servlet.jar" tofile="${artifact.output.ebs_multiempresa:war_exploded}/WEB-INF/lib/javax.servlet.jar"/>
+    <copy file="${basedir}/lib/json-20160810.jar" tofile="${artifact.output.ebs_multiempresa:war_exploded}/WEB-INF/lib/json-20160810.jar"/>
+    <copy file="${basedir}/lib/kotlin-stdlib.jar" tofile="${artifact.output.ebs_multiempresa:war_exploded}/WEB-INF/lib/kotlin-stdlib.jar"/>
+    <copy file="${basedir}/lib/poi-3.5-FINAL.jar" tofile="${artifact.output.ebs_multiempresa:war_exploded}/WEB-INF/lib/poi-3.5-FINAL.jar"/>
+    <copy file="${basedir}/lib/derby-10.4.2.0.jar" tofile="${artifact.output.ebs_multiempresa:war_exploded}/WEB-INF/lib/derby-10.4.2.0.jar"/>
+    <copy file="${basedir}/lib/javax.resource.jar" tofile="${artifact.output.ebs_multiempresa:war_exploded}/WEB-INF/lib/javax.resource.jar"/>
+    <copy file="${basedir}/lib/jsf-api-2.2.12.jar" tofile="${artifact.output.ebs_multiempresa:war_exploded}/WEB-INF/lib/jsf-api-2.2.12.jar"/>
+    <copy file="${basedir}/lib/jsr173_1.0_api.jar" tofile="${artifact.output.ebs_multiempresa:war_exploded}/WEB-INF/lib/jsr173_1.0_api.jar"/>
+    <copy file="${basedir}/lib/kotlin-reflect.jar" tofile="${artifact.output.ebs_multiempresa:war_exploded}/WEB-INF/lib/kotlin-reflect.jar"/>
+    <copy file="${basedir}/lib/primefaces-5.3.jar" tofile="${artifact.output.ebs_multiempresa:war_exploded}/WEB-INF/lib/primefaces-5.3.jar"/>
+    <copy file="${basedir}/lib/webservices-rt.jar" tofile="${artifact.output.ebs_multiempresa:war_exploded}/WEB-INF/lib/webservices-rt.jar"/>
+    <copy file="${basedir}/lib/asm-commons-3.1.jar" tofile="${artifact.output.ebs_multiempresa:war_exploded}/WEB-INF/lib/asm-commons-3.1.jar"/>
+    <copy file="${basedir}/lib/csrfguard-3.1.0.jar" tofile="${artifact.output.ebs_multiempresa:war_exploded}/WEB-INF/lib/csrfguard-3.1.0.jar"/>
+    <copy file="${basedir}/lib/itext-2.1.7.js6.jar" tofile="${artifact.output.ebs_multiempresa:war_exploded}/WEB-INF/lib/itext-2.1.7.js6.jar"/>
+    <copy file="${basedir}/lib/joda-money-0.12.jar" tofile="${artifact.output.ebs_multiempresa:war_exploded}/WEB-INF/lib/joda-money-0.12.jar"/>
+    <copy file="${basedir}/lib/joda-time-2.9.9.jar" tofile="${artifact.output.ebs_multiempresa:war_exploded}/WEB-INF/lib/joda-time-2.9.9.jar"/>
+    <copy file="${basedir}/lib/mime-util-2.1.3.jar" tofile="${artifact.output.ebs_multiempresa:war_exploded}/WEB-INF/lib/mime-util-2.1.3.jar"/>
+    <copy file="${basedir}/lib/ojdbc14_ora10.2.jar" tofile="${artifact.output.ebs_multiempresa:war_exploded}/WEB-INF/lib/ojdbc14_ora10.2.jar"/>
+    <copy file="${basedir}/lib/slf4j-api-1.4.2.jar" tofile="${artifact.output.ebs_multiempresa:war_exploded}/WEB-INF/lib/slf4j-api-1.4.2.jar"/>
+    <copy file="${basedir}/lib/webservices-api.jar" tofile="${artifact.output.ebs_multiempresa:war_exploded}/WEB-INF/lib/webservices-api.jar"/>
+    <copy file="${basedir}/lib/commons-io-2.0.1.jar" tofile="${artifact.output.ebs_multiempresa:war_exploded}/WEB-INF/lib/commons-io-2.0.1.jar"/>
+    <copy file="${basedir}/lib/xwork-core-2.2.3.jar" tofile="${artifact.output.ebs_multiempresa:war_exploded}/WEB-INF/lib/xwork-core-2.2.3.jar"/>
+    <copy file="${basedir}/lib/CoatsAddendaAddOn.jar" tofile="${artifact.output.ebs_multiempresa:war_exploded}/WEB-INF/lib/CoatsAddendaAddOn.jar"/>
+    <copy file="${basedir}/lib/commons-codec-1.8.jar" tofile="${artifact.output.ebs_multiempresa:war_exploded}/WEB-INF/lib/commons-codec-1.8.jar"/>
+    <copy file="${basedir}/lib/commons-lang3-3.4.jar" tofile="${artifact.output.ebs_multiempresa:war_exploded}/WEB-INF/lib/commons-lang3-3.4.jar"/>
+    <copy file="${basedir}/lib/commons-net-1.4.0.jar" tofile="${artifact.output.ebs_multiempresa:war_exploded}/WEB-INF/lib/commons-net-1.4.0.jar"/>
+    <copy file="${basedir}/lib/feProcess.3.4.034.jar" tofile="${artifact.output.ebs_multiempresa:war_exploded}/WEB-INF/lib/feProcess.3.4.034.jar"/>
+    <copy file="${basedir}/lib/freemarker-2.3.16.jar" tofile="${artifact.output.ebs_multiempresa:war_exploded}/WEB-INF/lib/freemarker-2.3.16.jar"/>
+    <copy file="${basedir}/lib/javax.persistence.jar" tofile="${artifact.output.ebs_multiempresa:war_exploded}/WEB-INF/lib/javax.persistence.jar"/>
+    <copy file="${basedir}/lib/javax.servlet.jsp.jar" tofile="${artifact.output.ebs_multiempresa:war_exploded}/WEB-INF/lib/javax.servlet.jsp.jar"/>
+    <copy file="${basedir}/lib/webservices-extra.jar" tofile="${artifact.output.ebs_multiempresa:war_exploded}/WEB-INF/lib/webservices-extra.jar"/>
+    <copy file="${basedir}/lib/webservices-tools.jar" tofile="${artifact.output.ebs_multiempresa:war_exploded}/WEB-INF/lib/webservices-tools.jar"/>
+    <copy file="${basedir}/lib/xmlrpc-client-1.0.jar" tofile="${artifact.output.ebs_multiempresa:war_exploded}/WEB-INF/lib/xmlrpc-client-1.0.jar"/>
+    <copy file="${basedir}/lib/feWebBeans1.4.6.10.jar" tofile="${artifact.output.ebs_multiempresa:war_exploded}/WEB-INF/lib/feWebBeans1.4.6.10.jar"/>
+    <copy file="${basedir}/lib/javassist-3.8.0.GA.jar" tofile="${artifact.output.ebs_multiempresa:war_exploded}/WEB-INF/lib/javassist-3.8.0.GA.jar"/>
+    <copy file="${basedir}/lib/json-lib-2.3-jdk15.jar" tofile="${artifact.output.ebs_multiempresa:war_exploded}/WEB-INF/lib/json-lib-2.3-jdk15.jar"/>
+    <copy file="${basedir}/lib/commons-logging-1.2.jar" tofile="${artifact.output.ebs_multiempresa:war_exploded}/WEB-INF/lib/commons-logging-1.2.jar"/>
+    <copy file="${basedir}/lib/jasperreports-6.4.1.jar" tofile="${artifact.output.ebs_multiempresa:war_exploded}/WEB-INF/lib/jasperreports-6.4.1.jar"/>
+    <copy file="${basedir}/lib/slf4j-log4j12-1.4.2.jar" tofile="${artifact.output.ebs_multiempresa:war_exploded}/WEB-INF/lib/slf4j-log4j12-1.4.2.jar"/>
+    <copy file="${basedir}/lib/wsClientCancelacion.jar" tofile="${artifact.output.ebs_multiempresa:war_exploded}/WEB-INF/lib/wsClientCancelacion.jar"/>
+    <copy file="${basedir}/lib/commons-digester-1.8.jar" tofile="${artifact.output.ebs_multiempresa:war_exploded}/WEB-INF/lib/commons-digester-1.8.jar"/>
+    <copy file="${basedir}/lib/bcprov-jdk14-147-full.jar" tofile="${artifact.output.ebs_multiempresa:war_exploded}/WEB-INF/lib/bcprov-jdk14-147-full.jar"/>
+    <copy file="${basedir}/lib/commons-discovery-0.2.jar" tofile="${artifact.output.ebs_multiempresa:war_exploded}/WEB-INF/lib/commons-discovery-0.2.jar"/>
+    <copy file="${basedir}/lib/hibernate-annotations.jar" tofile="${artifact.output.ebs_multiempresa:war_exploded}/WEB-INF/lib/hibernate-annotations.jar"/>
+    <copy file="${basedir}/lib/kotlin-stdlib-sources.jar" tofile="${artifact.output.ebs_multiempresa:war_exploded}/WEB-INF/lib/kotlin-stdlib-sources.jar"/>
+    <copy file="${basedir}/lib/webservices-extra-api.jar" tofile="${artifact.output.ebs_multiempresa:war_exploded}/WEB-INF/lib/webservices-extra-api.jar"/>
+    <copy file="${basedir}/lib/groovy-all-1.0-beta-10.jar" tofile="${artifact.output.ebs_multiempresa:war_exploded}/WEB-INF/lib/groovy-all-1.0-beta-10.jar"/>
+    <copy file="${basedir}/lib/ComercioExterior11AddOn.jar" tofile="${artifact.output.ebs_multiempresa:war_exploded}/WEB-INF/lib/ComercioExterior11AddOn.jar"/>
+    <copy file="${basedir}/lib/commons-beanutils-1.8.0.jar" tofile="${artifact.output.ebs_multiempresa:war_exploded}/WEB-INF/lib/commons-beanutils-1.8.0.jar"/>
+    <copy file="${basedir}/lib/commons-validator-1.3.1.jar" tofile="${artifact.output.ebs_multiempresa:war_exploded}/WEB-INF/lib/commons-validator-1.3.1.jar"/>
+    <copy file="${basedir}/lib/joda-time-2.9.9-javadoc.jar" tofile="${artifact.output.ebs_multiempresa:war_exploded}/WEB-INF/lib/joda-time-2.9.9-javadoc.jar"/>
+    <copy file="${basedir}/lib/joda-time-2.9.9-sources.jar" tofile="${artifact.output.ebs_multiempresa:war_exploded}/WEB-INF/lib/joda-time-2.9.9-sources.jar"/>
+    <copy file="${basedir}/lib/mongo-java-driver-3.2.2.jar" tofile="${artifact.output.ebs_multiempresa:war_exploded}/WEB-INF/lib/mongo-java-driver-3.2.2.jar"/>
+    <copy file="${basedir}/lib/commons-fileupload-1.2.2.jar" tofile="${artifact.output.ebs_multiempresa:war_exploded}/WEB-INF/lib/commons-fileupload-1.2.2.jar"/>
+    <copy file="${basedir}/lib/narayana-jta-5.3.4.Final.jar" tofile="${artifact.output.ebs_multiempresa:war_exploded}/WEB-INF/lib/narayana-jta-5.3.4.Final.jar"/>
+    <copy file="${basedir}/lib/commons-collections-3.2.1.jar" tofile="${artifact.output.ebs_multiempresa:war_exploded}/WEB-INF/lib/commons-collections-3.2.1.jar"/>
+    <copy file="${basedir}/lib/jasperreports-fonts-6.4.1.jar" tofile="${artifact.output.ebs_multiempresa:war_exploded}/WEB-INF/lib/jasperreports-fonts-6.4.1.jar"/>
+    <copy file="${basedir}/lib/jsf-impl-2.2.12-jbossorg-2.jar" tofile="${artifact.output.ebs_multiempresa:war_exploded}/WEB-INF/lib/jsf-impl-2.2.12-jbossorg-2.jar"/>
+    <copy file="${basedir}/lib/mchange-commons-java-0.2.11.jar" tofile="${artifact.output.ebs_multiempresa:war_exploded}/WEB-INF/lib/mchange-commons-java-0.2.11.jar"/>
+    <copy file="${basedir}/lib/primefaces-extensions-4.0.0.jar" tofile="${artifact.output.ebs_multiempresa:war_exploded}/WEB-INF/lib/primefaces-extensions-4.0.0.jar"/>
+    <copy file="${basedir}/lib/org.apache.commons.httpclient.jar" tofile="${artifact.output.ebs_multiempresa:war_exploded}/WEB-INF/lib/org.apache.commons.httpclient.jar"/>
+    <copy file="${basedir}/lib/mysql-connector-java-5.0.8-bin.jar" tofile="${artifact.output.ebs_multiempresa:war_exploded}/WEB-INF/lib/mysql-connector-java-5.0.8-bin.jar"/>
+    <copy file="${basedir}/lib/c3p0-oracle-thin-extras-0.9.5.2.jar" tofile="${artifact.output.ebs_multiempresa:war_exploded}/WEB-INF/lib/c3p0-oracle-thin-extras-0.9.5.2.jar"/>
+    <copy file="${basedir}/lib/hibernate-commons-annotations-3.2.0.Final.jar" tofile="${artifact.output.ebs_multiempresa:war_exploded}/WEB-INF/lib/hibernate-commons-annotations-3.2.0.Final.jar"/>
+    <copy file="${basedir}/lib/com.jaspersoft.studio.bundles.itext_2.1.7.js5.jar" tofile="${artifact.output.ebs_multiempresa:war_exploded}/WEB-INF/lib/com.jaspersoft.studio.bundles.itext_2.1.7.js5.jar"/>
+    <copy file="${path.variable.maven_repository}/org/projectlombok/lombok/1.16.16/lombok-1.16.16.jar" tofile="${artifact.output.ebs_multiempresa:war_exploded}/WEB-INF/lib/lombok-1.16.16.jar"/>
+    <copy file="${basedir}/lib/kotlin-reflect.jar" tofile="${artifact.output.ebs_multiempresa:war_exploded}/WEB-INF/lib/kotlin-reflect.jar"/>
+    <copy file="${basedir}/lib/joda-time-2.9.9.jar" tofile="${artifact.output.ebs_multiempresa:war_exploded}/WEB-INF/lib/joda-time-2.9.9.jar"/>
+    <copy file="${path.variable.maven_repository}/antlr/antlr/2.7.7/antlr-2.7.7.jar" tofile="${artifact.output.ebs_multiempresa:war_exploded}/WEB-INF/lib/antlr-2.7.7.jar"/>
+    <copy todir="${artifact.output.ebs_multiempresa:war_exploded}">
+      <fileset dir="${basedir}/web"/>
+    </copy>
+    <mkdir dir="${artifact.output.ebs_multiempresa:war_exploded}/WEB-INF"/>
+    <copy file="${basedir}/web/WEB-INF/web.xml" tofile="${artifact.output.ebs_multiempresa:war_exploded}/WEB-INF/web.xml"/>
+  </target>
+  
+  <target name="artifact.facturacionelectronica" depends="init.artifacts, artifact.ebs_multiempresa:war_exploded" description="Build &#39;FacturacionElectronica&#39; artifact">
+    <property name="artifact.temp.output.facturacionelectronica" value="${artifacts.temp.dir}/FacturacionElectronica"/>
+    <mkdir dir="${artifact.temp.output.facturacionelectronica}"/>
+    <zip destfile="${temp.jar.path.FacturacionElectronica.war}">
+      <zipfileset dir="${artifact.output.ebs_multiempresa:war_exploded}"/>
+      <zipfileset file="${basedir}/lib/joda-time-2.9.9.jar" prefix="WEB-INF/lib"/>
+      <zipfileset file="${path.variable.maven_repository}/antlr/antlr/2.7.7/antlr-2.7.7.jar" prefix="WEB-INF/lib"/>
+    </zip>
+    <copy file="${temp.jar.path.FacturacionElectronica.war}" tofile="${artifact.temp.output.facturacionelectronica}/FacturacionElectronica.war"/>
+  </target>
+  
+  <target name="build.all.artifacts" depends="artifact.ebs_multiempresa:war_exploded, artifact.facturacionelectronica" description="Build all artifacts">
+    <mkdir dir="${artifact.output.facturacionelectronica}"/>
+    <copy todir="${artifact.output.facturacionelectronica}">
+      <fileset dir="${artifact.temp.output.facturacionelectronica}"/>
+    </copy>
+    
+    <!-- Delete temporary files -->
+    <delete dir="${artifacts.temp.dir}"/>
+  </target>
+  
+  <target name="all" depends="build.modules, build.all.artifacts" description="build all"/>
+</project>

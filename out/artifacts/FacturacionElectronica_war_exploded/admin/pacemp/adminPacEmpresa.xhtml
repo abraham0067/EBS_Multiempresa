@@ -1,0 +1,142 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+                template="./../../templates/templateContent.xhtml">
+
+    <ui:define name="breadcrum">
+        <p:breadCrumb class="breadcrumbStyle" style="padding: 1px 1px 1px 1px;">
+            <p:menuitem value="Inicio" url="#"/>
+            <p:menuitem value="Administraci&oacute;n" url="#" />
+            <p:menuitem value="Parametros" url="#" />
+        </p:breadCrumb>
+    </ui:define>
+
+    <ui:define name="controls">
+        <h:form id="frmControls">
+            <!--Confirm dialog para  borrar el parametro-->
+            <p:confirmDialog message="¿Esta seguro de borrar el PAC?" 
+                             showEffect="fade"
+                             hideEffect="fade"
+                             styleClass="dialogBoxCustom"
+                             widgetVar="confirmDelete">
+                <p:commandButton title="YesButton" 
+                                 value="Si"
+                                 process="@this"
+                                 update="messages,frmContent:dtListPacs"
+                                 onclick="PF('confirmDelete').hide()"
+                                 action="#{managedBeanPacEmpresas.eliminarPac()}" 
+                                 oncomplete="PF('confirmDelete').hide()" />
+                <p:commandButton title="NoButton" 
+                                 value="No" 
+                                 oncomplete="PF('confirmDelete').hide()"/>
+            </p:confirmDialog>
+            <!--Confirm dialog para  extraer el reporte-->
+            <p:confirmDialog message="¿Esta seguro de modificar el PAC?"
+                             showEffect="fade"
+                             hideEffect="fade"
+                             styleClass="dialogBoxCustom"
+                             widgetVar="confirmMod">
+                <p:commandButton title="YesButton"
+                                 value="Si"
+                                 process="@this"
+                                 update="messages,frmContent:dtListPacs"
+                                 onclick="PF('confirmDelete').hide()"
+                                 action="#{managedBeanPacEmpresas.redirectModificacionPacEmp()}"
+                                 oncomplete="PF('confirmMod').hide()" />
+                <p:commandButton title="NoButton"
+                                 value="No"
+                                 oncomplete="PF('confirmMod').hide()"/>
+            </p:confirmDialog>
+            <p:confirmDialog message="¿Esta seguro de activar el PAC?"
+                             showEffect="fade"
+                             hideEffect="fade"
+                             styleClass="dialogBoxCustom"
+                             widgetVar="confirmActivacion">
+                <p:commandButton title="YesButton"
+                                 value="Si"
+                                 process="@this"
+                                 update="frmContent,messages"
+                                 onclick="PF('confirmActivacion').hide()"
+                                 action="#{managedBeanPacEmpresas.activarPACSeleccionado()}"
+                                 oncomplete="PF('confirmMod').hide()" />
+                <p:commandButton title="NoButton"
+                                 value="No"
+                                 oncomplete="PF('confirmActivacion').hide()"/>
+            </p:confirmDialog>
+            <p:growl id="messages" showDetail="false" autoUpdate="false" life="16000" />
+            <p:panelGrid columns="5" style="width: 100%;"
+                         columnClasses="ui-grid-col-3,ui-grid-col-1,ui-grid-col-6,ui-grid-col-1,ui-grid-col-1"
+                         layout="grid">
+                <p:outputLabel/>
+                <p:outputLabel value="Empresa:" for="somEmpresas"/>
+                <p:selectOneMenu id="somEmpresas" value="#{managedBeanPacEmpresas.idEmpresaSelected}" style="width: 80%;"
+                                 required="true" requiredMessage="Debe seleccionar una empresa"
+                                 filter="true" filterMatchMode="contains"
+                                 panelStyle="width:500px;">
+                    <f:selectItem itemLabel="Selecciona una empresa" itemValue="-1" noSelectionOption="true"/>
+                    <f:selectItems value="#{managedBeanEmpresasAsignadas.empresasAsignadas}" var="emp"
+                                   itemLabel="#{emp.RFC_Empresa()}" itemValue="#{emp.id}"/>
+                    <p:ajax event="change" process="somEmpresas,@this"  update="frmContent:dtListPacs,messages,somEmpresas" listener="#{managedBeanPacEmpresas.buscarPacs()}"/>
+                </p:selectOneMenu>
+                <p:outputLabel/>
+                <p:outputLabel/>
+                <p:outputLabel/>
+                <p:outputLabel/>
+                <f:facet name="footer">
+                    <p:commandButton value="Activar PAC" onclick="PF('confirmActivacion').show()" update="messages" />
+                    <p:commandButton value="Asociar PAC" action="#{managedBeanPacEmpresas.redirectCreacionPacEmp()}" />
+                    <p:commandButton value="Modificar PAC" onclick="PF('confirmMod').show()"  update="messages"/>
+                    <p:commandButton value="Borrar PAC"  onclick="PF('confirmDelete').show()"  update="messages"/>
+                </f:facet>
+            </p:panelGrid>
+        </h:form>
+    </ui:define>
+
+    <ui:define name="content">
+        <h:form id="frmContent" >
+            <p:growl id="messages" showDetail="false" autoUpdate="false" life="16000" />
+            <p:dataTable id="dtListPacs" value="#{managedBeanPacEmpresas.listPacsEmpresa}" var="tmp" resizableColumns="false" 
+                         resizeMode="expand" scrollRows="18" scrollHeight="520" scrollable="false" liveScroll="true" rowKey="#{tmp.id}"
+                         selection="#{managedBeanPacEmpresas.pacEmpresaSelected}"   emptyMessage="..." style="font-size: 10px;" 
+                         disabledTextSelection="false" paginator="true" rows="25">
+                <p:ajax event="rowSelectRadio" process="@this,dtListPacs" update="dtListPacs"></p:ajax>
+                <f:facet name="header">
+                    Se encontraron #{fn:length(managedBeanPacEmpresas.listPacsEmpresa)} registros.
+                </f:facet>
+                <!--Columna de seleccion-->
+                <p:column resizable="false" selectionMode="single"  width="3%" class="customCell">
+                </p:column>
+                <p:column headerText="R.F.C. Empresa" class="customCell" style="text-align: left;">
+                    <p:outputLabel value="#{tmp.empresa.RFC_Empresa()}"/>
+                </p:column>
+                <p:column headerText="PAC" class="customCell" width="110" style="text-align: left;">
+                    <p:outputLabel value="#{tmp.pac.nombre}"/>
+                </p:column>
+                <p:column headerText="Usuario" class="customCell" style="text-align: left;" width="280">
+                    <p:outputLabel  value="#{tmp.usuario}"/>
+                </p:column>
+                <p:column  headerText="Clave" class="customCell" width="150" style="text-align: left;">
+                    <p:outputLabel value="#{tmp.password}"/>
+                </p:column>
+                <p:column headerText="Estatus" class="customCell" width="100">
+                    <p:outputLabel value="ACTIVO" style="color: #4cae4c;font-weight: bold;" rendered="#{tmp.estatus eq 1}"/>
+                    <p:outputLabel value="DESACTIVADO" style="color: #ac2925;font-weight: bold;" rendered="#{tmp.estatus eq 0}"/>
+                    <p:outputLabel value="NO INCLUIR EN RULETA" style="color: #8a6d3b;font-weight: bold;" rendered="#{tmp.estatus eq 2}"/>
+                </p:column>
+                <p:column headerText="Fecha de registro" class="customCell" width="100">
+                    <p:outputLabel value="#{tmp.FechaRegistro()}"/>
+                </p:column>
+                <f:facet name="footer">
+                    Se encontraron #{fn:length(managedBeanPacEmpresas.listPacsEmpresa)} registros.
+                </f:facet>
+            </p:dataTable>
+        </h:form>
+    </ui:define>
+
+</ui:composition>

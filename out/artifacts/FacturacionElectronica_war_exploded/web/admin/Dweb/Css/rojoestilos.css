@@ -1,0 +1,216 @@
+a{
+border: none;
+text-decoration: none;
+border-bottom: none;
+border-color:activeborder;
+border-bottom-width:10px;
+border-width:20ex;
+margin:0px;
+padding-bottom: 0%;
+}
+.body{	
+	background-image:url("Dweb/Imagen/empresa.jpg");
+	background-attachment:fixed;
+	background-repeat: no-repeat;
+	background-size:cover;
+	margin: 40px 50px 20px 50px;
+}
+
+center{
+	border: 1px;
+	border-color: black;
+}
+.TituloAutoregistro{
+	font-family: "arial,sans-serif";
+	font-weight:bold;
+	font-size: 12px;
+	color:#000080;	
+}
+
+.TituloHeder{
+	font-family: "arial,sans-serif";	
+	font:cursive;
+	font-weight:cursive;
+	font-size: 20px;
+	color:#F0FFF0;	
+}
+.TituloHeder2{
+	font-family: "arial,sans-serif";
+	font-weight:bold;
+	font-size: 17px;
+	color:#66CC99;	
+}
+ 	
+
+.textoAutoregistro{
+    font-family:"Times New Roman",Georgia,Serif;
+    font-size:12px;    
+    color:#000080;      
+}
+
+.textoChicAutoregistro{
+    font-family:"Times New Roman",Georgia,Serif;
+    font-size:8px;
+    font-style:normal;    
+    color:#000080;      
+}
+
+.textFile{
+    font-family:"Times New Roman",Georgia,Serif;
+    font-size:12px;    
+    color:black;      
+}
+
+.TituloFrom{
+font-family: "Century Gothic"; 
+font-weight: bold;
+font-size: 15px;
+color:white;
+}
+
+.textoFrom{
+font-family: "Century Gothic"; 
+font-weight: bold;
+font-size: 15px;
+color:#8C1717  ;
+}
+
+.LoginChic {
+	font-family: "Century Gothic";
+	font-weight: bold;
+	font-size: 12px;
+	color:white ;
+}
+
+.textoFromChic{
+font-family: "Century Gothic"; 
+font-weight: normal;
+font-size: 12px;
+color:#8C1717  ;
+}
+
+hr{
+	background-color:#8C1717 ;
+	height: 2px;
+}
+
+.Linea{
+	background-color:#8C1717 ; 
+	height: 2px;
+}
+
+
+
+
+.estiloceldaam  {
+	font-family : "Century Gothic",Geneva,Arial,Helvetica,sans-serif;
+	font-size : 10px;
+	text-decoration : none;
+	font-style : normal;
+	font-weight: bold;
+	color: #5C1505;
+	background: #F9CD76;
+}
+
+.textoLogin{
+	font-family:"Century Gothic";
+	font-size:15px;
+	color:#0090C7;
+        font-weight:bold;
+	}
+.botonestilo {
+    background-color:#E6E6E6;
+    border-width: 2pt;
+    color:#8C1717 ;
+    font-size:11pt;
+    font-family:"Century Gothic";
+    font-weight:bold;    
+    border-bottom-color: white;
+}
+
+submit{
+		background-image:url(Dweb/Imagen/Iconos/1372893212_22643.ico);
+	background-repeat: no-repeat; 
+	background-position: left top; 
+	padding-top:90px;
+	
+}
+.boton {
+	background-color:#BDBDBD;
+	font-weight: bold;
+ }
+
+.obligatorio {
+	font-family: "Century Gothic";
+	font-size: 12px;
+	font-weight: normal;
+	font-style: normal;
+	color: #FF9966;
+}
+
+.error {
+	font-family: "Century Gothic", Geneva, Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	text-decoration: none;
+	font-style: normal;
+	font-weight: bold;
+	color:#FF9966;
+}
+
+.ejem{
+	font-family: "Century Gothic", Geneva, Arial, Helvetica, sans-serif;
+	font-size: 10px;
+	text-decoration: none;
+	color:#FF9966;
+}
+.titulo{
+	font-family : "Century Gothic",Geneva,Arial,Helvetica,sans-serif;
+	font-size : 15px;
+	text-decoration : none;
+	font-style : normal;
+	font-weight: bold;
+	color: #708090;
+}
+
+.texto-logo{
+    color: #2A1B0A;    
+    font-size: 10px;
+}
+
+.captcha{
+	font-family : "Century Gothic",Geneva,Arial,Helvetica,sans-serif;
+	font-size : 16px;
+	font-weight: bold;
+	font-style : italic;
+	color: white;
+}
+.textocuerpo{
+	font-family: "Century Gothic", Geneva, Arial, Helvetica, sans-serif;
+	font-size: 14px;
+	text-decoration: none;
+	font-style: normal;
+	color:#8C1717;
+}
+
+.textomenu{
+	font-family: "Century Gothic", Geneva, Arial, Helvetica, sans-serif;
+	font-size: 10px;
+	text-decoration: none;
+	font-style: normal;
+	color:#8C1717;
+}
+
+.Header {
+	font-family: "Century Gothic";
+	font-weight: bold;
+	font-size: 14px;
+	color: #8C1717 ;
+}
+.fijo{
+	position:fixed;
+	right:0px;
+	left:20px;
+	top:319px;	
+	z-index:50; 
+}
+

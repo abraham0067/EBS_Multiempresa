@@ -1,0 +1,44 @@
+<?xml version='1.0' encoding='UTF-8' ?> 
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui">
+    <h:head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <h:outputStylesheet library="css" name="default.css"/>
+        <h:outputStylesheet library="css" name="cssLayout.css"/>
+        <title>Sistema de Facturaci&oacute;n Electr&oacute;nica</title>
+        <link rel="icon" href="#{resource['img/favicon.ico']}"  type="image/x-icon" sizes="16x16"></link>
+    </h:head><h:outputStylesheet library="css" name="cssLayout.css"/>
+    <h:body>
+        <div id="wrapper" class="ui-fluid" style="padding-left: 20px; padding-right: 20px; min-width: 1200px; max-width: 1250px; max-height: 1600px;" >
+            <div id="top" class="ui-fluid,textHead" >
+                <ui:insert name="top">
+                    <ui:include src="/com/header.xhtml" />
+                </ui:insert>
+            </div>
+            <div id="menu" class="ui-fluid">
+                 <ui:insert name="menu" class="left">
+                     <ui:include src="/com/menu.xhtml" />
+                 </ui:insert>
+            </div>
+            <div id="ui-fluid" class="ui-fluid">
+                <div id="breadcrum" class="ui-fluid">
+                    <ui:insert name="breadcrum">Breadcrum</ui:insert>
+                </div>
+                <div id="controls" class="ui-fluid">
+                    <ui:insert name="controls">Controls</ui:insert>
+                </div>
+                <div id="content" class="ui-fluid">
+                    <ui:insert name="content">Contenido</ui:insert>
+                </div>
+            </div>
+            <div id="bottom">
+                <ui:insert name="bottom">
+                    <ui:include src="/com/footer.xhtml" />
+                </ui:insert>
+            </div>
+        </div>
+    </h:body>
+</html>

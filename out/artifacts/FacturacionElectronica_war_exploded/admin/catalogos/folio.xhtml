@@ -1,0 +1,88 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="./../../templates/templateContent.xhtml"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:fn="http://java.sun.com/jsp/jstl/functions">
+
+    <ui:define name="breadcrum">
+        <p:breadCrumb class="breadcrumbStyle" style="padding: 1px 1px 1px 1px;">
+            <p:menuitem value="Inicio" url="#"/>
+            <p:menuitem value="Administraci&oacute;n" url="#" />
+            <p:menuitem value="Catalogos" url="#" />
+            <p:menuitem value="Folios" url="#" />
+            <p:menuitem value="Creación/Modificación de folios" url="#" />
+        </p:breadCrumb>
+    </ui:define>
+
+    <ui:define name="controls">
+    </ui:define>
+
+    <ui:define name="content">
+        <h:form id="frmContent">
+            <p:growl id="messages" autoUpdate="false" showDetail="false" life="16000"/>
+            <p:panelGrid columns="6" columnClasses="ui-grid-col-4,ui-grid-col-2,ui-grid-col-2,ui-grid-col-2,ui-grid-col-1,ui-grid-col-1"
+                         layout="grid">
+                <p:outputLabel value=""/>
+                <p:outputLabel value=""/>
+                <p:outputLabel value=""/>
+                <p:outputLabel value=""/>
+                <p:commandButton value="Guardar" icon="fa fa-fw fa-save"  actionListener="#{managedBeanFolios.guardarFolio()}"
+                                 process="@this,@form" ajax="false" update="messages,@form"  />
+                <!--process="fuLogo,emisor,itRFCEmp,itRazonEmp,
+                                 itPaisEmp,itCalleEmp,itNombre,itCorreo" update="msgs"-->
+                <p:commandButton value="Cancelar" icon="fa fa-fw fa-arrow-left" action="#{managedBeanFolios.redirectConsultaFolios()}" process="@this"/>
+            </p:panelGrid>
+            <p:panel header="Pac-Empresa" style="margin-bottom:10px;">
+                <p:panelGrid id="pgPacEmp" columns="4" columnClasses="ui-grid-col-2,ui-grid-col-4,ui-grid-col-2,ui-grid-col-4"
+                    layout="grid">
+                    <c:if test="#{managedBeanFolios.currentOperation eq 0}">
+                        <p:outputLabel value="Empresa:" for="somEmpresas" />
+                        <p:selectOneMenu id="somEmpresas" value="#{managedBeanFolios.idEmpresaSelect}" style="width: 90%;" required="true" requiredMessage="Debe seleccionar una empresa." 
+                                         filter="true" filterMatchMode="contains">
+                            <f:selectItem itemLabel="Selecciona una empresa" itemValue="-1" noSelectionOption="true"/>
+                            <f:selectItems value="#{managedBeanEmpresasAsignadas.empresasAsignadas}" var="emp" itemLabel="#{emp.RFC_Empresa()}" itemValue="#{emp.id}"/>
+                            <p:ajax event="change" process="somEmpresas"/>
+                        </p:selectOneMenu>
+                    </c:if>
+                    <!--Modificacion-->
+                    <c:if test="#{managedBeanFolios.currentOperation eq 1}">
+                        <p:outputLabel value="Empresa:" for="itEmpresa" />
+                        <p:inputText id="itEmpresa"  value="#{managedBeanFolios.folio.empresa.RFC_Empresa()}" readonly="true" disabled="true" style="width: 90%;"/>
+                    </c:if>
+                    <p:outputLabel/>
+                    <p:outputLabel/>
+                    <p:outputLabel value="Id Serie:" for="itIdSerie"/>
+                    <p:inputText id="itIdSerie" value="#{managedBeanFolios.folio.id}" required="true" requiredMessage="El Id Serie es necesario." style="width: 90%;"/>
+                    <p:outputLabel value="Serie:" for="itSerie"/>
+                    <p:inputText id="itSerie" value="#{managedBeanFolios.folio.serie}" required="true" requiredMessage="La serie es necesaria." style="width: 90%;"/>
+                    <p:outputLabel value="Inicio:" for="itRango"/>
+                    <p:inputText id="itRango" value="#{managedBeanFolios.folio.rango}" style="width: 90%;" required="true" requiredMessage="El inicio es necesario"/>
+                    <p:outputLabel value="Usados:" for="itAsig"/>
+                    <p:inputText id="itAsig" value="#{managedBeanFolios.folio.asignados}" required="true" requiredMessage="Usados es un campo obligatorio." style="width: 90%;"/>
+                    <p:outputLabel value="Tipo Doc.:"/>
+                    <p:selectOneMenu value="#{managedBeanFolios.folio.tipoDoc}" style="width: 90%;" filter="true" filterMatchMode="contains">
+                        <f:selectItem itemLabel="Ingreso" itemValue="ingreso"/>
+                        <f:selectItem itemLabel="Egreso" itemValue="egreso"/>
+                        <f:selectItem itemLabel="Traslado" itemValue="traslado"/>
+                    </p:selectOneMenu>
+                    <p:outputLabel value="Tipo Factura:"/>
+                    <p:inputText value="#{managedBeanFolios.folio.descripcion}" style="width: 90%;"/>
+                    <p:outputLabel value="Estatus:" for="somEstatus"/>
+                    <p:selectOneMenu id="somEstatus" value="#{managedBeanFolios.folio.estatus}" style="width: 90%;" required="true" requiredMessage="El estatus es un campo obligatorio." 
+                                     filter="true" filterMatchMode="contains">
+                        <f:selectItem itemLabel="Activo" itemValue="1"/>
+                        <f:selectItem itemLabel="Bloqueado" itemValue="0"/>
+                    </p:selectOneMenu>
+                    <p:outputLabel/>
+                    <p:outputLabel/>
+                </p:panelGrid>
+            </p:panel>
+        </h:form>
+    </ui:define>
+
+</ui:composition>

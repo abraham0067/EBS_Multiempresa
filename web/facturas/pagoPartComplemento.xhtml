@@ -1,0 +1,525 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <p:fieldset legend="Información del pago" toggleable="true" toggleSpeed="500" collapsed="false">
+        <p:wizard id="wizPago" widgetVar="wizPago" flowListener="#{managedBeanComplementoPago.onFlowProcess}"
+                  backLabel="Anterior" nextLabel="Siguiente" showStepStatus="true"  >
+            <p:tab id="Pago" title="Inf. Pago">
+                <p:panelGrid id="pgDatosFacPar" styleClass="ui-panelgrid-blank, ui-noborder" style="width: 100%;">
+                    <p:row>
+                        <p:column>
+                            <p:outputLabel for="calFO" value="Fecha del pago:"/>
+                        </p:column>
+                        <p:column>
+                            <p:calendar id="calFO" value="#{managedBeanComplementoPago.pagoTempContainer.fechaPago}"
+                                        pattern="dd/MM/yyyy HH:mm:ss">
+                                <p:ajax event="dateSelect" process="@this,calFO"
+                                        listener="#{managedBeanComplementoPago.handleFechaPagoChange()}"/>
+                            </p:calendar>
+                        </p:column>
+
+
+                        <p:column>
+                            <p:outputLabel for="somFormaPago" value="Forma de pago:"/>
+                        </p:column>
+
+                        <p:column>
+                            <p:selectOneMenu id="somFormaPago"
+                                             value="#{managedBeanComplementoPago.pagoTempContainer.formaDePagoP.clave}"
+                                             style="width:80%;"
+                                             required="true" requiredMessage="Debe seleccionar una forma de pago."
+                                             filter="true" filterMatchMode="contains"
+                                             label="Selecciona una forma de pago"
+                                             binding="#{managedBeanComplementoPago.inputFormaPagoComplemento}">
+                                <f:selectItem itemLabel="Elige una opción" itemValue="" noSelectionOption="true"/>
+                                <f:selectItems value="#{managedBeanComplementoPago.cfs}" var="f"
+                                               itemValue="#{f.codigo}"
+                                               itemLabel="#{f.codigo}-#{f.descripcion}"/>
+                                <p:ajax event="change" process="@this,somFormaPago"
+                                        listener="#{managedBeanComplementoPago.handleChangeFormaPagoPago}"
+                                        update="msgs,somFormaPago,pgDatosFacPar:"/>
+                            </p:selectOneMenu>
+                        </p:column>
+                    </p:row>
+
+
+                    <p:row>
+                        <p:column>
+                            <!--MONEDA DEL PAGO-->
+                            <p:outputLabel for="somMoneda" value="Moneda:"/>
+                        </p:column>
+                        <p:column>
+                            <p:selectOneMenu id="somMoneda"
+                                             value="#{managedBeanComplementoPago.pagoTempContainer.monedaP.clave}"
+                                             style="width: 80%;"
+                                             required="true" requiredMessage="Debe seleccionar una moneda."
+                                             filter="true" filterMatchMode="contains" disabled="true">
+                                <f:selectItem itemLabel="Elige una opción" itemValue="" noSelectionOption="true"/>
+                                <f:selectItems value="#{managedBeanComplementoPago.monedas}" var="mon"
+                                               itemLabel="#{mon.clave}-#{mon.descripcion}"
+                                               itemValue="#{mon.clave}"/>
+                                <p:ajax event="change" process="@this, somMoneda" update="msgs, somMoneda, itTiCamb"
+                                        listener="#{managedBeanComplementoPago.handleMonedaChange}"/>
+                            </p:selectOneMenu>
+                        </p:column>
+                        <p:column>
+                            <p:outputLabel for="itTiCamb" value="Tipo de cambio:"/>
+                        </p:column>
+                        <p:column>
+                            <p:inputText id="itTiCamb"
+                                         disabled="true"
+                                         value="#{managedBeanComplementoPago.pagoTempContainer.tipoCambioP}"
+                                         binding="#{managedBeanComplementoPago.inputTipoCambio}" style="width: 80%;"
+                                         validatorMessage="El tipo de cambio debe ser positivo">
+                                <f:validateDoubleRange minimum="0.000001"/>
+                                <p:ajax event="blur" process="itTiCamb,@this" update="msgs"
+                                        listener="#{managedBeanComplementoPago.validaMontoTipoCambioPago()}"/>
+                            </p:inputText>
+                        </p:column>
+                    </p:row>
+
+
+                    <p:row>
+                        <p:column>
+                            <p:outputLabel for="itImportePago" value="Monto:"/>
+                        </p:column>
+                        <p:column>
+                            <p:inputText id="itImportePago"
+                                         value="#{managedBeanComplementoPago.pagoTempContainer.monto}">
+                                <f:validateDoubleRange minimum="0.000001"/>
+                                <p:ajax event="change" listener="#{managedBeanComplementoPago.handleMontoChange}"
+                                        update="msgs,itCodConf"/>
+                            </p:inputText>
+                        </p:column>
+                        <p:column>
+                            <p:outputLabel for="itNumOperacion" value="Número de operación:"/>
+                        </p:column>
+                        <p:column>
+                            <p:inputText id="itNumOperacion"
+                                         value="#{managedBeanComplementoPago.pagoTempContainer.numOperacion}"
+                                         disabled="#{managedBeanComplementoPago.requiredNumOper eq managedBeanComplementoPago.NO_REQUERIDO}"
+                                         autocomplete="off">
+                                <f:validateLength minimum="1" maximum="100"/>
+                                <p:ajax event="change" process="@this,itNumOperacion"
+                                        update="msgs,itNumOperacion"
+                                        listener="#{managedBeanComplementoPago.handleChangeNumOper()}"/>
+                            </p:inputText>
+                        </p:column>
+                    </p:row>
+
+
+                    <p:row>
+                        <p:column>
+                            <p:outputLabel for="itRfcEmisorCtaOrd" value="Rfc Emisor Cta. Ord.:"/>
+                        </p:column>
+                        <p:column>
+                            <p:inputText id="itRfcEmisorCtaOrd"
+                                         value="#{managedBeanComplementoPago.pagoTempContainer.rfcEmisorCtaOrd}"
+                                         disabled="#{managedBeanComplementoPago.requiredRfcEmiCor eq managedBeanComplementoPago.NO_REQUERIDO}"
+                                         required="#{managedBeanComplementoPago.requiredRfcEmiCor eq managedBeanComplementoPago.REQUERIDO}"
+                                         requiredMessage="El rfc del Emisor Cta. Ord. es requerido.">
+                                <f:validateLength minimum="12" maximum="13"/>
+                                <p:ajax event="change" process="@this,itRfcEmisorCtaOrd" update="itRfcEmisorCtaOrd,msgs"
+                                        listener="#{managedBeanComplementoPago.handleChangeRfcEmisorCtaOrdenante()}"/>
+                            </p:inputText>
+                        </p:column>
+
+                        <!--    Nombre del banco emisor   -->
+                        <p:column>
+                            <p:outputLabel for="itNomBancoOrdExt" value="Nom. Banco Ord. Ext.:"/>
+                        </p:column>
+                        <p:column>
+                            <p:inputText id="itNomBancoOrdExt"
+                                         value="#{managedBeanComplementoPago.pagoTempContainer.nomBancoOrdExt}"
+                                         disabled="#{managedBeanComplementoPago.requiredNomBancEmi eq managedBeanComplementoPago.NO_REQUERIDO}"
+                                         required="#{managedBeanComplementoPago.requiredNomBancEmi eq managedBeanComplementoPago.REQUERIDO}"
+                                         requiredMessage="El campo NomBancoOrdExt es requerido">
+                                <f:validateLength minimum="1" maximum="300"/>
+                                <p:ajax event="change" listener="#{managedBeanComplementoPago.handleChangeNomBancEmi()}"
+                                        process="@this,itNomBancoOrdExt" update="itNomBancoOrdExt,msgs"/>
+                            </p:inputText>
+                        </p:column>
+                    </p:row>
+
+
+                    <p:row>
+                        <p:column>
+                            <p:outputLabel for="itCtaOrdenante" value="Cta. Ordenante.:"/>
+                        </p:column>
+
+                        <p:column>
+                            <p:inputText id="itCtaOrdenante"
+                                         value="#{managedBeanComplementoPago.pagoTempContainer.ctaOrdenante}"
+                                         disabled="#{managedBeanComplementoPago.requiredCtaOrd eq managedBeanComplementoPago.NO_REQUERIDO}"
+                                         required="#{managedBeanComplementoPago.requiredCtaOrd eq managedBeanComplementoPago.REQUERIDO}"
+                                         requiredMessage="El campo Cta. Ordenante es requerido">
+                                <f:validateLength minimum="10" maximum="50"/>
+                                <p:ajax event="change"
+                                        listener="#{managedBeanComplementoPago.handleChangeCtaOrdenante()}"
+                                        process="@this,itCtaOrdenante" update="itCtaOrdenante,msgs"/>
+                            </p:inputText>
+                        </p:column>
+
+                        <p:column>
+                            <p:outputLabel for="itRfcEmisorCtaBen" value="Rfc EmisorCta.Ben.:"/>
+                        </p:column>
+
+                        <p:column>
+                            <p:inputText id="itRfcEmisorCtaBen"
+                                         value="#{managedBeanComplementoPago.pagoTempContainer.rfcEmisorCtaBen}"
+                                         disabled="#{managedBeanComplementoPago.requiredRfcEmiCtaBen eq managedBeanComplementoPago.NO_REQUERIDO}"
+                                         required="#{managedBeanComplementoPago.requiredRfcEmiCtaBen eq managedBeanComplementoPago.REQUERIDO}"
+                                         requiredMessage="El campo RFC. Emisor Cta. Ben.">
+                                <f:validateLength minimum="12" maximum="13"/>
+                                <p:ajax event="change" listener="#{managedBeanComplementoPago.handleChangeRfcEmisorBen}"
+                                        process="@this,itRfcEmisorCtaBen" update="itRfcEmisorCtaBen,msgs"/>
+                            </p:inputText>
+                        </p:column>
+                    </p:row>
+
+
+                    <p:row>
+                        <p:column>
+                            <p:outputLabel for="itCtaBeneficiario" value="Cta. Beneficiario.:"/>
+                        </p:column>
+
+                        <p:column>
+                            <p:inputText id="itCtaBeneficiario"
+                                         value="#{managedBeanComplementoPago.pagoTempContainer.ctaBeneficiario}"
+                                         disabled="#{managedBeanComplementoPago.requiredCtaBen eq managedBeanComplementoPago.NO_REQUERIDO}"
+                                         required="#{managedBeanComplementoPago.requiredCtaBen eq managedBeanComplementoPago.REQUERIDO}"
+                                         requiredMessage="El campo Cta. Beneficiario es requerido.">
+                                <f:validateLength minimum="10" maximum="50"/>
+                                <p:ajax event="change" listener="#{managedBeanComplementoPago.handleChangeCtaBen()}"
+                                        process="@this,itCtaBeneficiario" update="itCtaBeneficiario,msgs"/>
+                            </p:inputText>
+                        </p:column>
+
+                        <p:column></p:column>
+                        <p:column></p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column colspan="12">
+                            <p:separator/>
+                        </p:column>
+
+                    </p:row>
+
+                    <p:row>
+                        <p:column>
+                            <p:outputLabel for="somTipoCadPago" value="Tipo Cad. Pago.:"/>
+                        </p:column>
+
+                        <p:column>
+                            <p:selectOneMenu id="somTipoCadPago"
+                                             value="#{managedBeanComplementoPago.pagoTempContainer.tipoCadPago}"
+                                             style="width: 80%;"
+                                             disabled="#{managedBeanComplementoPago.requiredTipoCadPago eq managedBeanComplementoPago.NO_REQUERIDO}"
+                                             required="#{managedBeanComplementoPago.requiredTipoCadPago eq managedBeanComplementoPago.REQUERIDO}"
+                                             requiredMessage="El campo Tipo de Cadena Pago es requerido.">
+                                <f:selectItem itemLabel="Elige una opción" itemValue="" noSelectionOption="true"/>
+                                <f:selectItem itemLabel="01-SPEI" itemValue="01"/>
+                                <p:ajax event="change" process="@this,somTipoCadPago"
+                                        update="itCertPago,itCadPago,itCSelloPago,somTipoCadPago,msgs"
+                                        listener="#{managedBeanComplementoPago.handleTipoCadPagoChange}"/>
+                            </p:selectOneMenu>
+                        </p:column>
+                        <p:column></p:column>
+                        <p:column></p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>
+                            <p:outputLabel for="itCertPago" value="Certificado Pago:"/>
+                        </p:column>
+
+                        <p:column>
+                            <p:inputText id="itCertPago"
+                                         value="#{managedBeanComplementoPago.pagoTempContainer.certPago}"
+                                         disabled="#{!managedBeanComplementoPago.inputActivoCertPago}"
+                                         required="#{managedBeanComplementoPago.inputActivoCertPago}">
+                                <p:ajax event="change" process="@this,itCertPago"/>
+                            </p:inputText>
+                        </p:column>
+
+                        <p:column>
+                            <p:outputLabel for="itCadPago" value="Cadena Pago:"/>
+                        </p:column>
+
+                        <p:column>
+                            <p:inputText id="itCadPago"
+                                         value="#{managedBeanComplementoPago.pagoTempContainer.cadPago}"
+                                         disabled="#{!managedBeanComplementoPago.inputActivoCadPago}"
+                                         required="#{managedBeanComplementoPago.inputActivoCadPago}">
+                                <p:ajax event="change" process="@this,itCadPago"/>
+                            </p:inputText>
+                        </p:column>
+                    </p:row>
+
+                    <p:row>
+                        <p:column>
+                            <p:outputLabel for="itCSelloPago" value="Sello Pago:"/>
+                        </p:column>
+
+                        <p:column>
+                            <p:inputText id="itCSelloPago"
+                                         value="#{managedBeanComplementoPago.pagoTempContainer.selloPago}"
+                                         disabled="#{!managedBeanComplementoPago.inputActivoSelloPago}"
+                                         required="#{managedBeanComplementoPago.inputActivoSelloPago}">
+                                <p:ajax event="change" process="@this,itCSelloPago"/>
+                            </p:inputText>
+                        </p:column>
+                    </p:row>
+                </p:panelGrid>
+            </p:tab>
+            <p:tab id="docsRel" title="Pagos Pendientes">
+                <!--  Documentos relacionados   -->
+                <p:dataTable id="dtPagoPendientes" value="#{managedBeanComplementoPago.pagosPendientes}" var="tmpPP" rows="30"
+                             liveScroll="true"
+                             scrollable="true" rowKey="#{tmpPP.id}"
+                             selection="#{managedBeanComplementoPago.pagoPendienteSelection}"
+                             emptyMessage="No hay pagos pendientes para esta empresa."
+                             style="text-align: center; font-size: 9px;" disabledTextSelection="false">
+                    <p:ajax event="rowSelectRadio" process="@this,dtPagoPendientes" update="dtPagoPendientes,frmCompPago:pgDocRels,frmCompPago:msgs"
+                            listener="#{managedBeanComplementoPago.buscarDocumentoRelacionado()}"/>
+                    <p:column selectionMode="single" width="5%">
+                    </p:column>
+                    <p:column headerText="Id Documento">
+                        <h:outputText value="#{tmpPP.uuid}"/>
+                    </p:column>
+                    <p:column headerText="Ultima Parcialidad">
+                        <h:outputText value="#{tmpPP.numParcialidad}"/>
+                    </p:column>
+                    <p:column headerText="Imp. SaldoAnt">
+                        <h:outputText value="#{tmpPP.impSaldoAnterior}"/>
+                    </p:column>
+                    <p:column headerText="Moneda">
+                        <h:outputText value="#{tmpPP.moneda}"/>
+                    </p:column>
+                </p:dataTable>
+
+                <p:separator/>
+                <h3>Información del pago seleccionado</h3>
+                <p:panelGrid id="pgDocRels" styleClass="ui-panelgrid-blank, ui-noborder" style="width: 100%;"
+                             columns="6"
+                             columnClasses="ui-grid-col-1,ui-grid-col-2, ui-grid-col-3, ui-grid-col-2, ui-grid-col-3, ui-grid-col-1">
+                    <p:outputLabel/>
+                    <p:outputLabel>Serie</p:outputLabel>
+                    <p:outputLabel id="olSerieDocRel"
+                                   value="#{managedBeanComplementoPago.docRelTempPago.serie}"/>
+
+                    <p:outputLabel>Folio</p:outputLabel>
+                    <p:outputLabel id="olFolioDocRel"
+                                   value="#{managedBeanComplementoPago.docRelTempPago.folio}"/>
+                    <p:outputLabel/>
+
+
+                    <p:outputLabel/>
+                    <p:outputLabel>Moneda DocRel</p:outputLabel>
+                    <p:outputLabel id="olMonedaDocRel"
+                                   value="#{managedBeanComplementoPago.docRelTempPago.monedaDR.clave}"/>
+                    <p:outputLabel for="itDoctoTiCamb" value="Tipo de cambioDR:"/>
+                    <p:inputText id="itDoctoTiCamb"
+                                 value="#{managedBeanComplementoPago.docRelTempPago.tipoCambioDR}"
+                                 required="#{managedBeanComplementoPago.requiredTipoCambioDocRel}"
+                                 binding="#{managedBeanComplementoPago.inputDocRelTipoCambio}"
+                                 style="width: 80%;"
+                                 validatorMessage="El tipo de cambio no debe ser negativo">
+                        <f:validateDoubleRange minimum="0.000001"/>
+                        <p:ajax event="blur" process="itDoctoTiCamb,@this" update="msgs,itDoctoTiCamb,olSIDocRel,itImpPagado,olSaldoDispMR"
+                                listener="#{managedBeanComplementoPago.handleDoctoRelTipoCambioChange()}"/>
+                    </p:inputText>
+                    <p:outputLabel/>
+
+                    <p:outputLabel/>
+                    <p:outputLabel value="Saldo Disponible PAGO #{managedBeanComplementoPago.pagoTempContainer.monedaP.clave}:"/>
+                    <p:outputLabel id="olSaldoDisp" value="#{managedBeanComplementoPago.saldoDisponibleEmisor}"/>
+
+                    <p:outputLabel value="Saldo Disponible DR #{managedBeanComplementoPago.docRelTempPago.monedaDR.clave}:"/>
+                    <p:outputLabel id="olSaldoDispMR" value="#{managedBeanComplementoPago.saldoDisponibleEmisorMonedaDR}"/>
+                    <p:outputLabel/>
+
+                    <p:outputLabel/>
+                    <p:outputLabel value="Imp. SaldoAnt en #{managedBeanComplementoPago.docRelTempPago.monedaDR.clave}:"/>
+                    <p:outputLabel id="olImpSaldoAnterior" value="#{managedBeanComplementoPago.docRelTempPago.impSaldoAnt}"/>
+                    <p:outputLabel/>
+                    <p:outputLabel/>
+                    <p:outputLabel/>
+
+
+
+                    <p:outputLabel/>
+                    <p:outputLabel  value="ImpPagado-#{managedBeanComplementoPago.docRelTempPago.monedaDR.clave}:"/>
+                    <p:inputText id="itImpPagado" value="#{managedBeanComplementoPago.docRelTempPago.impPagado}">
+                        <p:ajax event="change" process="itImpPagado" update="itImpPagado,msgs,olSIDocRel,olSaldoDispMR,itDoctoTiCamb"
+                                listener="#{managedBeanComplementoPago.handleChangeImpPagado()}"/>
+                        <f:validateDoubleRange minimum="0.000000" maximum="#{managedBeanComplementoPago.saldoDisponibleEmisorMonedaDR}"/>
+                    </p:inputText>
+                    <p:outputLabel/>
+                    <p:outputLabel/>
+                    <p:outputLabel/>
+
+                    <p:outputLabel/>
+                    <p:outputLabel value="Saldo Insoluto-#{managedBeanComplementoPago.docRelTempPago.monedaDR.clave}"/>
+                    <p:outputLabel id="olSIDocRel"
+                                   value="#{managedBeanComplementoPago.docRelTempPago.impSaldoInsoluto}"/>
+                    <p:commandButton id="cbAddDoctoRel" value="Agregar DoctoRel"
+                                     actionListener="#{managedBeanComplementoPago.agregarDocRelTempPago()}"
+                                     disabled="#{managedBeanComplementoPago.disabledBttnAgregarDoctoRel}"
+                                     update="msgs,cbAddDoctoRel,dtDocumentosRel,olSaldoDisp,wizPago"
+                                     process="@this"/>
+                    <p:outputLabel/>
+                    <p:outputLabel/>
+
+                </p:panelGrid>
+
+                <p:separator/>
+
+                <!--  Documentos relacionados   -->
+                <p:dataTable id="dtDocumentosRel" value="#{managedBeanComplementoPago.docsRelPago}" var="tmp" rows="30"
+                             liveScroll="true"
+                             scrollable="true" rowKey="#{tmp.idDocumento}"
+                             selection="#{managedBeanComplementoPago.docsRelPagoSelection}"
+                             emptyMessage="Agrege pagos pendientes."
+                             style="text-align: center; font-size: 9px;" disabledTextSelection="false">
+                    <p:ajax event="rowSelectCheckbox" process="@this,dtDocumentosRel"/>
+                    <p:ajax event="rowUnselectCheckbox" process="@this,dtDocumentosRel"/>
+                    <p:column selectionMode="multiple" width="5%">
+                    </p:column>
+                    <p:column headerText="Id Documento">
+                        <h:outputText value="#{tmp.idDocumento}"/>
+                    </p:column>
+                    <p:column headerText="serie">
+                        <h:outputText value="#{tmp.serie}"/>
+                    </p:column>
+                    <p:column headerText="Folio">
+                        <h:outputText value="#{tmp.folio}"/>
+                    </p:column>
+                    <p:column headerText="MonedaDR">
+                        <h:outputText value="#{tmp.monedaDR.clave}"/>
+                    </p:column>
+                    <p:column headerText="Tipo Cambio DR.">
+                        <h:outputText value="#{tmp.tipoCambioDR}"/>
+                    </p:column>
+                    <p:column headerText="Imp. SaldoAnt">
+                        <h:outputText value="#{tmp.impSaldoAnt}"/>
+                    </p:column>
+                    <p:column headerText="Imp. Pagado">
+                        <h:outputText value="#{tmp.impPagado}"/>
+                    </p:column>
+                    <p:column headerText="Imp. Saldo In.">
+                        <h:outputText value="#{tmp.impSaldoInsoluto}"/>
+                    </p:column>
+
+                </p:dataTable>
+
+                <p:separator/>
+
+                <p:commandButton id="cbEliminarDocRel" value="Eliminar Doc.Rel."
+                                 actionListener="#{managedBeanComplementoPago.eliminarDocsRelacionados()}"
+                                 update="msgs,dtDocumentosRel,cbEliminarDocRel" process="@this"/>
+            </p:tab>
+            <p:tab id="confirmation" title="Confirmación">
+                <p:panelGrid id="pgConfirmacionInfoPago" styleClass="ui-panelgrid-blank, ui-noborder" style="width: 100%;"
+                             columns="6"
+                             columnClasses="ui-grid-col-1,ui-grid-col-1, ui-grid-col-3, ui-grid-col-3, ui-grid-col-3, ui-grid-col-1">
+                    <p:outputLabel/>
+                    <p:outputLabel value="Fecha del pago:"/>
+                    <p:outputLabel value="#{managedBeanComplementoPago.pagoTempContainer.fechaPago}">
+                        <f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" type="date"/>
+                    </p:outputLabel>
+                    <p:outputLabel value="Forma de pago:"/>
+                    <p:outputLabel value="#{managedBeanComplementoPago.pagoTempContainer.formaDePagoP.clave}"/>
+                    <p:outputLabel/>
+                </p:panelGrid>
+                <hr/>
+                <p:dataTable value="#{managedBeanComplementoPago.docsRelPago}" var="tmpDR" rows="30"
+                             liveScroll="true"
+                             scrollable="true" rowKey="#{tmpDR.idDocumento}" disabledSelection="true"
+                             style="text-align: center; font-size: 9px;" disabledTextSelection="false">
+                    <p:column headerText="Id Documento">
+                        <h:outputText value="#{tmpDR.idDocumento}"/>
+                    </p:column>
+                    <p:column headerText="serie">
+                        <h:outputText value="#{tmpDR.serie}"/>
+                    </p:column>
+                    <p:column headerText="Folio">
+                        <h:outputText value="#{tmpDR.folio}"/>
+                    </p:column>
+                    <p:column headerText="Moneda">
+                        <h:outputText value="#{tmpDR.monedaDR.clave}"/>
+                    </p:column>
+                    <p:column headerText="Tipo Cambio DR.">
+                        <h:outputText value="#{tmpDR.tipoCambioDR}"/>
+                    </p:column>
+                    <p:column headerText="Imp. SaldoAnt">
+                        <h:outputText value="#{tmpDR.impSaldoAnt}"/>
+                    </p:column>
+                    <p:column headerText="Imp. Pagado">
+                        <h:outputText value="#{tmpDR.impPagado}"/>
+                    </p:column>
+                    <p:column headerText="Imp. Saldo In.">
+                        <h:outputText value="#{tmpDR.impSaldoInsoluto}"/>
+                    </p:column>
+                </p:dataTable>
+                <hr/>
+                <p:commandButton value="Agregar Pago" actionListener="#{managedBeanComplementoPago.salvarCambiosPago()}"
+                                 styleClass="customButtonTwo"
+                                 update="msgs,dtPagos,cbEliminarPago,wizPago" process="@this"
+                                 oncomplete="PF('wizPago').loadStep('Pago', false)"/>
+            </p:tab>
+        </p:wizard>
+    </p:fieldset>
+
+    <p:separator/>
+    <h3>Resumen de pagos agregados</h3>
+    <!--    PAGOS    -->
+    <p:dataTable id="dtPagos" value="#{managedBeanComplementoPago.pagos}" var="tmpPago" rows="30"
+                 liveScroll="true"
+                 scrollable="true" rowKey="#{tmpPago.id}"
+                 selection="#{managedBeanComplementoPago.pagosSelection}"
+                 emptyMessage="No hay pagos registrados."
+                 style="text-align: center; font-size: 9px;" disabledTextSelection="false">
+        <p:ajax event="rowSelectCheckbox" process="@this,dtPagos"></p:ajax>
+        <p:ajax event="rowUnselectCheckbox" process="@this,dtPagos"></p:ajax>
+        <p:column selectionMode="multiple" width="5%">
+        </p:column>
+        <p:column headerText="Monto">
+            <h:outputText value="#{tmpPago.monto}"/>
+        </p:column>
+        <p:column headerText="Moneda">
+            <h:outputText value="#{tmpPago.monedaP.clave}"/>
+        </p:column>
+        <p:column headerText="Forma Pago">
+            <h:outputText value="#{tmpPago.formaDePagoP.clave}"/>
+        </p:column>
+        <!--TODO poner formato a la fecha del pago-->
+        <p:column headerText="Fecha Pago">
+            <h:outputText value="#{tmpPago.fechaPago}" >
+            </h:outputText>
+        </p:column>
+        <p:column headerText="Comandos" >
+            <!--
+            <p:commandButton icon="fa fa-fw fa-remove" title="Remove"
+                             actionListener="#{managedBeanComplementoPago.eliminarPago}">
+                <f:setPropertyActionListener value="#{tmpPago}"
+                                             target="#{managedBeanComplementoPago.pagoTempContainer}"/>
+            </p:commandButton>
+            <p:commandButton icon="fa fa-fw fa-edit" title="Edit"
+                             actionListener="#{managedBeanComplementoPago.modificarPago()}">
+                <f:setPropertyActionListener value="#{tmpPago}"
+                                             target="#{managedBeanComplementoPago.pagoTempContainer}"/>
+            </p:commandButton>
+            -->
+        </p:column>
+    </p:dataTable>
+
+    <p:panelGrid columns="1" style="width: 100%;" styleClass="ui-noborder">
+        <p:commandButton id="cbEliminarPago" value="Eliminar" icon="fa fa-fw fa-remove"
+                         action="#{managedBeanComplementoPago.eliminarPago()}"
+                         update="dtPagos,@this" process="dtPagos,@this"
+                         disabled="#{managedBeanComplementoPago.flgDisabledBttonEliminarPago}">
+        </p:commandButton>
+    </p:panelGrid>
+
+</ui:composition>

@@ -1,0 +1,84 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <body>
+
+        <ui:composition template="./../../templates/templateContent.xhtml">
+
+            <ui:define name="breadcrum">
+                <p:breadCrumb class="breadcrumbStyle" style="padding: 1px 1px 1px 1px;">
+                    <p:menuitem value="Inicio" url="#" />
+                    <p:menuitem value="Administración" url="#" />
+                    <p:menuitem value="Certificados" url="#" />
+                    <p:menuitem value="Nuevo Certificado" url="#" />
+                </p:breadCrumb>
+            </ui:define>
+
+            <ui:define name="controls">
+                </ui:define>
+                
+            <ui:define name="content">
+                <h:form id="frmDatos" enctype="multipart/form-data" >
+                    <p:growl id="messages" showDetail="false" sticky="false" life="16000" autoUpdate="false" />
+                    <p:panel header="Certificado" style="margin-bottom:10px;">
+                        <p:fieldset legend="Claves" toggleable="true" toggleSpeed="500" collapsed="false">
+                            <p:panelGrid columns="4" columnClasses="ui-grid-col-2, ui-grid-col-4, ui-grid-col-2, ui-grid-col-4" layout="grid" styleClass="ui-panelgrid-blank, ui-noborder">
+                                <f:facet name="header">
+                                    <p:commandButton value="Regresar" icon="fa fa-fw fa-arrow-left" action="#{managedBeanCertificados.redirectCerts}"  immediate="true"  />
+                                </f:facet>
+                                <p:outputLabel value="Selecciona una empresa:" for="somEmpresas"/>
+                                <p:selectOneMenu id="somEmpresas" value="#{managedBeanCertificados.idEmpresaNuevoCert}" style="width: 100%;"
+                                                 required="true" requiredMessage="Debe seleccionar una empresa."
+                                                 filter="true" filterMatchMode="contains" panelStyle="width:500px;">
+                                    <f:selectItem itemLabel="Elige una empresa..." itemValue="-1" noSelectionOption="true" />
+                                    <f:selectItems value="#{managedBeanEmpresasAsignadas.empresasAsignadas}" var="emp" itemLabel="#{emp.RFC_Empresa()}" itemValue="#{emp.id}"/>
+                                    <p:ajax event="change" process="@this,somEmpresas"/>
+                                </p:selectOneMenu>
+                                <p:outputLabel value=""/>
+                                <p:outputLabel value=""/>
+
+                                <p:outputLabel value="Clave:" for="itClave"/>
+                                <p:password id="itClave" value="#{managedBeanCertificados.clave1}" required="true" requiredMessage="La clave es necesaria."/>
+                                <p:outputLabel value="Confirmación:" for="itClave2"/>
+                                <p:password id="itClave2" value="#{managedBeanCertificados.clave2}" required="true" requiredMessage="Confirme la clave."/>
+
+                                <p:outputLabel value="Certificado:"  for="fuCer"/>
+                                <p:fileUpload id="fuCer" value="#{managedBeanCertificados.cert}" mode="simple" skinSimple="true"
+                                              auto="false" allowTypes="/(\.|\/)(cer)$/" required="true"
+                                              requiredMessage="Es necesario agregar el certificado." label="Elegir..." />
+                                <p:outputLabel value="Llave Privada:" for="fuKey"/>
+                                <p:fileUpload id="fuKey" value="#{managedBeanCertificados.key}" mode="simple" skinSimple="true"
+                                              auto="true" allowTypes="/(\.|\/)(key)$/" required="true"
+                                              requiredMessage="Es necesario agregar la llave." label="Elegir..."/>
+
+
+                                <p:outputLabel value="Activar Certificado:" for="activarCert" />
+                                <p:inputSwitch id="activarCert" offLabel="No" onLabel="Si" value="#{ managedBeanCertificados.activarCertificado}"/>
+                                <p:outputLabel />
+                                <p:outputLabel />
+
+
+                                <p:outputLabel/>
+                                <p:commandButton value="Registrar"
+                                                 ajax="false"
+                                                 process="@this,somEmpresas,itClave,itClave2,fuKey,fuCer,activarCert"
+                                                 icon="fa fa-fw fa-save"
+                                                 actionListener="#{managedBeanCertificados.registrarNuevoCertificado}"
+                                                 update="messages,somEmpresas,itClave2,fuKey,fuCer,itClave,activarCert"/>
+                                <p:outputLabel/>
+                                <p:outputLabel/>
+                            </p:panelGrid>
+                        </p:fieldset>
+                    </p:panel>
+                </h:form>
+            </ui:define>
+
+        </ui:composition>
+
+    </body>
+</html>

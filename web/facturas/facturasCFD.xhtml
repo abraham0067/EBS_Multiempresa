@@ -1,0 +1,165 @@
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="./../templates/templateContent.xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:fn="http://java.sun.com/jsp/jstl/functions">
+
+    <ui:define name="breadcrum">
+        <p:breadCrumb class="breadcrumbStyle" style="padding: 1px 1px 1px 1px;">
+            <p:menuitem value="Inicio" url="#"/>
+            <p:menuitem value="Facturas" url="#"/>
+            <p:menuitem value="Facturas CFD" url="#"/>
+        </p:breadCrumb>
+    </ui:define>
+
+    <ui:define name="controls">
+    </ui:define>
+
+    <ui:define name="content">
+        <ui:debug/>
+        <h:form id="formConsultasCFD" enctype="multipart/form-data">
+            <!--Confirm dialog para  extraer descargar facturas-->
+            <p:confirmDialog
+                    message="¿Esta seguro de querer descargar la lista de facturas? Esto puede tardar varios minutos."
+                    showEffect="fade"
+                    appendTo="@(body)"
+                    hideEffect="fade"
+                    widgetVar="confirmDF">
+                <p:commandButton title="YesButton"
+                                 value="Si"
+                                 ajax="false"
+                                 update="messages"
+                                 onclick="PF('confirmDF').hide()"
+                                 action="#{managedBeanConsultaCFD.extraerFacturas()}"/>
+                <p:commandButton title="NoButton"
+                                 value="No"
+                                 oncomplete="PF('confirmDF').hide()"/>
+            </p:confirmDialog>
+            <p:growl id="messages" showDetail="true" life="16000" sticky="false"/>
+            <p:panelGrid columns="6"
+                         columnClasses="ui-grid-col-1, ui-grid-col-3, ui-grid-col-1, ui-grid-col-3, ui-grid-col-1, ui-grid-col-3"
+                         layout="grid">
+                <f:facet name="header">
+                    <p:outputLabel value="Parametros"/>
+                </f:facet>
+                <p:outputLabel for="somTipoBusqueda" value="Tipo de busqueda:"/>
+                <p:selectOneMenu id="somTipoBusqueda" label="TipoBusquedas" value="#{managedBeanConsultaCFD.tipBusq}"
+                                 filter="true" filterMatchMode="contains"
+                                 style="width: 180px;" panelStyleClass="width:200px;;">
+                    <f:selectItem itemLabel="Elige una opción" itemValue="-1"/>
+                    <f:selectItems value="#{managedBeanDynamicMenu.opciones}"/>
+                    <p:ajax event="change" listener="#{managedBeanConsultaCFD.cambiarValor}" update="itParamBus"/>
+                </p:selectOneMenu>
+                <p:outputLabel for="itParamBus" value="Valor:"/>
+                <p:inputText id="itParamBus" label="ParamBusqueda" disabled="#{!managedBeanConsultaCFD.booTipoBusqueda}"
+                             value="#{managedBeanConsultaCFD.paramBusq}"/>
+                <p:outputLabel for="somEstatus" value="Estatus:"/>
+                <p:selectOneMenu id="somEstatus" label="Estatus" required="true" style="width: 180px;"
+                                 value="#{managedBeanConsultaCFD.strEstatus}"
+                                 requiredMessage="El campo Estatus es obligatorio."
+                >
+                    <f:selectItem itemLabel="Elige una opción" itemValue="-1"/>
+                    <f:selectItem itemLabel="Generada" itemValue="1"/>
+                    <f:selectItem itemLabel="Cancelada" itemValue="0"/>
+                </p:selectOneMenu>
+                <p:outputLabel for="calDesde" value="Desde:"/>
+                <p:calendar id="calDesde" locale="es" navigator="true" pattern="dd-MM-yyyy"
+                            value="#{managedBeanConsultaCFD.datDesde}">
+                    <p:ajax event="dateSelect" update="calHasta"></p:ajax>
+                    <p:ajax event="change" update="calHasta"></p:ajax>
+                </p:calendar>
+                <p:outputLabel for="calHasta" value="Hasta:"/>
+                <p:calendar id="calHasta" locale="es" navigator="true" value="#{managedBeanConsultaCFD.datHasta}"
+                            pattern="dd-MM-yyyy" mindate="#{managedBeanConsultaCFD.datDesde}"/>
+                <!--Footer del grid-->
+                <f:facet name="footer">
+                    <p:commandButton id="cbBuscar" value="Buscar" icon="fa fa-fw fa-search" ajax="true"
+                                     actionListener="#{managedBeanConsultaCFD.cargarCFD()}"
+                                     update="formContent, messages"
+                                     process="somTipoBusqueda,itParamBus,somEstatus,calDesde,calHasta,@this"/>
+                    <p:commandButton value="Extraer Facturas" onclick="PF('confirmDF').show()">
+                    </p:commandButton>
+                </f:facet>
+            </p:panelGrid>
+
+            <p:blockUI block="formContent:registrosCFDI" trigger="cbBuscar">
+                Cargando...<br/>
+                <p:graphicImage library="img" name="ajax-loader-circle.gif"/>
+            </p:blockUI>
+        </h:form>
+        <h:form id="formContent">
+            <p:growl id="messages" showDetail="false" life="16000" sticky="false"/>
+            <p:dataTable id="registrosCFDI" styleClass="customDataTable" resizableColumns="true" lazy="true"
+                         liveResize="false"
+                         resizeMode="expand" scrollHeight="500" scrollRows="50" scrollable="true" liveScroll="true"
+                         disabledTextSelection="false"
+                         value="#{managedBeanConsultaCFD.listCFDS}" var="tmp" rowKey="#{tmp.id}"
+                         selection="#{managedBeanConsultaCFD.listSelectsCFDS}"
+                         emptyMessage="..." style="font-size: 11px;">
+                <p:ajax event="rowSelectCheckbox" process="@this"></p:ajax>
+                <p:ajax event="rowUnselectCheckbox" process="@this"></p:ajax>
+                <p:ajax event="rowSelect" process="@this"></p:ajax>
+                <p:ajax event="rowUnselect" process="@this"></p:ajax>
+                <f:facet name="header">
+                    <!--
+                    <p:outputLabel value="Resultados" ></p:outputLabel>
+                    -->
+                    Se encontraron #{fn:length(managedBeanConsultaCFD.listCFDS)} registros.
+                    <!--
+                    <p:commandButton id="toggler" type="button" value="Columnas" style="float:right" icon="ui-icon-calculator" />
+                    <p:columnToggler datasource="registrosCFDI" trigger="toggler" />
+                    -->
+                </f:facet>
+                <p:column resizable="true" class="customCell" selectionMode="multiple" width="3%">
+                </p:column>
+                <!-- NOT WILL BE RENDER
+                <p:column headerText="id" rendered="false">
+                    <h:outputText value="#//{tmp.id}" />
+                </p:column>
+                -->
+                <p:column headerText="Razon Social" class="customCell" style="text-align: left;">
+                    <h:outputText value="#{tmp.razonSocial}"/>
+                </p:column>
+                <p:column headerText="R.F.C." width="75" class="customCell" style="text-align: left;">
+                    <h:outputText value="#{tmp.rfc}"/>
+                </p:column>
+                <p:column headerText="No. Factura" width="100" class="customCell">
+                    <h:outputText value="#{tmp.numeroFactura}"/>
+                    <p:growl id="messages" showDetail="true" life="16000" sticky="false"/>
+                    <p:commandLink id="xmlExp" ajax="false"
+                                   action="#{mbFileUtil.descargarArchivoXMLCFD(tmp.id, tmp.numeroFactura)}">
+                        <p:graphicImage value="./../resources/img/xml.png" alt="xml" width="20"/>
+                    </p:commandLink>
+                    <p:commandLink id="pdfExp" ajax="false"
+                                   action="#{mbFileUtil.descargarArchivoPDFCFD(tmp.id, tmp.numeroFactura)}">
+                        <p:graphicImage value="./../resources/img/pdf.png" alt="pdf" width="20"/>
+                    </p:commandLink>
+                </p:column>
+                <p:column headerText="Fecha envio" width="55" class="customCell">
+                    <h:outputText value="#{tmp.fecha}"/>
+                </p:column>
+                <p:column headerText="T.C" width="20" class="customCell">
+                    <h:outputText value="#{tmp.tipoCambio}"/>
+                </p:column>
+                <p:column headerText="I.V.A." width="60" class="customCell" style="text-align: left;">
+                    <h:outputText value="#{tmp.iva}"/>
+                </p:column>
+                <p:column headerText="Total" width="70" class="customCell" style="text-align: rightg;">
+                    <h:outputText value="#{tmp.total}"/>
+                </p:column>
+                <p:column headerText="Estatus" width="60" class="customCell">
+                    <h:outputText value="#{tmp.ESTATUS()}"/>
+                </p:column>
+                <f:facet name="footer">
+                    Se encontraron #{fn:length(managedBeanConsultaCFD.listCFDS)} registros.
+                </f:facet>
+            </p:dataTable>
+            <p:blockUI block="registrosCFDI" trigger="registrosCFDI">
+                Cargando...<br/>
+                <p:graphicImage library="img" name="ajax-loader-circle.gif"/>
+            </p:blockUI>
+        </h:form>
+    </ui:define>
+</ui:composition>

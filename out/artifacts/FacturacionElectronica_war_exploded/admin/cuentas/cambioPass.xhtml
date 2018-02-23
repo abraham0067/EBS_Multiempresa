@@ -1,0 +1,79 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:h="http://xmlns.jcp.org/jsf/html">
+
+    <body>
+
+        <ui:composition template="./../../templates/templateContent.xhtml">
+
+            <ui:define name="breadcrum">
+                <p:breadCrumb class="breadcrumbStyle" style="padding: 1px 1px 1px 1px;">
+                    <p:menuitem value="Inicio" url="#"/>
+                    <p:menuitem value="Administraci&oacute;n" url="#" />
+                    <p:menuitem value="Mi Cuenta" url="#" />
+                    <p:menuitem value="Cambio de Contraseña" url="#" />
+                </p:breadCrumb>
+            </ui:define>
+
+            <ui:define name="controls">
+            </ui:define>
+
+            <ui:define name="content">
+                <h:form id="frmContent">
+                    <p:growl id="messages" autoUpdate="false" showDetail="false" life="16000"/>
+                    <p:panelGrid columns="6" columnClasses="ui-grid-col-4,ui-grid-col-2,ui-grid-col-2,ui-grid-col-2,ui-grid-col-1,ui-grid-col-1"
+                                 layout="grid">
+                        <p:outputLabel value=""/>
+                        <p:outputLabel value=""/>
+                        <p:outputLabel value=""/>
+                        <p:outputLabel value=""/>
+                        <p:commandButton value="Guardar Cambios" actionListener="#{managedBeanCambioPassword.guardarNuevoPassword}"
+                                         icon="fa fa-fw fa-save"  update="messages,@(:input)" process="@this,@(:input)"  />
+                        <!--process="fuLogo,emisor,itRFCEmp,itRazonEmp,
+                                         itPaisEmp,itCalleEmp,itNombre,itCorreo" update="msgs"-->
+                        <p:commandButton value="Cancelar" icon="fa fa-fw fa-arrow-left" action="#{managedBeanCambioPassword.redirectIndex}"  process="@this"/>
+                    </p:panelGrid>
+                    <p:fieldset legend="Usuario" toggleable="false" toggleSpeed="500" collapsed="false">
+                        <p:panelGrid id="pgUsuario" columns="4" style="width: 100%;" 
+                                     columnClasses="ui-grid-col-4,ui-grid-col-2,ui-grid-col-2,ui-grid-col-4"
+                                     layout="grid" >
+                            <p:outputLabel value=""/>
+                            <p:outputLabel value="Usuario:"/>
+                            <p:inputText id="itUsuario" value="#{managedBeanCambioPassword.usuarioAcceso.usuario}"
+                                         readonly="true" disabled="true"  />
+                            <p:outputLabel value=""/>
+                            <p:outputLabel value=""/>
+                            <p:outputLabel value="Tipo de Usuario:"/>
+                            <p:inputText id="itTU"  value="#{managedBeanCambioPassword.usuarioAcceso.perfil.tipoUser}"
+                                         readonly="true" disabled="true"/>
+                            <p:outputLabel value=""/>
+                            <p:outputLabel value=""/>
+                            <p:outputLabel value="Password Anterior:" for="itPA"  />
+                            <p:password id="itPA"  value="#{managedBeanCambioPassword.passant}" required="true"
+                                        requiredMessage="El password anterior es requerido."/>
+                            <p:outputLabel value=""/>
+                            <!-- Form match fields use atttributte match-->
+                            <p:outputLabel value=""/>
+                            <p:outputLabel value="Nuevo Password:" for="itNP" />
+                            <p:password id="itNP"  value="#{managedBeanCambioPassword.newpass}" match="itNPC"
+                                        required="true" requiredMessage="Ingrese su nuevo passwotd." />
+                            <p:outputLabel value=""/>
+                            <p:outputLabel value=""/>
+                            <p:outputLabel value="Comfirma Nuevo Password" for="itNPC"/>
+                            <p:password id="itNPC"  value="#{managedBeanCambioPassword.newpass}" required="true"
+                                        requiredMessage="Confima tu passwowrd."/>
+                            <p:outputLabel value=""/>
+                            
+                        </p:panelGrid>
+                    </p:fieldset>
+                </h:form>
+
+            </ui:define>
+
+        </ui:composition>
+
+    </body>
+</html>

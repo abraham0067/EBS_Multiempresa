@@ -1,0 +1,154 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+                template="./../templates/templateContent.xhtml"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+
+    <ui:define name="breadcrum">
+        <p:breadCrumb class="breadcrumbStyle" style="padding: 1px 1px 1px 1px;">
+            <p:menuitem value="Inicio" url="#"/>
+            <p:menuitem value="Administraci&oacute;n" url="#" />
+            <p:menuitem value="Perfiles" url="#" />
+        </p:breadCrumb>
+    </ui:define>
+
+    <ui:define name="controls">
+        <script type="text/javascript">
+            function handleAddRequest(xhr, status, args) {
+                if (args.validationFailed || !args.resOperation) {
+                    PF('dlg').jq.effect("shake", {times: 5}, 100);
+                    //console.log("false");
+                    //console.log(args.validationFailed);
+                    //console.log(args.succes);
+
+                } else {
+                    PF('dlg').hide();
+                    //console.log("true");
+                }
+            }
+        </script>
+        <ui:debug />
+        <h:form id="frmAdminPerfiles">
+            <!--Confirm dialog para  extraer el reporte-->
+            <p:confirmDialog message="¿Esta seguro de borrar el perfil?"
+                             showEffect="fade"
+                             hideEffect="fade"
+                             styleClass="dialogBoxCustom"
+                             widgetVar="confirmDelete">
+                <p:commandButton title="YesButton" 
+                                 value="Si"
+                                 update="messages,somPerfiles,frmPerfil"
+                                 onclick="PF('confirmDelete').hide()"
+                                 actionListener="#{managedBeanPerfiles.borrarPerfil()}"
+                                 process="@this,frmPerfil"
+                                 oncomplete="PF('confirmDelete').hide()" />
+                <p:commandButton title="NoButton" 
+                                 value="No" 
+                                 oncomplete="PF('confirmDelete').hide()"/>
+            </p:confirmDialog>
+            <!--Cuadro de dialogo para la creacion de un nuevo perfil-->
+            <p:dialog header="Crear un nuevo perfil" widgetVar="dlg" showEffect="fade" modal="true" resizable="false" position="top" closeOnEscape="true"
+                      width="600">
+                <p:panelGrid id="pgNuevoPerfil" columns="4" columnClasses="ui-grid-col-4, ui-grid-col-2,ui-grid-col-4,ui-grid-col-2" 
+                             layout="grid" styleClass="ui-panelgrid-blank, ui-noborder">
+
+                    <p:outputLabel value="Empresa:" for="empresa"/>
+                    <p:selectOneMenu id="empresa" value="#{managedBeanPerfiles.idEmpresaSelect}" 
+                                     required="true" requiredMessage="Se debe seleccionar la empresa" style="width: 350px;"
+                                     filter="true" filterMatchMode="contains" >
+                        <f:selectItem itemLabel="Selecciona una empresa" itemValue="-1" noSelectionOption="true" />
+                        <f:selectItems value="#{managedBeanEmpresasAsignadas.empresasAsignadas}" var="tmp" itemLabel="#{tmp.rfcOrigen}-#{tmp.razonSocial}" itemValue="#{tmp.id}" />
+                        <p:ajax event="change" process="@this,empresa"/>
+                    </p:selectOneMenu>                        
+                    <p:outputLabel value="" />
+                    <p:outputLabel value="" />
+
+                    <p:outputLabel value="Nombre del perfil:" for="itNombrePerfil" />
+                    <p:inputText id="itNombrePerfil" value="#{managedBeanPerfiles.nombrePerfil}" required="true" 
+                                 style="width: 340px;" requiredMessage="El nombre del perfil es obligatorio."></p:inputText>
+                    <p:outputLabel value="" />
+                    <p:outputLabel value="" />
+
+                    <f:facet name="footer">
+                        <p:toolbar id="tb">
+                            <f:facet name="left">
+                                <!--Componentes alineados a la izquierda-->
+
+                            </f:facet>
+                            <f:facet name="right">
+                                <!--Alineados a la derecha-->
+                                <p:commandButton id="cbSave" value="Registrar perfil" action="#{managedBeanPerfiles.registrarPerfil()}" 
+                                                 process="pgNuevoPerfil, @this" 
+                                                 update="messages, pgNuevoPerfil,somPerfiles" oncomplete="handleAddRequest(xhr, status, args)" />
+                                <span class="ui-separator">
+                                    <span class="ui-icon ui-icon-grip-dotted-vertical" />
+                                </span>
+                                <p:commandButton value="Cancelar" immediate="true" onclick="PF('dlg').hide()" />
+                            </f:facet>
+                        </p:toolbar>
+
+                    </f:facet>                            
+                </p:panelGrid>
+            </p:dialog>
+            <p:growl id="messages" showDetail="false" sticky="false" life="16000" autoUpdate="false" />
+            <p:panelGrid id="pgPerfil" columns="8"  style="width: 100%;" 
+                         columnClasses="ui-grid-col-3,ui-grid-col-2,ui-grid-col-2,ui-grid-col-1,ui-grid-col-1,ui-grid-col-1,ui-grid-col-1,ui-grid-col-1"
+                         layout="grid">
+                <p:outputLabel/>
+                <p:outputLabel value="Empresa:"/>
+                <p:selectOneMenu id="somEmpresas" value="#{managedBeanPerfiles.empresaIdFiltro}"
+                                 style="width: 200%;" required="false" requiredMessage="Debe seleccionar una empresa"
+                                 filter="true" filterMatchMode="contains" panelStyle="width:500px;">
+                    <f:selectItem itemLabel="Selecciona" itemValue="-1" noSelectionOption="true" />
+                    <f:selectItems value="#{managedBeanEmpresasAsignadas.empresasAsignadas}" var="emp" itemLabel="#{emp.RFC_Empresa()}" itemValue="#{emp.id}"/>
+                    <p:ajax event="change" process="somEmpresas,@this"
+                            update="somPerfiles,messages,somEmpresas,frmPerfil"
+                            listener="#{managedBeanPerfiles.cargarPerfiles()}"/>
+                </p:selectOneMenu>
+                <p:outputLabel/>
+
+                <p:outputLabel/>
+                <p:outputLabel/>
+                <p:outputLabel/>
+                <p:outputLabel/>
+
+
+
+
+                <p:outputLabel value=""/>
+                <p:outputLabel value="Selecciona un perfil:"/>
+                <p:selectOneMenu id="somPerfiles" value="#{managedBeanPerfiles.idPerfil}" style="width: 200px;"
+                                 filter="true" filterMatchMode="contains" disabled="#{managedBeanPerfiles.empresaIdFiltro le 0}">
+                    <f:selectItem itemLabel="Selecciona" itemValue="0" noSelectionOption="true"></f:selectItem>
+                    <f:selectItems value="#{managedBeanPerfiles.perfiles}" var="per" itemLabel="#{per.tipoUser}"  itemValue="#{per.id}"/>
+                    <p:ajax event="change" process="@this,frmPerfil" update="frmPerfil" listener="#{managedBeanPerfiles.cambiarPerfil()}"/>
+                </p:selectOneMenu>
+                <p:outputLabel value=""/>
+                <p:outputLabel value=""/>
+                <p:outputLabel value=""/>
+                <p:outputLabel value=""/>
+                <p:outputLabel value=""/>
+                <!--
+                <p:commandButton value="Guardar" process="@this, frmPerfil" update="messages" actionListener="#{managedBeanPerfiles.modificarPerfil()}"/>
+                -->
+                <f:facet name="footer">
+                    <p:commandButton value="Nuevo Perfil" onclick="PF('dlg').show();" />
+                    <p:commandButton value="Borrar" onclick="PF('confirmDelete').show()" />
+                </f:facet>
+            </p:panelGrid>
+        </h:form>
+
+    </ui:define>
+
+    <ui:define name="content">
+        <!--Muestra los valores del perfil seleccionado-->
+        <h:form id="frmPerfil"  binding="#{managedBeanPerfiles.form}">
+        </h:form>
+    </ui:define>
+
+</ui:composition>
