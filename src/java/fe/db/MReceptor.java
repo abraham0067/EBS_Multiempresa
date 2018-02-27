@@ -132,8 +132,9 @@ public class MReceptor implements Serializable {
 	public String rfcRazonSoc() {
 		return getRfcOrigen() + " - " + getRazonSocial();
 	}
-        
-//        public void escapeSqlAndHtmlCharacters(){
+
+
+	//        public void escapeSqlAndHtmlCharacters(){
 //            this.correo = (this.correo != null)?StringEscapeUtils.escapeSql(this.correo):"";
 //            this.razonSocial = (this.razonSocial != null) ? StringEscapeUtils.escapeSql(this.razonSocial) : "";
 //            this.rfcOrigen = (this.rfcOrigen != null) ? StringEscapeUtils.escapeSql(this.rfcOrigen) : "";

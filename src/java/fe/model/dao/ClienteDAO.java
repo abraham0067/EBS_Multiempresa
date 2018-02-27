@@ -1,36 +1,33 @@
 package fe.model.dao;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import fe.db.MCliente;
 import fe.db.MEmpresa;
-import org.hibernate.Criteria;
-import org.hibernate.HibernateException;
-import org.hibernate.criterion.Order;
-import org.hibernate.criterion.Restrictions;
-
-import fe.db.MAcceso;
-import fe.db.MReceptor;
-import fe.db.MAcceso.Nivel;
 import fe.model.util.hibernateutil.HibernateUtilApl;
 import fe.model.util.hibernateutil.HibernateUtilEmi;
+import org.hibernate.HibernateException;
+import org.hibernate.Criteria;
+import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Restrictions;
 import java.io.Serializable;
+import java.util.List;
+import fe.db.MAcceso.Nivel;
+import fe.db.MAcceso;
 
-public class ReceptorDAO implements Serializable {
+public class ClienteDAO implements Serializable {
 
     private HibernateUtilApl hibManagerRO;
     private HibernateUtilEmi hibManagerSU;
 
-    public ReceptorDAO() {
+    public ClienteDAO() {
         hibManagerRO = new HibernateUtilApl();//Read only interface
         hibManagerSU = new HibernateUtilEmi();
     }
 
-    public boolean GuardarActualizar(MReceptor receptor) {
+    public boolean GuardarActualizar(MCliente cliente) {
         boolean val = false;
         try {
             hibManagerSU.initTransaction();
-            hibManagerSU.getSession().saveOrUpdate(receptor);
+            hibManagerSU.getSession().saveOrUpdate(cliente);
             hibManagerSU.getTransaction().commit();
             val = true;
         } catch (HibernateException ex) {
@@ -44,8 +41,8 @@ public class ReceptorDAO implements Serializable {
     }
 
     @SuppressWarnings({"unchecked"})
-    public List<MReceptor> ListaReceptoresporUser(int idUser) {
-        List<MReceptor> receptores = null;
+    public List<MCliente> ListaClientesporUser(int idUser) {
+        List<MCliente> clientes = null;
         try {
             hibManagerRO.initTransaction();
             MAcceso usuario = (MAcceso) hibManagerRO.getSession().get(MAcceso.class, idUser);
@@ -55,14 +52,14 @@ public class ReceptorDAO implements Serializable {
                 for (int i = 0; i < usuario.getEmpresas().size(); i++) {
                     idemps[i] = usuario.getEmpresas().get(i).getId();
                 }
-                Criteria cr = hibManagerRO.getSession().createCriteria(MReceptor.class);
+                Criteria cr = hibManagerRO.getSession().createCriteria(MCliente.class);
                 cr.add(Restrictions.in("empresa.id", idemps));
-                receptores = cr.list();
+                clientes = cr.list();
                 hibManagerRO.getTransaction().commit();
             } else if (usuario.getNivel() == Nivel.INTERNO) {
-                Criteria cr = hibManagerRO.getSession().createCriteria(MReceptor.class);
+                Criteria cr = hibManagerRO.getSession().createCriteria(MCliente.class);
                 cr.setMaxResults(100);
-                receptores = cr.list();
+                clientes = cr.list();
                 hibManagerRO.getTransaction().commit();
             }
         } catch (HibernateException ex) {
@@ -72,18 +69,18 @@ public class ReceptorDAO implements Serializable {
             hibManagerRO.closeSession();
         }
 
-        return receptores;
+        return clientes;
     }
 
     @SuppressWarnings("unchecked")
-    public List<MReceptor> ListaReceptoresporIdemp(int Idempresa) {
-        List<MReceptor> receptores = null;
+    public List<MCliente> ListaClientesporIdemp(int Idempresa) {
+        List<MCliente> clientes = null;
         try {
             hibManagerRO.initTransaction();
-            Criteria cr = hibManagerRO.getSession().createCriteria(MReceptor.class);
+            Criteria cr = hibManagerRO.getSession().createCriteria(MCliente.class);
             cr.add(Restrictions.eq("empresa.id", Idempresa));
             cr.addOrder(Order.asc("rfcOrigen"));
-            receptores = cr.list();
+            clientes = cr.list();
             hibManagerRO.getTransaction().commit();
         } catch (HibernateException ex) {
             hibManagerRO.getTransaction().rollback();
@@ -92,14 +89,14 @@ public class ReceptorDAO implements Serializable {
             hibManagerRO.closeSession();
         }
 
-        return receptores;
+        return clientes;
     }
 
-    public MReceptor BuscarReceptorIdr(int id) {
-        MReceptor receptor = null;
+    public MCliente BuscarMClienteIdr(int id) {
+        MCliente cliente = null;
         try {
             hibManagerRO.initTransaction();
-            receptor = (MReceptor) hibManagerRO.getSession().get(MReceptor.class, id);
+            cliente = (MCliente) hibManagerRO.getSession().get(MCliente.class, id);
             hibManagerRO.getTransaction().commit();
         } catch (HibernateException ex) {
             hibManagerRO.getTransaction().rollback();
@@ -108,28 +105,27 @@ public class ReceptorDAO implements Serializable {
             hibManagerRO.closeSession();
         }
 
-        return receptor;
+        return cliente;
     }
 
     @SuppressWarnings("unchecked")
-    public List<MReceptor> BusquedaParam(Integer idacceso, int idempresa, String columna, String value) {
-        List<MReceptor> listlReceptor = null;
+    public List<MCliente> BusquedaParam(Integer idacceso, int idempresa, String columna, String value) {
+        List<MCliente> lCliente = null;
 
         try {
             hibManagerRO.initTransaction();
-            Criteria rp = hibManagerRO.getSession().createCriteria(MReceptor.class);
+            Criteria rp = hibManagerRO.getSession().createCriteria(MCliente.class);
 
             if (idempresa <= 0) {
                 MAcceso acceso = (MAcceso) hibManagerRO.getSession().get(MAcceso.class, idacceso);
                 if (acceso.getEmpresas() != null && !acceso.getEmpresas().isEmpty()) {
                     Integer[] idem = new Integer[acceso.getEmpresas().size()];
-                    for (int i = 0; i < acceso.getEmpresas().size(); i++)
+                    for (int i = 0; i < acceso.getEmpresas().size(); i++) {
                         idem[i] = acceso.getEmpresas().get(i).getId();
-
+                    }
                     rp.add(Restrictions.in("empresa.id", idem));
                     if (!columna.trim().equals("Todos") && !columna.trim().equals("Ninguno") && (!value.trim().equals("")))
                         rp.add(Restrictions.ilike(columna.trim(), "%" + value + "%"));
-
 
                 } else if (acceso.getNivel() == Nivel.INTERNO) {
                     if (!columna.trim().equals("Todos") && !columna.trim().equals("Ninguno") && (!value.trim().equals("")))
@@ -144,7 +140,8 @@ public class ReceptorDAO implements Serializable {
                 }
             }
 
-            listlReceptor = rp.list();
+            //rp.setMaxResults(10);
+            lCliente = rp.list();
 
             hibManagerRO.getTransaction().commit();
         } catch (HibernateException e) {
@@ -153,16 +150,16 @@ public class ReceptorDAO implements Serializable {
         } finally {
             hibManagerRO.closeSession();
         }
-        return listlReceptor;
+        return lCliente;
     }
 
-    public String BusquedaRFC(int idempresa) {
+    private String BusquedaRFC(int idempresa) {
         String rfc = null;
         try {
             hibManagerRO.initTransaction();
 
             MEmpresa empresa = (MEmpresa) hibManagerRO.getSession().get(MEmpresa.class, idempresa);
-            if(empresa != null)
+            if (empresa != null)
                 rfc = empresa.getRfcOrigen();
 
             hibManagerRO.getTransaction().commit();
@@ -175,11 +172,11 @@ public class ReceptorDAO implements Serializable {
         return rfc;
     }
 
-    public boolean BorrarReceptor(MReceptor receptor) {
+    public boolean BorrarCliente(MCliente cliente) {
         boolean val = false;
         try {
             hibManagerSU.initTransaction();
-            hibManagerSU.getSession().delete(receptor);
+            hibManagerSU.getSession().delete(cliente);
             hibManagerSU.getTransaction().commit();
             val = true;
         } catch (HibernateException ex) {
@@ -192,14 +189,14 @@ public class ReceptorDAO implements Serializable {
         return val;
     }
 
-    public MReceptor BuscarReceptorRfc_IdEmpresa(String rfc, int empresa) {
-        MReceptor receptor = null;
+    public MCliente BuscarMClienteRfc_IdEmpresa(String rfc, int empresa) {
+        MCliente cliente = null;
         try {
             hibManagerRO.initTransaction();
-            Criteria cr = hibManagerRO.getSession().createCriteria(MReceptor.class);
+            Criteria cr = hibManagerRO.getSession().createCriteria(MCliente.class);
             cr.add(Restrictions.eq("rfcOrigen", rfc.trim().toUpperCase()));
             cr.add(Restrictions.eq("empresa.id", empresa));
-            receptor = (MReceptor) cr.uniqueResult();
+            cliente = (MCliente) cr.uniqueResult();
             hibManagerRO.getTransaction().commit();
         } catch (HibernateException ex) {
             hibManagerRO.getTransaction().rollback();
@@ -208,7 +205,6 @@ public class ReceptorDAO implements Serializable {
             hibManagerRO.closeSession();
         }
 
-        return receptor;
+        return cliente;
     }
-
 }
