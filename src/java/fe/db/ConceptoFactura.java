@@ -213,8 +213,13 @@ public class ConceptoFactura implements Serializable {
         calcularRetenciones();
     }
 
-    public void calcularMontoComercioExterior(){
-        this.valorDolares = importe / tipoCambioUsd;
+    public void calcularMontoComercioExterior(Double tipoCambio){
+
+        this.valorDolares = (importe * tipoCambio) / tipoCambioUsd;
+    }
+
+    public void calcularValorUnitarioAduana(Double tipoCambio){
+        this.valorUnitarioAduana = (valorUnitario * tipoCambio) / tipoCambioUsd;
     }
 
     private void calcularTraslados() {

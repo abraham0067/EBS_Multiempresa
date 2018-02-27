@@ -247,7 +247,8 @@ public class ManagedBeanFacturacionManual implements Serializable {
     private List<ImpuestoContainer> trasladosFact;//Pueden haber varias combinaciones de IMPUESTO,FACTOR Y TASA
     private List<ImpuestoContainer> retencionesFact;//Se deben agrupar por tipo de impuesto
 
-    @Getter @Setter
+    @Getter
+    @Setter
     private double tipoCambioDatosFacturaInput = 1.0;//Proporcionado por el usuario e
     private double tipoCambioActualBackend = 1.0;//Proporcionado por el SAT
     private double montoDescuento = 0.0;//Nivel Comprobante
@@ -542,7 +543,7 @@ public class ManagedBeanFacturacionManual implements Serializable {
     private void initComercioExterior() {
         System.out.println("Init comercio exterior models   ");
         flagsEntradasComercioExterior = new FlagsEntradasComercioExterior(FACTURA_CLAVE);
-        disponibleComercioExterior =false;
+        disponibleComercioExterior = false;
         usarComplementoComercioExterior = false;
         mercanciasData = new ArrayList<>();
         singleEmisorData = new CustomEmisorData();
@@ -622,8 +623,7 @@ public class ManagedBeanFacturacionManual implements Serializable {
         resetComercioExterior();
     }
 
-    public void resetComercioExterior()
-    {
+    public void resetComercioExterior() {
         initComercioExterior();
         flagsEntradasComercioExterior.reset();
     }
@@ -726,19 +726,25 @@ public class ManagedBeanFacturacionManual implements Serializable {
 
 
         if (fraccionArancelaria == null || fraccionArancelaria.isEmpty()) {
-            return false;
+
+            if (!UnidadAduana.equalsIgnoreCase("99")) {
+                return false;
+            }else{
+                System.out.println("validación ok");
+            }
+
         }
-
-
 
 
         if (NoIdentificacion == null || NoIdentificacion.isEmpty()) {
             return false;
         }
 
+
         if (UnidadAduana == null || UnidadAduana.isEmpty()) {
             return false;
         }
+
 
         if (marca == null || marca.isEmpty()) {
             return false;
@@ -778,7 +784,6 @@ public class ManagedBeanFacturacionManual implements Serializable {
                 System.out.println("OK parametros comercio exterior");
             }
         }
-
 
 
         if (continuar) {
@@ -995,16 +1000,7 @@ public class ManagedBeanFacturacionManual implements Serializable {
         ///-------------------------------------------------------------------------------------------------------------
         /// Propietario
         ///-------------------------------------------------------------------------------------------------------------
-        PropietarioComercioData propietarioComercioData = new PropietarioComercioData();
-        System.out.println("Numero: " + singlePropietarioData.getNumRegIdTrib());
-        System.out.println("clave" + singlePropietarioData.getResidenciaFiscal().getClave());
-        if((singlePropietarioData.getNumRegIdTrib() != null) ){
-
-            propietarioComercioData.setNumRegIdTrib(singlePropietarioData.getNumRegIdTrib());
-            propietarioComercioData.setResidenciaFiscal(singlePropietarioData.getResidenciaFiscal().getClave());
-        }
-
-
+        PropietarioComercioData propietarioComercioData = null;
 
         ///-------------------------------------------------------------------------------------------------------------
         /// Mercancias
@@ -1283,15 +1279,15 @@ public class ManagedBeanFacturacionManual implements Serializable {
                 condiciones = "";
                 formaPago = "Pago en una sola exhibición";
                 metodoPago = "NO IDENTIFICADO";
-                disabledInputCondicionesDePago = true;
+                /*disabledInputCondicionesDePago = true;
                 disabledInputFormaDePago = true;
                 disabledInputMetodoDePago = true;
                 disabledFieldSetImpuestosDetalleConcepto = true;
                 disabledInputDescuentoDetalleConcepto = true;
-                disabledInputValorUnitarioDetalleConcepto = true;
-                disponibleComercioExterior = false;
+                disabledInputValorUnitarioDetalleConcepto = true;*/
+                //disponibleComercioExterior = false;
                 flagsEntradasComercioExterior.changeRequiredInputs(TRASLADO_CLAVE);
-            } else if (tipoDocObjFact.getcTipoComprobanteByTdocId().getClave().equalsIgnoreCase(FACTURA_CLAVE)){
+            } else if (tipoDocObjFact.getcTipoComprobanteByTdocId().getClave().equalsIgnoreCase(FACTURA_CLAVE)) {
                 disponibleComercioExterior = true;
                 flagsEntradasComercioExterior.changeRequiredInputs(FACTURA_CLAVE);
             } else if (tipoDocObjFact.getcTipoComprobanteByTdocId().getClave().equalsIgnoreCase(NOTA_CREDITO_CLAVE)) {
@@ -1519,6 +1515,14 @@ public class ManagedBeanFacturacionManual implements Serializable {
                 ((DatosComprobanteData) comprobanteData.getDatosComprobante()).setFormaDePago(null);
                 ((DatosComprobanteData) comprobanteData.getDatosComprobante()).setMetodoDePago(null);
                 comprobanteData.setImpuestos(null);
+
+                // en caso de ser comercio exterior
+
+                if (usarComplementoComercioExterior) {
+                    ((DatosComprobanteData) comprobanteData.getDatosComprobante()).setTotal(0.00);
+                    ((DatosComprobanteData) comprobanteData.getDatosComprobante()).setSubTotal(0.00);
+                }
+
             } else if (tipoDocObjFact.getcTipoComprobanteByTdocId().getClave().equalsIgnoreCase("I")) {
                 agregarImpuestosComprobante();
                 agregarAtributosComprobante();
@@ -1531,6 +1535,9 @@ public class ManagedBeanFacturacionManual implements Serializable {
             /// COMPLEMENTO DE COMERCIO EXTERIOR
             ///=========================================================================================================
             if (usarComplementoComercioExterior) {
+                System.out.println("Timbra complemento exterior");
+                handleChangeTipoCambioUSD();
+                transformarConceptosAMercancias();
                 addComplementoComercioExterior(getComprobanteData());
             }
 
@@ -2068,19 +2075,24 @@ public class ManagedBeanFacturacionManual implements Serializable {
         System.out.println("Handle change comercio exterior flag if need");
     }
 
-    public void handleChangeTipoCambioUSD(){
+    public void handleChangeTipoCambioUSD() {
         ejecutaOperacionComercioExterior();
     }
 
-    public void ejecutaOperacionComercioExterior(){
+    public void ejecutaOperacionComercioExterior() {
         singleComplementoComercioExteriorData.setTotalUSD(0.0);
         double tempTotalUsd = 0.0;
         for (ConceptoFactura tmp : this.conceptosAsignados) {
             tmp.setTipoCambioUsd(singleComplementoComercioExteriorData.getTipoCambioUSD());
-            tmp.calcularMontoComercioExterior();
-            tempTotalUsd +=tmp.getValorDolares();
+            tmp.calcularMontoComercioExterior(tipoCambioDatosFacturaInput);
+            tmp.calcularValorUnitarioAduana(tipoCambioDatosFacturaInput);
+            tempTotalUsd += tmp.getValorDolares();
         }
-        singleComplementoComercioExteriorData.setTotalUSD(tempTotalUsd);
+
+        DecimalFormat df = new DecimalFormat("#.00");
+        String number = df.format(tempTotalUsd);
+        double tmpnum = Double.parseDouble(number);
+        singleComplementoComercioExteriorData.setTotalUSD(tmpnum);
     }
 
     /**
