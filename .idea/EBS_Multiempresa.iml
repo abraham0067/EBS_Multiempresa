@@ -39,5 +39,6 @@
     <orderEntry type="library" name="lib" level="project" />
     <orderEntry type="library" name="antlr:antlr:2.7.7" level="project" />
     <orderEntry type="library" name="joda-time:joda-time:2.9.9" level="project" />
+    <orderEntry type="library" name="AddendaVolksWagen" level="project" />
   </component>
 </module>
