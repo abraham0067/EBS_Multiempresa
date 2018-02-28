@@ -5,14 +5,8 @@
  */
 package com.ebs.mbeans;
 
-import fe.db.MAcceso;
-import fe.db.MDireccion;
-import fe.db.MEmpresa;
-import fe.db.MReceptor;
-import fe.model.dao.DireccionDAO;
-import fe.model.dao.EmpresaDAO;
-import fe.model.dao.LogAccesoDAO;
-import fe.model.dao.ReceptorDAO;
+import fe.db.*;
+import fe.model.dao.*;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -46,11 +40,13 @@ public class ManagedBeanClientes implements Serializable {
     private int currentOperation;
     private MDireccion direccion;
     private List<MReceptor> receptores;
+    private List<MCliente> clientes;
     private MReceptor receptorSelected;
     private List<MEmpresa> empresas;
     //DAOS
     private EmpresaDAO daoEmpresa;
     private ReceptorDAO daoReceptor;
+    private ClienteDAO daoCliente;
     private DireccionDAO daoDireccion;
     private LogAccesoDAO daoLog;
 
@@ -71,6 +67,7 @@ public class ManagedBeanClientes implements Serializable {
         daoLog = new LogAccesoDAO();
         daoDireccion = new DireccionDAO();
         daoReceptor = new ReceptorDAO();
+        daoCliente = new ClienteDAO();
         daoEmpresa = new EmpresaDAO();
         paramBusqueda = "";
         tipoBusqueda = "Ninguno";
@@ -78,7 +75,11 @@ public class ManagedBeanClientes implements Serializable {
     }
 
     public void buscarClientes() {
-        receptores = daoReceptor.BusquedaParam(mAcceso.getId(), idEmpresaSelect, tipoBusqueda, paramBusqueda);
+        if(daoReceptor.BusquedaRFC().equals("BMS030731PC4"))
+            clientes = daoCliente.BusquedaParam(mAcceso.getId(), idEmpresaSelect, tipoBusqueda, paramBusqueda);
+        else
+            receptores = daoReceptor.BusquedaParam(mAcceso.getId(), idEmpresaSelect, tipoBusqueda, paramBusqueda);
+
         empresas = daoEmpresa.ListaEmpresasPadres(mAcceso.getId());
     }
 
@@ -311,4 +312,9 @@ public class ManagedBeanClientes implements Serializable {
         this.direccion = direccion;
     }
 
+
+
+    public List<MCliente> getClientes() { return clientes;}
+
+    public void setClientes(List<MCliente> clientes) { this.clientes = clientes; }
 }

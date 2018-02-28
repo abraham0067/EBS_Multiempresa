@@ -194,15 +194,17 @@ public class VistaCfdiOtro implements Serializable{
         return res;
     }
     public String getEstatusEnvioCorreoAsString() {
-        String res = "";
-        if (estatusMail == 1) {
-            res = "OK";
-        } if (estatusMail == 2) {
-            res = "ERROR";
-        }else {
-            res = "NO";
+        String resp = "ERROR";
+        switch (estatusMail){
+            case 0:
+                resp = "NO";
+                break;
+            case 1:
+                resp = "OK";
+                break;
         }
-        return res;
+
+        return resp;
     }
 
 

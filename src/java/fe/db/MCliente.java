@@ -21,7 +21,7 @@ import org.hibernate.annotations.Index;
 import javax.persistence.ManyToOne;
 //import org.apache.commons.lang.StringEscapeUtils;
 
-@SuppressWarnings("serial")
+//@SuppressWarnings("serial")
 @Entity
 @Table(name="M_CLIENTE") 
 public class MCliente implements Serializable {
@@ -30,11 +30,13 @@ public class MCliente implements Serializable {
 	private String noCliente = "";
 	private String rfc = "";
 	private String razonSocial = "";
-	private int ctaPadre = 0;
+	private Integer ctaPadre = 0;
+	private String email = "";
+	private MDireccion direccion = new MDireccion();
 	
-	protected MCliente() {}
-	
-	public MCliente(MEmpresa empresa, String noCliente, String rfc, String razonSocial, int ctaPadre) {
+	public MCliente() {}
+
+	public MCliente(MEmpresa empresa, String noCliente, String rfc, String razonSocial, Integer ctaPadre) {
 		this.empresa = empresa;
 		this.noCliente = noCliente;
 		this.rfc = rfc;
@@ -42,8 +44,17 @@ public class MCliente implements Serializable {
 		this.ctaPadre = ctaPadre;
 	}
 
- 	
- 	@Id
+	public MCliente(MEmpresa empresa, String noCliente, String rfc, String razonSocial, Integer ctaPadre, String email, MDireccion direccion) {
+		this.empresa = empresa;
+		this.noCliente = noCliente;
+		this.rfc = rfc;
+		this.razonSocial = razonSocial;
+		this.ctaPadre = ctaPadre;
+		this.email = email;
+		this.direccion = direccion;
+	}
+
+	@Id
   	@GeneratedValue(strategy=GenerationType.AUTO)
     @Column(name="ID", nullable=false)
 	public int getId() {
@@ -73,8 +84,23 @@ public class MCliente implements Serializable {
 	}
 	
     @Column(name="CUENTA_PADRE", nullable=true)
-	public int getCtaPadre() {
+	public Integer getCtaPadre() {
 		return ctaPadre;
+	}
+
+	/**
+	 * @return the direccion
+	 */
+	@ManyToOne
+	@Index(name = "RECEPTOR_DIRECCION_IDX")
+	public MDireccion getDireccion() {
+		return direccion;
+	}
+
+	@Index(name = "EMAIL")
+	@Column(name="EMAIL", nullable=true)
+	public String getEmail() {
+		return email;
 	}
 
 	public void setId(int id) {
@@ -97,8 +123,20 @@ public class MCliente implements Serializable {
 		this.razonSocial = razonSocial;
 	}
 
-	public void setCtaPadre(int ctaPadre) {
+	public void setCtaPadre(Integer ctaPadre) {
 		this.ctaPadre = ctaPadre; 
+	}
+
+	/**
+	 * @param direccion
+	 *            the direccion to set
+	 */
+	public void setDireccion(MDireccion direccion) {
+		this.direccion = direccion;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
 	}
         
 //        public void escapeSqlAndHtmlCharacters(){

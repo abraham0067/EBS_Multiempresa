@@ -320,7 +320,8 @@
                     </p:column>
 
                     <p:column headerText="Enviado" width="50" class="customCell" >
-                        <h:outputText  value="#{tmp.getEstatusEnvioCorreoAsString()}"/>
+                        <h:outputText  value="#{tmp.getEstatusEnvioCorreoAsString()}" rendered="#{tmp.getEstatusEnvioCorreoAsString() eq 'OK'}" style="color: #3c763d;" />
+                        <h:outputText  value="#{tmp.getEstatusEnvioCorreoAsString()}" rendered="#{tmp.getEstatusEnvioCorreoAsString() != 'OK'}" style="color: #B42C15;" />
                     </p:column>
                 </c:if>
 
