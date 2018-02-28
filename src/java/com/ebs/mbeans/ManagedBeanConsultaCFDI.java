@@ -623,12 +623,12 @@ public class ManagedBeanConsultaCFDI implements Serializable {
 
                                 } else {
                                     System.out.print("Cancelando->Produccion");
-                                    new CancelaCFDI().cancelaUuid(rfcEmpresa, cfd.getUuid(), pswCancelacion);
+                                    acuse = new CancelaCFDI().cancelaUuid(rfcEmpresa, cfd.getUuid(), pswCancelacion);
                                 }
 
                             } else{
                                 System.out.print("Cancelando->Produccion");
-                                new CancelaCFDI().cancelaUuid(rfcEmpresa, cfd.getUuid(), pswCancelacion);
+                                acuse = new CancelaCFDI().cancelaUuid(rfcEmpresa, cfd.getUuid(), pswCancelacion);
                             }
 
                             /*
@@ -676,6 +676,7 @@ public class ManagedBeanConsultaCFDI implements Serializable {
 
                             }*/
                             String sAcuse = new String(acuse);
+                            //System.out.println("sAcuse = " + sAcuse);
                             if (sAcuse.contains("<Error") || sAcuse.trim().length() <= 70) {
                                 System.out.println("Factura no cancelada");
                                 acuse = null;

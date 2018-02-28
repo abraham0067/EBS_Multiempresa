@@ -54,6 +54,8 @@
                                  oncomplete="PF('confirmMod').hide()"/>
             </p:confirmDialog>
             <p:growl id="messages" showDetail="false" sticky="false" autoUpdate="true" life="16000" />
+
+
             <p:panelGrid columns="8" style="width: 100%;" 
                          columnClasses="ui-grid-col-2,ui-grid-col-1,ui-grid-col-3,ui-grid-col-2,ui-grid-col-1,ui-grid-col-1,ui-grid-col-1,ui-grid-col-1"
                          layout="grid">
@@ -88,7 +90,8 @@
                 <p:outputLabel/>
 
                 <f:facet name="footer">
-                    <p:commandButton value="Buscar" icon="fa fa-fw fa-search" action="#{managedBeanClientes.buscarClientes()}" update="frmContent:dtListClientes"/>
+                    <p:commandButton value="Buscar" icon="fa fa-fw fa-search" action="#{managedBeanClientes.buscarClientes()}"   update="frmContent:dtListClientes"/>
+                    <!--<p:commandButton value="Buscar" icon="fa fa-fw fa-search" action="#{managedBeanClientes.buscarClientes()}" rendered="#{managedBeanClientes.isCliente() eq true}"  update="frmContent:dtListClientes"/>-->
                     <p:commandButton value="Registrar" action="#{managedBeanClientes.redirectCreacionCliente()}" />
                     <p:commandButton value="Modificar" onclick="PF('confirmMod').show()"  update="messages"/>
                     <p:commandButton value="Borrar"  onclick="PF('confirmDelete').show()"  update="messages"/>
@@ -100,40 +103,41 @@
 
     <ui:define name="content">
         <h:form id="frmContent" >
-            <p:dataTable id="dtListClientes" value="#{managedBeanClientes.receptores}" var="tmp" resizableColumns="false" 
-                         resizeMode="expand" scrollRows="18"
-                         paginator="true" rowsPerPageTemplate="25" rows="25" scrollHeight="520" scrollable="false" liveScroll="false" rowKey="#{tmp.id}"
-                         selection="#{managedBeanClientes.receptorSelected}" selectionMode="single"    emptyMessage="..." style="font-size: 11px;"
-                         disabledTextSelection="false">
-                <p:ajax event="rowSelect" process="@this,dtListClientes" ></p:ajax>
-                <f:facet name="header">
-                    Se encontraron #{fn:length(managedBeanClientes.receptores)} registros.
-                </f:facet>
-                <p:columnGroup type="header" >
-                    <p:row style="font-size: 11px; text-align: left;"  >
-                        <p:column  colspan="2" headerText="Cliente" />
-                        <p:column width="500" colspan="1" headerText="Empresa a la que pertenece" />
-                    </p:row>
-                    <p:row style="font-size: 11px; text-align: left;" >
-                        <p:column headerText="Razón Social" />
-                        <p:column headerText="R.F.C" />
-                        <p:column headerText="R.F.C.-Razón Social" />                      
-                    </p:row>
-                </p:columnGroup>
-                <p:column class="customCell" style="text-align: left;" >
-                    <p:outputLabel value="#{tmp.razonSocial}"/>
-                </p:column >
-                <p:column class="customCell" >
-                    <p:outputLabel value="#{tmp.rfcOrigen}"/>
-                </p:column>
-                <p:column class="customCell" style="text-align: left;">
-                    <p:outputLabel value="#{tmp.empresa.RFC_Empresa()}" />                           
-                </p:column>
-                <f:facet name="footer">
-                    Se encontraron #{fn:length(managedBeanClientes.receptores)} registros.
-                </f:facet>
-            </p:dataTable>
+                <p:dataTable id="dtListClientes" value="#{managedBeanClientes.receptores}" var="tmp" resizableColumns="false"
+                             resizeMode="expand" scrollRows="18"
+                             paginator="true" rowsPerPageTemplate="25" rows="25" scrollHeight="520" scrollable="false" liveScroll="false" rowKey="#{tmp.id}"
+                             selection="#{managedBeanClientes.receptorSelected}" selectionMode="single"    emptyMessage="..." style="font-size: 11px;"
+                             disabledTextSelection="false">
+                    <p:ajax event="rowSelect" process="@this,dtListClientes" ></p:ajax>
+                    <f:facet name="header">
+                        Se encontraron #{fn:length(managedBeanClientes.receptores)} registros.
+                    </f:facet>
+                    <p:columnGroup type="header" >
+                        <p:row style="font-size: 11px; text-align: left;"  >
+                            <p:column  colspan="2" headerText="Cliente" />
+                            <p:column width="500" colspan="1" headerText="Empresa a la que pertenece" />
+                        </p:row>
+                        <p:row style="font-size: 11px; text-align: left;" >
+                            <p:column headerText="Razón Social" />
+                            <p:column headerText="R.F.C" />
+                            <p:column headerText="R.F.C.-Razón Social" />
+                        </p:row>
+                    </p:columnGroup>
+                    <p:column class="customCell" style="text-align: left;" >
+                        <p:outputLabel value="#{tmp.razonSocial}"/>
+                    </p:column >
+                    <p:column class="customCell" >
+                        <p:outputLabel value="#{tmp.rfcOrigen}"/>
+                    </p:column>
+                    <p:column class="customCell" style="text-align: left;">
+                        <p:outputLabel value="#{tmp.empresa.RFC_Empresa()}" />
+                    </p:column>
+                    <f:facet name="footer">
+                        Se encontraron #{fn:length(managedBeanClientes.receptores)} registros.
+                    </f:facet>
+                </p:dataTable>
         </h:form>
+
     </ui:define>
 
 </ui:composition>

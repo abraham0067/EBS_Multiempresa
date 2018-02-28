@@ -85,7 +85,6 @@ public class ManagedBeanEmpresasAsignadas implements Serializable{
      * @return 
      */
     public List<MEmpresa> getEmpresasAsignadas() {
-
         empresasAsignadas = daoEmpresa.ListaEmpresasPadres(mAcceso.getId());
         if(empresasAsignadas == null){
             empresasAsignadas = new ArrayList();

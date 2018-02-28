@@ -32,23 +32,25 @@ public class ManagedBeanClientes implements Serializable {
     private FacesContext facesContext;
     private FacesMessage facesMessage;
     private String appContext;
-
-
     private int idEmpresaSelect;
     private String tipoBusqueda;
     private String paramBusqueda;
     private int currentOperation;
     private MDireccion direccion;
     private List<MReceptor> receptores;
-    private List<MCliente> clientes;
+    //private List<MCliente> clientes;
+
     private MReceptor receptorSelected;
+    //private MCliente clienteSelected;
     private List<MEmpresa> empresas;
     //DAOS
     private EmpresaDAO daoEmpresa;
     private ReceptorDAO daoReceptor;
-    private ClienteDAO daoCliente;
+   // private ClienteDAO daoCliente;
     private DireccionDAO daoDireccion;
     private LogAccesoDAO daoLog;
+
+    //private boolean cliente = false;
 
     /**
      * Creates a new instance of ManagedBeanClientes
@@ -67,7 +69,7 @@ public class ManagedBeanClientes implements Serializable {
         daoLog = new LogAccesoDAO();
         daoDireccion = new DireccionDAO();
         daoReceptor = new ReceptorDAO();
-        daoCliente = new ClienteDAO();
+        //daoCliente = new ClienteDAO();
         daoEmpresa = new EmpresaDAO();
         paramBusqueda = "";
         tipoBusqueda = "Ninguno";
@@ -75,10 +77,13 @@ public class ManagedBeanClientes implements Serializable {
     }
 
     public void buscarClientes() {
-        if(daoReceptor.BusquedaRFC().equals("BMS030731PC4"))
-            clientes = daoCliente.BusquedaParam(mAcceso.getId(), idEmpresaSelect, tipoBusqueda, paramBusqueda);
-        else
+        //if(daoCliente.BusquedaRFC(idEmpresaSelect).equals("BMS030731PC4")) {
+       //     clientes = daoCliente.BusquedaParam(mAcceso.getId(), idEmpresaSelect, tipoBusqueda, paramBusqueda);
+        //    this.cliente = true;
+        //}else {
             receptores = daoReceptor.BusquedaParam(mAcceso.getId(), idEmpresaSelect, tipoBusqueda, paramBusqueda);
+        //    this.cliente = false;
+        //}//
 
         empresas = daoEmpresa.ListaEmpresasPadres(mAcceso.getId());
     }
@@ -161,6 +166,11 @@ public class ManagedBeanClientes implements Serializable {
         receptorSelected = null;
         receptorSelected = new MReceptor();
         receptorSelected.setDireccion(new MDireccion());
+
+      //  clienteSelected = null;
+      //  clienteSelected = new MCliente();
+      //  clienteSelected.setDireccion(new MDireccion());
+
         idEmpresaSelect = -1;
     }
 
@@ -292,6 +302,20 @@ public class ManagedBeanClientes implements Serializable {
     }
 
     /**
+     * @return the receptorSelected
+     */
+  //  public MCliente getClienteSelected() {
+  //      return clienteSelected;
+  //  }
+
+    /**
+     * @param clienteSelected the receptorSelected to set
+     */
+   // public void setClienteSelected(MCliente clienteSelected) {
+   //     this.clienteSelected = clienteSelected;
+   // }
+
+    /**
      * @return the currentOperation
      */
     public int getCurrentOperation() {
@@ -312,9 +336,23 @@ public class ManagedBeanClientes implements Serializable {
         this.direccion = direccion;
     }
 
+    /**
+     * @return the clientes
+     */
+    //public List<MCliente> getClientes() { return clientes;}
+
+    /**
+     * @param clientes the clientes to set
+     */
+    //public void setClientes(List<MCliente> clientes) { this.clientes = clientes; }
+
+    //public boolean isCliente() {
+    //    return cliente;
+    //}
+
+   // public void setCliente(boolean cliente) {
+    //    this.cliente = cliente;
+  //  }
 
 
-    public List<MCliente> getClientes() { return clientes;}
-
-    public void setClientes(List<MCliente> clientes) { this.clientes = clientes; }
 }

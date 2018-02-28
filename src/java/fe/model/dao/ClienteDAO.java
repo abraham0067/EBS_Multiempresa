@@ -153,11 +153,10 @@ public class ClienteDAO implements Serializable {
         return lCliente;
     }
 
-    private String BusquedaRFC(int idempresa) {
+    public String BusquedaRFC(int idempresa) {
         String rfc = null;
         try {
             hibManagerRO.initTransaction();
-
             MEmpresa empresa = (MEmpresa) hibManagerRO.getSession().get(MEmpresa.class, idempresa);
             if (empresa != null)
                 rfc = empresa.getRfcOrigen();
