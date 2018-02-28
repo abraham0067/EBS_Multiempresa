@@ -2371,10 +2371,12 @@ public class ManagedBeanFacturacionManual implements Serializable {
 
         if (tipoAdenda.equalsIgnoreCase("PROD")) {
             adendaProductos = true;
+            adendaServicios = false;
             msge = "Producto";
         }
         if (tipoAdenda.equalsIgnoreCase("SERV")) {
             adendaServicios = true;
+            adendaProductos = false;
             msge = "Servicio";
         }
 
