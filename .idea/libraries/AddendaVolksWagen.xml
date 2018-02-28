@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="AddendaVolksWagen">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/lib/AddendaVolksWagen.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

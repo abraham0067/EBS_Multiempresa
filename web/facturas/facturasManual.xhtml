@@ -45,11 +45,11 @@
 
             function handleFactResponse(xhr, status, args) {
                 if (args.validationFailed || !args.succes) {
-                     /*muestra un mensaje creado desde javascript
-                    console.log("false");
-                    PF('growlWV').renderMessage({"summary":"Ocurrio un error al procesar la factura",
-                        "detail":"",
-                        "severity":"warn"})*/
+                    /*muestra un mensaje creado desde javascript
+                   console.log("false");
+                   PF('growlWV').renderMessage({"summary":"Ocurrio un error al procesar la factura",
+                       "detail":"",
+                       "severity":"warn"})*/
                 } else {
                     $("#frmManual\\:hdnBtn").click();
                     /*
@@ -63,7 +63,7 @@
         </script>
         <h:form id="frmManual">
             <p:growl id="msgs" showDetail="false" life="16000" autoUpdate="false"/>
-            <p:growl widgetVar="growlWV" />
+            <p:growl widgetVar="growlWV"/>
             <p:panel header="Facturación manual" style="margin-bottom:10px;">
                 <p:fieldset legend="Datos del emisor y receptor" toggleable="true" toggleSpeed="500" collapsed="false">
                     <p:panelGrid id="pfDatosEmiRec" columns="4"
@@ -77,7 +77,8 @@
                             <f:selectItem itemLabel="Selecciona" itemValue="" noSelectionOption="true"/>
                             <f:selectItems value="#{managedBeanEmpresasAsignadas.empresasAsignadas}" var="em"
                                            itemLabel="#{em.RFC_Empresa()}" itemValue="#{em.id}"/>
-                            <p:ajax event="change" listener="#{managedBeanFacturacionManual.actualizaDatoPorEmpresaEmisora()}"
+                            <p:ajax event="change"
+                                    listener="#{managedBeanFacturacionManual.actualizaDatoPorEmpresaEmisora()}"
                                     process="@this,somEmisor"
                                     update="somClientes, somSerie, somMoneda, somConceptos, flsParams"
                                     onstart="PF('statusLoadingData').show()"
@@ -133,7 +134,8 @@
                         <p:outputLabel/>
                         <p:outputLabel/>
                         <p:outputLabel value="ResidenciaFiscal"/>
-                        <p:selectOneMenu id="somResidenciaFiscal" value="#{managedBeanFacturacionManual.residenciaFiscal}"
+                        <p:selectOneMenu id="somResidenciaFiscal"
+                                         value="#{managedBeanFacturacionManual.residenciaFiscal}"
                                          style="width:98%; max-width: 100%" required="true"
                                          requiredMessage="Seleccione el pais"
                                          filter="true" filterMatchMode="contains" panelStyle="width:550px;"
@@ -143,7 +145,8 @@
                             <f:selectItems value="#{managedBeanFacturacionManual.paises}" var="pais"
                                            itemLabel="#{pais.clave}-#{pais.descripcion}"
                                            itemValue="#{pais.clave}-#{pais.descripcion}"/>
-                            <p:ajax event="change" listener="#{managedBeanFacturacionManual.handleChangeResidenciaFiscal()}"
+                            <p:ajax event="change"
+                                    listener="#{managedBeanFacturacionManual.handleChangeResidenciaFiscal()}"
                                     process="@this,somResidenciaFiscal,msgs" update="@this,somResidenciaFiscal,msgs"/>
                         </p:selectOneMenu>
 
@@ -156,15 +159,14 @@
                                      disabled="#{managedBeanFacturacionManual.requiredNumRegIdTrib eq managedBeanFacturacionManual.NO_REQUERIDO}"
                                      maxlength="40" autocomplete="off">
                             <p:ajax event="change" process="@this,somNumRegIdTrib,msgs" update="somNumRegIdTrib,msgs"
-                                    listener="#{managedBeanFacturacionManual.handleChangeNumRegIdTrib()}" />
+                                    listener="#{managedBeanFacturacionManual.handleChangeNumRegIdTrib()}"/>
                         </p:inputText>
-
 
 
                     </p:panelGrid>
                 </p:fieldset>
                 <ui:include src="/facturas/datosFacturaPart.xhtml"/>
-               <ui:include src="/facturas/compComercioExterior/complementoComercioExteriorPart.xhtml"/>
+                <ui:include src="/facturas/compComercioExterior/complementoComercioExteriorPart.xhtml"/>
                 <p:fieldset legend="Comentarios" toggleable="true" toggleSpeed="500" collapsed="false">
                     <p:panelGrid class="panelCentered" columns="1" style="width: 50%; text-align: center;">
                         <p:inputTextarea id="itaComentarios" autoResize="true" cols="50" rows="5" maxlength="300"
@@ -182,11 +184,12 @@
                         <p:inputText id="itConcept" value="#{managedBeanFacturacionManual.busCop}" style="width: 80%;"
                                      title="  ">
                             <p:tooltip id="toolTipCptoBuscar" for="itConcept" showEvent="focus" hideEvent="blur">
-                                <p:outputLabel value="Ingrese una cadena de texto para buscar un concepto" />
+                                <p:outputLabel value="Ingrese una cadena de texto para buscar un concepto"/>
                                 <br/>
-                                <p:outputLabel value="que ya este registrado, presione el boton de 'Buscar concepto'" />
+                                <p:outputLabel value="que ya este registrado, presione el boton de 'Buscar concepto'"/>
                                 <br/>
-                                <p:outputLabel value="para realizar la busqueda, despues seleccione el concepto en la lista de abajo." />
+                                <p:outputLabel
+                                        value="para realizar la busqueda, despues seleccione el concepto en la lista de abajo."/>
                             </p:tooltip>
                         </p:inputText>
                         <p:commandButton value="Buscar concepto" icon="fa fa-fw fa-search"
@@ -205,24 +208,27 @@
                             <p:ajax event="click"
                                     listener="#{managedBeanFacturacionManual.reiniciarDatosConcepto()}"/>
                             <p:tooltip id="toolTipCrearNC" for="cbCrearAgrCpto">
-                                <p:outputLabel value="Concepto completamente nuevo, ademas de que este se guardara permanentemente" />
+                                <p:outputLabel
+                                        value="Concepto completamente nuevo, ademas de que este se guardara permanentemente"/>
                                 <br/>
-                                <p:outputLabel value="en los conceptos asociados a la empresa emisora seleccionada.'" />
+                                <p:outputLabel value="en los conceptos asociados a la empresa emisora seleccionada.'"/>
                                 <br/>
-                                <p:outputLabel value="" />
+                                <p:outputLabel value=""/>
                             </p:tooltip>
                         </p:commandButton>
                         <p:outputLabel for="somConceptos" value="Concepto:"/>
                         <p:selectOneMenu id="somConceptos" value="#{managedBeanFacturacionManual.idConcepto}"
                                          style="width: 80%;" filter="true" filterMatchMode="contains" required="false"
-                                         panelStyle="width:450px;" title="Elige entre los conceptos disponibles o crea uno nuevos">
-                            <f:selectItem itemLabel="Selecciona un concepto existente" itemValue="-1" noSelectionOption="true"/>
+                                         panelStyle="width:450px;"
+                                         title="Elige entre los conceptos disponibles o crea uno nuevos">
+                            <f:selectItem itemLabel="Selecciona un concepto existente" itemValue="-1"
+                                          noSelectionOption="true"/>
                             <f:selectItems value="#{managedBeanFacturacionManual.conceptosEmpresa}" var="c"
                                            itemValue="#{c.id}" itemLabel="#{c.conceptofacturacion}"/>
                             <p:ajax event="change" listener="#{managedBeanFacturacionManual.cargaInfoConceptoFromDB()}"
                                     process="@this,somConceptos" onsuccess="PF('dlgAdd').show();"
                                     update=":frmManual:pgCptoDetail,:frmManual:pgTrasladosCptoDev,
-                                    :frmManual:pgRetencionesCptoDev,somConceptos" />
+                                    :frmManual:pgRetencionesCptoDev,somConceptos"/>
                             <p:ajax event="change"
                                     listener="#{managedBeanCatalogos.resetDatosBusqueda}"/>
                         </p:selectOneMenu>
@@ -315,24 +321,62 @@
                 </p:fieldset>
                 <!--ADDENDAS SOLO APERECERA SI ESTA EN LA LISTA DE EMPRESAS CON ADDENDA, APARECEN DE ACUERDO A LA EMPRESA-->
                 <!--ADDENDA COATS-->
-                <p:fieldset id="flsAddenda" legend="Addenda Coats" toggleable="true" toggleSpeed="500" collapsed="false"
-                            rendered="#{managedBeanFacturacionManual.keyReceptorAddenda eq 1}">
-                    <p:panelGrid columns="6" style="width: 100%;"
-                                 columnClasses="ui-grid-col-1,ui-grid-col-2, ui-grid-col-3, ui-grid-col-2, ui-grid-col-3, ui-grid-col-1"
-                                 styleClass="ui-noborder">
-                        <p:outputLabel/>
+                <p:fieldset id="flsAddenda" legend="Addenda Volkswagen/Audi" toggleable="true" toggleSpeed="500" collapsed="false">
+
+                    <p:panelGrid columns="4"
+                                 columnClasses="ui-grid-col-2, ui-grid-col-4, ui-grid-col-2, ui-grid-col-4"
+                                 style="width: 100%;" styleClass="ui-noborder">
+
+
+                        <p:outputLabel for="itClienteAdenda" value="Cliente addenda:" />
+                        <p:selectOneMenu id="itClienteAdenda" value="#{managedBeanFacturacionManual.tipoAdenda}">
+                            <f:selectItem itemLabel="Volkswagen" itemValue="1" />
+                            <f:selectItem itemLabel="Audi" itemValue="2" />
+
+                        </p:selectOneMenu>
+
+
+
+                        <p:outputLabel for="tipoAdenda" value="Tipo addenda:" />
+                        <p:selectOneMenu id="tipoAdenda" value="#{managedBeanFacturacionManual.tipoAdenda}">
+                            <f:selectItem itemLabel="Producto" itemValue="PROD" />
+                            <f:selectItem itemLabel="Servicio" itemValue="SERV" />
+                            <p:ajax event="change"
+                                    listener="#{managedBeanFacturacionManual.handleChangeTipoAdenda()}"
+                                    process="@this,tipoAdenda,msgs" update="@this,tipoAdenda,msgs"/>
+                        </p:selectOneMenu>
                         <p:outputLabel for="itNumProv" value="Numero de Proveedor:"/>
                         <p:inputText id="itNumProv" value="#{managedBeanFacturacionManual.numeroProveedor}"
-                                     style="width: 80%;" required="true">
+                                     required="true">
                             <p:ajax event="change" process="itNumProv"/>
                         </p:inputText>
                         <p:outputLabel for="itOrdComp" value="Orden(es) de Compra(Separar con ,):"/>
                         <p:inputText id="itOrdComp" value="#{managedBeanFacturacionManual.ordenCompraInput}"
-                                     style="width: 80%;" required="true">
+                                    required="true">
                             <p:ajax event="change" process="itOrdComp"/>
                         </p:inputText>
-                        <p:outputLabel/>
                     </p:panelGrid>
+                   <p:panelGrid columns="4"
+                                columnClasses="ui-grid-col-2, ui-grid-col-4, ui-grid-col-2, ui-grid-col-4"
+                                style="width: 100%;" styleClass="ui-noborder">
+                       <p:outputLabel for="itCodigoImpuesto" value="Código impuesto"/>
+                       <p:inputText id="itCodigoImpuesto" value="#{managedBeanFacturacionManual.codigoImpuestoAdenda}"/>
+                       <p:outputLabel for="itCodigoDestino" value="Código destino"/>
+                       <p:inputText id="itCodigoDestino" value="#{managedBeanFacturacionManual.dataReferenciaAdenda.codigoDestino}"/>
+                       <p:outputLabel for="itReferenciaProveedor" value="Referencia proveedor"/>
+                       <p:inputText id="itReferenciaProveedor" value="#{managedBeanFacturacionManual.dataReferenciaAdenda.referenciaProvedor}"/>
+                       <p:outputLabel for="itRemision" value="Remisión"/>
+                       <p:inputText id="itRemision" value="#{managedBeanFacturacionManual.dataReferenciaAdenda.remision}"/>
+                       <p:outputLabel for="itNombreSolicitante" value="Nombre del solicitante"/>
+                       <p:inputText id="itNombreSolicitante" value="#{managedBeanFacturacionManual.dataReferenciaAdenda.nombreSolicitante}"/>
+
+                       <p:outputLabel for="itCorreoSolicitante" value="Correo del solicitante"/>
+                       <p:inputText id="itCorreoSolicitante" value="#{managedBeanFacturacionManual.dataReferenciaAdenda.correoSolicitante}"/>
+
+                       <p:outputLabel for="itCorreoContacto" value="Correo de contacto"/>
+                       <p:inputText id="itCorreoContacto" value="#{managedBeanFacturacionManual.dataReferenciaAdenda.correoContacto}"/>
+
+                   </p:panelGrid>
                 </p:fieldset>
                 <p:fieldset id="flsEnvioEmail" legend="Envio de correo" toggleable="true"
                             toggleSpeed="500" collapsed="true">
@@ -340,13 +384,14 @@
                                  columnClasses="ui-grid-col-1,ui-grid-col-2, ui-grid-col-8 ui-grid-col-1">
                         <p:outputLabel/>
                         <p:outputLabel value="¿Enviar Factura?"/>
-                        <p:inputSwitch id="isEviarEmail" value="#{managedBeanFacturacionManual.enviarEmailCliente}" onLabel="Si" offLabel="No">
+                        <p:inputSwitch id="isEviarEmail" value="#{managedBeanFacturacionManual.enviarEmailCliente}"
+                                       onLabel="Si" offLabel="No">
                             <p:ajax event="change" process="isEviarEmail,@this" update="itEmailsCliente,isEviarEmail"/>
                         </p:inputSwitch>
                         <p:outputLabel/>
 
                         <p:outputLabel/>
-                        <p:outputLabel value="Emails:" />
+                        <p:outputLabel value="Emails:"/>
                         <p:inputText id="itEmailsCliente" value="#{managedBeanFacturacionManual.emailCliente}"
                                      disabled="#{!managedBeanFacturacionManual.enviarEmailCliente}" maxlength="250">
                             <p:ajax event="change" process="itEmailsCliente,@this" update="itEmailsCliente"/>
@@ -393,8 +438,8 @@
                                  selection="#{managedBeanFacturacionManual.uuidsRelsSelection}"
                                  emptyMessage="No hay facturas relacionadas."
                                  style="text-align: center; font-size: 9px;" disabledTextSelection="false">
-                        <p:ajax event="rowSelectCheckbox" process="@this,dtUuidRels" />
-                        <p:ajax event="rowUnselectCheckbox" process="@this,dtUuidRels" />
+                        <p:ajax event="rowSelectCheckbox" process="@this,dtUuidRels"/>
+                        <p:ajax event="rowUnselectCheckbox" process="@this,dtUuidRels"/>
                         <p:column selectionMode="multiple" width="5%">
                         </p:column>
                         <p:column headerText="UUID">
@@ -497,7 +542,7 @@
                         </p:row>
                         <p:row>
                             <p:column width="100px" style="width: 100px;">
-                                <p:outputLabel value="Total:" style="font-weight: 700;" />
+                                <p:outputLabel value="Total:" style="font-weight: 700;"/>
                             </p:column>
 
                             <p:column width="200px" style="text-align: right; width: 200px">
@@ -529,7 +574,7 @@
         </p:dialog>
         <p:dialog widgetVar="statusLoadingData" modal="false" position="center top" draggable="false" closable="false"
                   resizable="false" showHeader="false">
-            <p:graphicImage library="img" name="loadingCircleGreen.gif" alt="Cargando Datos..." />
+            <p:graphicImage library="img" name="loadingCircleGreen.gif" alt="Cargando Datos..."/>
             <br/>
             Cargando datos ...
         </p:dialog>

@@ -16,7 +16,7 @@ public class CustomComplementoComercioExteriorMetadata {
     @Getter @Setter String certificadoOrigen = "0";
     @Getter @Setter String numCertificadoOrigen = "";
     @Getter @Setter String numExportadorConfiable = "";
-    @Getter @Setter String incoterm = "FCA";
+    @Getter @Setter String incoterm = "";
     @Getter @Setter String subdivision = "0";
     @Getter @Setter String observaciones = "";
     @Getter @Setter double tipoCambioUSD = 1.0;

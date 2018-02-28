@@ -12,12 +12,15 @@
             <p:panelGrid columns="2" style="width: 100%;" styleClass="ui-noborder"
                          columnClasses="ui-grid-col-1,ui-grid-col-2, ui-grid-col-8 ui-grid-col-1">
 
-                <p:outputLabel value=""/>
+                <p:outputLabel value="Referencia proveedor"/>
                 <p:inputText
-                        value="#{managedBeanFacturacionManual.singleComplementoComercioExteriorData.tipoOperacion}"
-                        disabled="#{managedBeanFacturacionManual.flagsEntradasComercioExterior.numCertificadoOrigen
-                        eq managedBeanFacturacionManual.flagsEntradasComercioExterior.NO_REQUERIDO}">
-                    <p:ajax event="change" process="@this"/>
+                        value="#{managedBeanFacturacionManual.singleAdenda.referencias.referenciaProvedor}">
+                </p:inputText>
+
+
+                <p:outputLabel value="Oden de compra"/>
+                <p:inputText
+                        value="#{managedBeanFacturacionManual.singleAdenda.referencias.ordenCompra}">
                 </p:inputText>
 
             </p:panelGrid>

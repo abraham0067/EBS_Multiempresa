@@ -68,7 +68,12 @@ public class ConceptoFactura implements Serializable {
     @Getter
     @Setter
     private List<Integer> indicesParams;
-
+    @Getter
+    @Setter
+    private double precioUnitarioAdenda = 0.0;
+    @Getter
+    @Setter
+    private double montoLineaAdenda= 0.0;
 
     @Getter
     @Setter
@@ -216,11 +221,14 @@ public class ConceptoFactura implements Serializable {
     public void calcularMontoComercioExterior(Double tipoCambio){
 
         this.valorDolares = (importe * tipoCambio) / tipoCambioUsd;
+        System.out.println("Montos: " + this.valorDolares);
     }
 
     public void calcularValorUnitarioAduana(Double tipoCambio){
         this.valorUnitarioAduana = (valorUnitario * tipoCambio) / tipoCambioUsd;
+        System.out.println("Montos aduana: " + this.valorUnitarioAduana);
     }
+
 
     private void calcularTraslados() {
         for (ImpuestoContainer imp : traslados) {

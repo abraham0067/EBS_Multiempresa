@@ -1,6 +1,10 @@
 package com.ebs.mbeans;
 
 
+import com.ebs.adenda.Adenda;
+import com.ebs.adenda.Partes;
+import com.ebs.adenda.Proveedor;
+import com.ebs.adenda.Referencias;
 import com.ebs.complementoextdata.*;
 import com.ebs.exceptions.BadImpuestoTypeException;
 import com.ebs.util.FloatsNumbersUtil;
@@ -56,6 +60,9 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.faces.component.UIInput;
+
+import fe.vw.*;
+import fe.audi.*;
 
 import static com.sun.faces.el.ELUtils.createValueExpression;
 
@@ -134,6 +141,7 @@ public class ManagedBeanFacturacionManual implements Serializable {
 
     private List<MAddfieldsInvoice> paramsInvoice;
     private List<MAddfieldsCpto> paramsCpto;
+    private List<AdendaFe> lstAdd = new ArrayList<AdendaFe>();
 
 
     private int idConcepto;
@@ -377,6 +385,8 @@ public class ManagedBeanFacturacionManual implements Serializable {
     private Fieldset fieldSetRefCpto;
     private static final String RFC_CME = "CME891127EA1";
     private static final String RFC_AAA = "AAA010101AAA";
+    private static final String RFC_VW = "VME640813HF6";
+    private static final String RFC_AUDI = "AAU120905KG9";
 
 
     ///Envio de correo automatico factura manual
@@ -427,12 +437,50 @@ public class ManagedBeanFacturacionManual implements Serializable {
     @Getter
     @Setter
     CustomComplementoComercioExteriorMetadata singleComplementoComercioExteriorData;
-
+    @Getter
+    @Setter
+    Adenda singleAdenda;
+    @Getter
+    @Setter
+    Proveedor dataProveedorAdenda;
+    @Getter
+    @Setter
+    Referencias dataReferenciaAdenda;
+    @Getter
+    @Setter
+    List<Partes> dataPartesAdenda;
+    @Getter
+    @Setter
+    private boolean usarComplementoAdendaVW;
+    @Getter
+    @Setter
+    private boolean usarComplementoAdendaAudi;
+    @Getter
+    @Setter
+    private boolean adendaProductos;
+    @Getter
+    @Setter
+    private boolean adendaServicios;
+    @Getter
+    @Setter
+    private String tipoAdenda;
+    @Getter
+    @Setter
+    private int clienteAddenda; //1 volkswagwn 2 audi
+    @Getter
+    @Setter
+    private FacturaVWData factura;
+    @Getter @Setter
+    private String codigoImpuestoAdenda;
+    @Getter @Setter
+    private FacturaAudiData facturaAudi;
 
     static {
         empresasConAddenda = new TreeMap<String, Integer>();
         empresasConAddenda.put(RFC_CME, 1);
         empresasConAddenda.put(RFC_AAA, 15);//Empresa Prueba
+        empresasConAddenda.put(RFC_VW, 2);
+        empresasConAddenda.put(RFC_AUDI, 3);
     }
 
 
@@ -538,6 +586,7 @@ public class ManagedBeanFacturacionManual implements Serializable {
 
         respuestas = new ArrayList<>();
         initComercioExterior();
+        initAdenda();
     }
 
     private void initComercioExterior() {
@@ -554,6 +603,14 @@ public class ManagedBeanFacturacionManual implements Serializable {
         singleDestinatarioData = new CustomDestinatarioData();
         singleDomicilioDestinatarioData = new CustomDomicilioData();
         singleComplementoComercioExteriorData = new CustomComplementoComercioExteriorMetadata();
+    }
+
+    private void initAdenda() {
+        usarComplementoAdendaVW = false;
+        usarComplementoAdendaAudi = false;
+        dataPartesAdenda = new ArrayList<>();
+        dataReferenciaAdenda = new Referencias();
+        dataProveedorAdenda = new Proveedor();
     }
 
 
@@ -711,6 +768,11 @@ public class ManagedBeanFacturacionManual implements Serializable {
         }
     }
 
+    public void addMessageAdenda() {
+        String summary = adendaProductos ? "Ha seleccionado una adenda de tipo producto" : adendaServicios ? "Ha seleccionado una adenda de tipo servicio" : "";
+        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(summary));
+    }
+
     private boolean validarCamposRequeridosConceptoComercioExterior(ConceptoFactura conceptoValida) {
 
         String fraccionArancelaria = conceptoValida.getFraccionArancelaria();
@@ -729,7 +791,7 @@ public class ManagedBeanFacturacionManual implements Serializable {
 
             if (!UnidadAduana.equalsIgnoreCase("99")) {
                 return false;
-            }else{
+            } else {
                 System.out.println("validación ok");
             }
 
@@ -752,6 +814,18 @@ public class ManagedBeanFacturacionManual implements Serializable {
 
 
         return true;
+    }
+
+    private boolean validarCamposAdenda() {
+
+        if (getKeyReceptorAddenda() == 2) {
+            if ((numeroProveedor != null && ordenCompraInput != null) || (!numeroProveedor.isEmpty() && !ordenCompraInput.isEmpty())) {
+                return true;
+            }
+        }
+
+
+        return false;
     }
 
     /*
@@ -833,6 +907,25 @@ public class ManagedBeanFacturacionManual implements Serializable {
             merc.setValorUnitarioAduana(tmp.getValorUnitarioAduana());
             merc.getDescripcionesEspecificas().add(new CustomDescripcionEspecificaData(tmp.getMarca()));
             mercanciasData.add(merc);
+        }
+    }
+
+    private void transformarConceptosAProdServicios() {
+
+        int posicion = 0;
+        for (ConceptoFactura tmp : this.conceptosAsignados) {
+            posicion++;
+            Partes parte = new Partes();
+            parte.setCantidadMaterial(tmp.getCantidad());
+            parte.setPosicion(posicion);
+            parte.setNumeroMaterial(tmp.getNumeroSerie());
+            parte.setDescripcionMterial(tmp.getConceptofacturacion());
+            parte.setUnidadMedida(tmp.getUnidad());
+            parte.setPrecioUnitario(tmp.getValorUnitario());
+            parte.setMontoLinea(tmp.getImporte());
+            parte.setOdenCompra(ordenCompraInput);
+            parte.setCodigoImpuesto(codigoImpuestoAdenda);
+            dataPartesAdenda.add(parte);
         }
     }
 
@@ -1061,7 +1154,14 @@ public class ManagedBeanFacturacionManual implements Serializable {
             comercioExteriorData.setSubdivision(Integer.parseInt(singleComplementoComercioExteriorData.getSubdivision()));
             comercioExteriorData.setTipoCambioUSD(singleComplementoComercioExteriorData.getTipoCambioUSD());
             comercioExteriorData.setTotalUSD(singleComplementoComercioExteriorData.getTotalUSD());
+
         }
+
+        if (tipoDocObjFact.getcTipoComprobanteByTdocId().getClave().equalsIgnoreCase("T")){
+            System.out.println("Entro trasalado exterior");
+            comercioExteriorData.setMotivoTraslado(singleComplementoComercioExteriorData.getMotivoTraslado());
+        }
+
 
 
         List<ComplementoFe> complementos = cdata.getComplementosFe();
@@ -1072,6 +1172,155 @@ public class ManagedBeanFacturacionManual implements Serializable {
         cdata.setComplemementosFe(complementos);
 
         return cdata;
+    }
+
+    public void facturaVw(String nombreProveedor, String sociedad){
+
+        if (tipoDocObjFact.getcTipoComprobanteByTdocId().getClave().equalsIgnoreCase("E")) {
+            factura.setTipoDocumentoFiscal("CR");
+        } else if (tipoDocObjFact.getcTipoComprobanteByTdocId().getClave().equalsIgnoreCase("I")) {
+            factura.setTipoDocumentoFiscal("FA");
+        }
+
+        if (!moneda.toUpperCase().equals("MXN")) {
+            factura.setTipoMoneda("MXP");
+        } else {
+            factura.setTipoMoneda(moneda);
+            factura.setTipoCambio(tipoCambioDatosFacturaInput);
+        }
+
+        factura.setCodigoProveedor(dataReferenciaAdenda.getCodigoProveedor());
+
+        factura.setNombreProveedor(nombreProveedor);
+        factura.setCodigoDestino(dataReferenciaAdenda.getCodigoDestino());
+        factura.setReferenciaProveedor(dataReferenciaAdenda.getReferenciaProvedor());
+        factura.setRemision(dataReferenciaAdenda.getRemision());
+
+        factura.setNombreSolicitante(dataReferenciaAdenda.getNombreSolicitante());
+        factura.setCorreoSolicitante(dataReferenciaAdenda.getCorreoSolicitante());
+        factura.setCorreoContacto(dataReferenciaAdenda.getCorreoContacto());
+        factura.setSociedad(sociedad);
+
+    }
+
+    public void facturaAudi(){
+
+        facturaAudi.setTipo(adendaProductos ? FacturaAudi.TIPO.MATERIALES : FacturaAudi.TIPO.SERVICIO);
+
+        if (tipoDocObjFact.getcTipoComprobanteByTdocId().getClave().equalsIgnoreCase("E")) {
+            facturaAudi.tipoDocumentoFiscal = "CR";
+        } else if (tipoDocObjFact.getcTipoComprobanteByTdocId().getClave().equalsIgnoreCase("I")) {
+            facturaAudi.tipoDocumentoFiscal = "FA";
+        }
+
+        if (!moneda.toUpperCase().equals("MXN")) {
+            facturaAudi.tipoMoneda ="MXP";
+        } else {
+            facturaAudi.tipoMoneda = moneda;
+            facturaAudi.tipoCambio = tipoCambioDatosFacturaInput;
+        }
+
+        facturaAudi.noProveedor = dataReferenciaAdenda.getCodigoProveedor();
+        facturaAudi.codigoDestino= dataReferenciaAdenda.getCodigoDestino();
+        facturaAudi.correoSolicitante = dataReferenciaAdenda.getCorreoSolicitante();
+        facturaAudi.eMail = dataReferenciaAdenda.getCorreoContacto();
+
+    }
+
+    public ComprobanteData addAddenda(ComprobanteData cdata) {
+
+        usarComplementoAdendaAudi = false;
+        usarComplementoAdendaVW = false;
+
+        AddendaVolksWagenData adendaVolksWagen = null;
+        AddendaAudi addendaAudi = null;
+        List<Partes> listPartes = dataPartesAdenda;
+        String rfcCliente = daoRec.BuscarReceptorIdr(idCliente).getRfcOrigen();
+        String nombreProveedor = daoRec.BuscarReceptorIdr(idCliente).getRazonSocial();
+
+        List<ParteVW> partesFe = new ArrayList<>();
+        List<ParteAudi> partesAudi = new ArrayList<>();
+        try {
+
+        if(clienteAddenda == 1){
+            factura = new FacturaVWData();
+            usarComplementoAdendaVW = true;
+            facturaVw(nombreProveedor, "");
+        }else if(clienteAddenda == 2){
+            usarComplementoAdendaAudi = true;
+            facturaAudi = new FacturaAudiData();
+            facturaAudi();
+        }
+
+            if(usarComplementoAdendaAudi){
+
+                for (Partes parte : listPartes) {
+
+                    ParteAudiData parteAudi = new ParteAudiData();
+                    parteAudi.cantidad = parte.getCantidadMaterial();
+                    parteAudi.codigoImpuesto = parte.getCodigoImpuesto();
+                    parteAudi.desMaterial = parte.getDescripcionMterial();
+                    parteAudi.montoLinea = parte.getMontoLinea();
+                    //parteAudi.setNoMaterial(parte.getNumeroMaterial());
+                    parteAudi.unidad = parte.getUnidadMedida();
+                    parteAudi.pu = parte.getPrecioUnitario();
+                    parteAudi.posicion = parte.getPosicion();
+                    parteAudi.ordenCompra = ordenCompraInput;
+
+
+                    partesAudi.add(parteAudi);
+
+                    facturaAudi.partes  = partesAudi.toArray(facturaAudi.getPartes());
+                }
+
+            }else if(usarComplementoAdendaVW){
+                for (Partes parte : listPartes) {
+
+                    ParteVWData tmpParte = new ParteVWData();
+                    tmpParte.setCantidad(parte.getCantidadMaterial());
+                    tmpParte.setCodigoImpuesto(parte.getCodigoImpuesto());
+                    tmpParte.setDesMaterial(parte.getDescripcionMterial());
+                    tmpParte.setMontoLinea(parte.getMontoLinea());
+                    tmpParte.setNoMaterial(parte.getNumeroMaterial());
+                    tmpParte.setUnidadMedida(parte.getUnidadMedida());
+                    tmpParte.setPrecioUnitario(parte.getPrecioUnitario());
+                    tmpParte.setPosicion(parte.getPosicion());
+                    tmpParte.setOrdenCompra(ordenCompraInput);
+
+                    partesFe.add(tmpParte);
+
+                    factura.setPartes(partesFe.toArray(factura.getPartes()));
+                }
+            }
+
+
+        } catch (Exception ex) {
+            System.out.println(ex.getMessage());
+        }
+
+
+        if (usarComplementoAdendaVW) {
+            adendaVolksWagen = new AddendaVolksWagenData(adendaProductos ? AddendaVolksWagenData.TIPO_ADENDA_VW.PMT : AddendaVolksWagenData.TIPO_ADENDA_VW.PSV);
+            adendaVolksWagen.setFacturaVW(factura);
+            lstAdd.add(adendaVolksWagen);
+            System.out.println("Entro agregar adenda vw");
+
+        }else if(usarComplementoAdendaAudi){
+            lstAdd.add(facturaAudi);
+            System.out.println("Entro agregar adenda audi");
+        }
+
+        cdata.setAdendas(lstAdd);
+
+        return cdata;
+
+    }
+
+    public void genAdenda(FacturaVWData factura) {
+
+        tipoDocObjFact.getcTipoComprobanteByTdocId().getClave().equalsIgnoreCase("T");
+
+
     }
 
 
@@ -1519,8 +1768,10 @@ public class ManagedBeanFacturacionManual implements Serializable {
                 // en caso de ser comercio exterior
 
                 if (usarComplementoComercioExterior) {
+                    codConfRequerido = false;
                     ((DatosComprobanteData) comprobanteData.getDatosComprobante()).setTotal(0.00);
                     ((DatosComprobanteData) comprobanteData.getDatosComprobante()).setSubTotal(0.00);
+                    System.out.println("valida traslado comercio exterior");
                 }
 
             } else if (tipoDocObjFact.getcTipoComprobanteByTdocId().getClave().equalsIgnoreCase("I")) {
@@ -1546,7 +1797,11 @@ public class ManagedBeanFacturacionManual implements Serializable {
 
             agregarEmailCliente();
 
-            agregaAddendas();
+            //agregaAddendas();
+            if(usarComplementoAdendaVW || usarComplementoAdendaAudi){
+                transformarConceptosAProdServicios();
+                addAddenda(getComprobanteData());
+            }
             PintarLog.println("Apunto de llamar al servicio de factura manual");
             String respuestaServicio = "";
             MEmpresaMTimbre m = daoEmpTimp.ObtenerClaveWSEmpresaTimbre(idEmpresa);
@@ -1917,9 +2172,25 @@ public class ManagedBeanFacturacionManual implements Serializable {
             }
             int res = maxValueImporte.compareTo(new BigDecimal(tmpAmm));
             if (res == -1) {
-                codConfRequerido = true;
+                if(usarComplementoComercioExterior && tipoDocObjFact.getcTipoComprobanteByTdocId().getClave().equalsIgnoreCase("T")){
+                    codConfRequerido=false;
+                    System.out.println("omitir codigo");
+                }else{
+                    codConfRequerido = true;
+                    System.out.println("No omitir codigo");
+                }
+
                 if (((String) (inputCodigoConfirmacion.getValue())).length() != LENGTHCODCONF) {
-                    inputCodigoConfirmacion.setValid(false);
+
+                    if(usarComplementoComercioExterior && tipoDocObjFact.getcTipoComprobanteByTdocId().getClave().equalsIgnoreCase("T")){
+                        inputCodigoConfirmacion.setValid(true);
+                        System.out.println("omitir codigo");
+
+                    }else{
+                        inputCodigoConfirmacion.setValid(false);
+                        System.out.println("No omitir codigo");
+                    }
+
                 }
                 FacesContext.getCurrentInstance().addMessage("frmManual", new FacesMessage(FacesMessage.SEVERITY_WARN,
                         "Debe proporcionar el codigo de confirmación ya que el importe de la factura sobrepasa los limites permitidos.", "Info"));
@@ -1940,10 +2211,26 @@ public class ManagedBeanFacturacionManual implements Serializable {
                     if (tipoCambioDatosFacturaInput < 0 || tipoCambioDatosFacturaInput < limiteInferior || tipoCambioDatosFacturaInput > limiteSuperior) {
                         FacesContext.getCurrentInstance().addMessage("frmManual", new FacesMessage(FacesMessage.SEVERITY_INFO,
                                 "El tipo de cambio esta fuera del rango permitido, debe ingresar el codigo de confirmación o modificar el valor del tipo de cambio. ", "Info"));
-                        inputTipoCambio.setValid(false);
-                        codConfRequerido = true;
+
+                        if(usarComplementoComercioExterior && tipoDocObjFact.getcTipoComprobanteByTdocId().getClave().equalsIgnoreCase("T")){
+                            codConfRequerido=false;
+                            inputCodigoConfirmacion.setValid(true);
+                            inputTipoCambio.setValid(true);
+                            System.out.println("omitir codigo");
+                        }else{
+                            codConfRequerido = true;
+                            inputTipoCambio.setValid(false);
+                            System.out.println("no omitir codigo");
+                        }
                         if (((String) (inputCodigoConfirmacion.getValue())).length() != LENGTHCODCONF) {
-                            inputCodigoConfirmacion.setValid(false);
+                            if(usarComplementoComercioExterior && tipoDocObjFact.getcTipoComprobanteByTdocId().getClave().equalsIgnoreCase("T")){
+                                inputCodigoConfirmacion.setValid(true);
+                                System.out.println("omitir codigo");
+                            }else{
+                                inputCodigoConfirmacion.setValid(false);
+                                System.out.println("No omitir codigo");
+                            }
+
                         }
                     }
                 }
@@ -1988,7 +2275,7 @@ public class ManagedBeanFacturacionManual implements Serializable {
     public void actualizaDatosReceptor(boolean handle) {
         if (handle)
             handleChangeEsReceptorExtranjero();
-        //filtraEmpresaConAddenda();//Si filtran las empresas que tienen addenda
+        filtraEmpresaConAddenda();//Si filtran las empresas que tienen addenda
     }
 
     public void handleChangeReceptor() {
@@ -2000,7 +2287,7 @@ public class ManagedBeanFacturacionManual implements Serializable {
         }
         emailCliente = mywmp.getCorreo();
         handleChangeEsReceptorExtranjero();
-//        filtraEmpresaConAddenda();
+        filtraEmpresaConAddenda();
     }
 
 
@@ -2060,6 +2347,27 @@ public class ManagedBeanFacturacionManual implements Serializable {
             FacesContext.getCurrentInstance().addMessage(
                     null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Por favor seleccione la residencia fiscal del cliente extranjero diferente de MEX!!!", ""));
         }
+    }
+
+    public void handleChangeTipoAdenda() {
+
+        String msge = "";
+        System.out.println("Tipo adenda: " + tipoAdenda);
+        adendaServicios = false;
+        adendaServicios = false;
+
+        if (tipoAdenda.equalsIgnoreCase("PROD")) {
+            adendaProductos = true;
+            msge = "Producto";
+        }
+        if (tipoAdenda.equalsIgnoreCase("SERV")) {
+            adendaServicios = true;
+            msge = "Servicio";
+        }
+
+        FacesContext.getCurrentInstance().addMessage(
+                null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Ha seleccionado el tipo de adenda " + msge, ""));
+
     }
 
     public void handleChangeNumRegIdTrib() {
@@ -2426,6 +2734,10 @@ public class ManagedBeanFacturacionManual implements Serializable {
                     case RFC_AAA:
                         setKeyReceptorAddenda(empresasConAddenda.get(RFC_AAA));//
 
+                        break;
+                    case RFC_VW:
+                        setKeyReceptorAddenda(empresasConAddenda.get(RFC_VW));//
+                        System.out.println("Adenda vw");
                         break;
                     default:
                         setKeyReceptorAddenda(-1);//set not found
