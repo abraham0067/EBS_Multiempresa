@@ -466,7 +466,7 @@ public class ManagedBeanFacturacionManual implements Serializable {
     private String tipoAdenda;
     @Getter
     @Setter
-    private int clienteAddenda; //1 volkswagwn 2 audi
+    private String clienteAddenda; //1 volkswagwn 2 audi
     @Getter
     @Setter
     private FacturaVWData factura;
@@ -912,6 +912,8 @@ public class ManagedBeanFacturacionManual implements Serializable {
 
     private void transformarConceptosAProdServicios() {
 
+        System.out.println("transforma conceptos");
+
         int posicion = 0;
         for (ConceptoFactura tmp : this.conceptosAsignados) {
             posicion++;
@@ -1227,10 +1229,20 @@ public class ManagedBeanFacturacionManual implements Serializable {
 
     }
 
-    public ComprobanteData addAddenda(ComprobanteData cdata) {
-
+    public void usarAddenda(){
         usarComplementoAdendaAudi = false;
         usarComplementoAdendaVW = false;
+        System.out.println("valor addenda: " + clienteAddenda);
+        if(clienteAddenda.equalsIgnoreCase("1")){
+            usarComplementoAdendaVW = true;
+            System.out.println("usa addenda vw");
+        }else if(clienteAddenda.equalsIgnoreCase("2")){
+            System.out.println("usa addenda audi");
+            usarComplementoAdendaAudi = true;
+        }
+    }
+
+    public ComprobanteData addAddenda(ComprobanteData cdata) {
 
         AddendaVolksWagenData adendaVolksWagen = null;
         AddendaAudi addendaAudi = null;
@@ -1242,11 +1254,11 @@ public class ManagedBeanFacturacionManual implements Serializable {
         List<ParteAudi> partesAudi = new ArrayList<>();
         try {
 
-        if(clienteAddenda == 1){
+        if(usarComplementoAdendaVW){
             factura = new FacturaVWData();
             usarComplementoAdendaVW = true;
             facturaVw(nombreProveedor, "");
-        }else if(clienteAddenda == 2){
+        }else if(usarComplementoAdendaAudi){
             usarComplementoAdendaAudi = true;
             facturaAudi = new FacturaAudiData();
             facturaAudi();
@@ -1799,6 +1811,7 @@ public class ManagedBeanFacturacionManual implements Serializable {
 
             //agregaAddendas();
             if(usarComplementoAdendaVW || usarComplementoAdendaAudi){
+                System.out.println("Addendas");
                 transformarConceptosAProdServicios();
                 addAddenda(getComprobanteData());
             }

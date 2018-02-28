@@ -328,17 +328,19 @@
                                  style="width: 100%;" styleClass="ui-noborder">
 
 
-                        <p:outputLabel for="itClienteAdenda" value="Cliente addenda:" />
-                        <p:selectOneMenu id="itClienteAdenda" value="#{managedBeanFacturacionManual.tipoAdenda}">
+                        <p:outputLabel for="itClienteAdenda" value="Cliente addenda*" />
+                        <p:selectOneMenu id="itClienteAdenda" value="#{managedBeanFacturacionManual.clienteAddenda}">
+                            <f:selectItem itemLabel="Selecciona un cliente" itemValue="-1" />
                             <f:selectItem itemLabel="Volkswagen" itemValue="1" />
                             <f:selectItem itemLabel="Audi" itemValue="2" />
-
+                            <p:ajax event="change" listener="#{managedBeanFacturacionManual.usarAddenda()}" process="@this"/>
                         </p:selectOneMenu>
 
 
 
-                        <p:outputLabel for="tipoAdenda" value="Tipo addenda:" />
+                        <p:outputLabel for="tipoAdenda" value="Tipo addenda*" />
                         <p:selectOneMenu id="tipoAdenda" value="#{managedBeanFacturacionManual.tipoAdenda}">
+                            <f:selectItem itemLabel="Selecciona un tipo de addenda" itemValue="NA" />
                             <f:selectItem itemLabel="Producto" itemValue="PROD" />
                             <f:selectItem itemLabel="Servicio" itemValue="SERV" />
                             <p:ajax event="change"
