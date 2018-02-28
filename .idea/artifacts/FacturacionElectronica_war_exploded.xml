@@ -14,7 +14,6 @@
         <element id="file-copy" path="$PROJECT_DIR$/web/WEB-INF/web.xml" />
       </element>
       <element id="javaee-facet-resources" facet="EBS_Multiempresa/web/Web" />
-      <element id="dir-copy" path="$PROJECT_DIR$" />
     </root>
   </artifact>
 </component>

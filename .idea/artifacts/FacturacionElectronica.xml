@@ -3,16 +3,6 @@
     <output-path>$PROJECT_DIR$/out/artifacts/FacturacionElectronica</output-path>
     <root id="archive" name="FacturacionElectronica.war">
       <element id="artifact" artifact-name="FacturacionElectronica:war exploded" />
-      <element id="directory" name="WEB-INF">
-        <element id="directory" name="classes">
-          <element id="module-output" name="EBS_Multiempresa" />
-        </element>
-        <element id="file-copy" path="$PROJECT_DIR$/web/WEB-INF/web.xml" />
-        <element id="directory" name="lib">
-          <element id="library" level="project" name="antlr:antlr:2.7.7" />
-          <element id="library" level="project" name="joda-time:joda-time:2.9.9" />
-        </element>
-      </element>
     </root>
   </artifact>
 </component>
