@@ -77,13 +77,7 @@ public class ManagedBeanClientes implements Serializable {
     }
 
     public void buscarClientes() {
-        //if(daoCliente.BusquedaRFC(idEmpresaSelect).equals("BMS030731PC4")) {
-       //     clientes = daoCliente.BusquedaParam(mAcceso.getId(), idEmpresaSelect, tipoBusqueda, paramBusqueda);
-        //    this.cliente = true;
-        //}else {
-            receptores = daoReceptor.BusquedaParam(mAcceso.getId(), idEmpresaSelect, tipoBusqueda, paramBusqueda);
-        //    this.cliente = false;
-        //}//
+        receptores = daoReceptor.BusquedaParam(mAcceso.getId(), idEmpresaSelect, tipoBusqueda, paramBusqueda);
 
         empresas = daoEmpresa.ListaEmpresasPadres(mAcceso.getId());
     }
