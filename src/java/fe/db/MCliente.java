@@ -34,7 +34,7 @@ public class MCliente implements Serializable {
 	private String email = "";
 	private MDireccion direccion = new MDireccion();
 	
-	protected MCliente() {}
+	public MCliente() {}
 
 	public MCliente(MEmpresa empresa, String noCliente, String rfc, String razonSocial, Integer ctaPadre) {
 		this.empresa = empresa;
