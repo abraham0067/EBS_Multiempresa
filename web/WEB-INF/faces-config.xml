@@ -166,6 +166,13 @@
         <managed-bean-scope>session</managed-bean-scope>
     </managed-bean>
     <managed-bean>
+        <description>Catalogo de Agentes</description>
+        <managed-bean-name>managedBeanAgentes</managed-bean-name>
+        <managed-bean-class>com.ebs.mbeans.ManagedBeanAgentes</managed-bean-class>
+
+        <managed-bean-scope>session</managed-bean-scope>
+    </managed-bean>
+    <managed-bean>
         <description>ManagedBean para logs de acceso y operaciones sobre facturas
         </description>
         <managed-bean-name>managedBeanLogs</managed-bean-name>

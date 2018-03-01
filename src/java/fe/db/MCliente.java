@@ -32,8 +32,7 @@ public class MCliente implements Serializable {
 	private String razonSocial = "";
 	private Integer ctaPadre = 0;
 	private String email = "";
-	private MDireccion direccion = new MDireccion();
-	
+
 	public MCliente() {}
 
 	public MCliente(MEmpresa empresa, String noCliente, String rfc, String razonSocial, Integer ctaPadre) {
@@ -44,14 +43,13 @@ public class MCliente implements Serializable {
 		this.ctaPadre = ctaPadre;
 	}
 
-	public MCliente(MEmpresa empresa, String noCliente, String rfc, String razonSocial, Integer ctaPadre, String email, MDireccion direccion) {
+	public MCliente(MEmpresa empresa, String noCliente, String rfc, String razonSocial, Integer ctaPadre, String email) {
 		this.empresa = empresa;
 		this.noCliente = noCliente;
 		this.rfc = rfc;
 		this.razonSocial = razonSocial;
 		this.ctaPadre = ctaPadre;
 		this.email = email;
-		this.direccion = direccion;
 	}
 
 	@Id
@@ -88,15 +86,6 @@ public class MCliente implements Serializable {
 		return ctaPadre;
 	}
 
-	/**
-	 * @return the direccion
-	 */
-	@ManyToOne
-	@Index(name = "RECEPTOR_DIRECCION_IDX")
-	public MDireccion getDireccion() {
-		return direccion;
-	}
-
 	@Index(name = "EMAIL")
 	@Column(name="EMAIL", nullable=true)
 	public String getEmail() {
@@ -127,13 +116,7 @@ public class MCliente implements Serializable {
 		this.ctaPadre = ctaPadre; 
 	}
 
-	/**
-	 * @param direccion
-	 *            the direccion to set
-	 */
-	public void setDireccion(MDireccion direccion) {
-		this.direccion = direccion;
-	}
+
 
 	public void setEmail(String email) {
 		this.email = email;

@@ -24,6 +24,7 @@
             <menuEntry name="folios" title="Folios" url="/admin/catalogos/catFolios.xhtml" perfil="512"  icon="no" nivel="4" position="2" />
             <menuEntry name="ConceptosFacturacion" title="Conceptos de Facturación" icon="no"	url="/admin/catalogos/catConceptos.xhtml" perfil="1024" nivel="4" position="3" />
             <menuEntry name="Pacs" title="Pac's" url="/admin/catalogos/catPacs.xhtml"  icon="no"	perfil="524288" nivel="4" position="4" />
+            <menuEntry name="Agentes" title="Agentes" url="/admin/catalogos/catAgentes.xhtml"  icon="no"	perfil="67108864" nivel="4" position="5" />
         </subMenu>
         <subMenu name="Logs" title="Logs" perfil="2048" icon="no" nivel="3" position="9">
             <menuEntry name="Logacceso" title="Log Acceso" url="/admin/logs/logAcceso.xhtml" icon="no"	perfil="4096" nivel="4" position="1" />

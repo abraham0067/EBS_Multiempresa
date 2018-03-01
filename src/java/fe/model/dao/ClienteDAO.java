@@ -1,5 +1,6 @@
 package fe.model.dao;
 
+import com.barcodelib.barcode.a.g.c.e;
 import fe.db.MCliente;
 import fe.db.MEmpresa;
 import fe.model.util.hibernateutil.HibernateUtilApl;
@@ -127,6 +128,9 @@ public class ClienteDAO implements Serializable {
                     if (!columna.trim().equals("Todos") && !columna.trim().equals("Ninguno") && (!value.trim().equals("")))
                         rp.add(Restrictions.ilike(columna.trim(), "%" + value + "%"));
 
+                    if (!columna.isEmpty() && columna.trim().equals("Ninguno") )
+                        rp.setMaxResults(100);
+
                 } else if (acceso.getNivel() == Nivel.INTERNO) {
                     if (!columna.trim().equals("Todos") && !columna.trim().equals("Ninguno") && (!value.trim().equals("")))
                         rp.add(Restrictions.ilike(columna.trim(), "%" + value + "%"));
@@ -138,6 +142,9 @@ public class ClienteDAO implements Serializable {
                         && (!value.trim().equals(""))) {
                     rp.add(Restrictions.ilike(columna.trim(), "%" + value + "%"));
                 }
+
+                if (!columna.isEmpty() && columna.trim().equals("Ninguno") )
+                    rp.setMaxResults(100);
             }
 
             //rp.setMaxResults(10);
@@ -206,4 +213,30 @@ public class ClienteDAO implements Serializable {
 
         return cliente;
     }
+
+    public boolean  BuscarNoCliente(int idEmpresa, String noCliente) {
+        boolean existe = false;
+        try {
+            hibManagerRO.initTransaction();
+            Criteria cr = hibManagerRO.getSession().createCriteria(MCliente.class);
+            cr.add(Restrictions.eq("noCliente", noCliente));
+            cr.add(Restrictions.eq("empresa.id", idEmpresa));
+            cr.setMaxResults(1);
+
+            if(cr.uniqueResult() == null)
+                existe = true;
+
+            hibManagerRO.getTransaction().commit();
+        } catch (HibernateException ex) {
+            hibManagerRO.getTransaction().rollback();
+            ex.printStackTrace(System.err);
+        } finally {
+            hibManagerRO.closeSession();
+        }
+
+        return existe;
+    }
+
+
+
 }
