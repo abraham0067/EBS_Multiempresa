@@ -65,7 +65,7 @@ public class ManagedBeanAgentes implements Serializable {
     public void buscarAgentes() {
         empresas = daoEmpresa.ListaEmpresasPadres(mAcceso.getId());
         if(idEmpresaSelect >= 0)
-            clientes = daoCliente.BusquedaParam(mAcceso.getId(), idEmpresaSelect, tipoBusqueda, paramBusqueda);
+            clientes = daoCliente.BusquedaParam(mAcceso.getId(), idEmpresaSelect, tipoBusqueda.trim(), paramBusqueda.trim());
         else
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Debe seleccionar primero la empresa", ""));
     }
@@ -98,6 +98,7 @@ public class ManagedBeanAgentes implements Serializable {
         try {
             idEmpresaSelect = -1;
             clienteSelected = null;
+            clientes = null;
             buscarAgentes();
             FacesContext.getCurrentInstance().getExternalContext().redirect(appContext + "/admin/catalogos/catAgentes.xhtml");
         } catch (IOException e1) {

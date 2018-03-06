@@ -91,15 +91,33 @@
             <p:dataTable id="dtListClientes" value="#{managedBeanAgentes.clientes}" var="tmp" resizableColumns="false"
                              resizeMode="expand" scrollRows="18"
                              paginator="true" rowsPerPageTemplate="25" rows="25" scrollHeight="520" scrollable="false" liveScroll="false" rowKey="#{tmp.id}"
-                             selection="#{managedBeanAgentes.clienteSelected}" selectionMode="single"    emptyMessage="..." style="font-size: 11px;"
+                             selection="#{managedBeanAgentes.clientes}" emptyMessage="..." style="font-size: 11px;"
                              disabledTextSelection="false"
                              editable="true"
                 >
+                <p:ajax event="rowSelectCheckbox"  process="@this" ></p:ajax>
+                <p:ajax event="rowUnselectCheckbox"  process="@this" ></p:ajax>
+                <p:ajax event="rowSelect"  process="@this" ></p:ajax>
+                <p:ajax event="rowUnselect"  process="@this" ></p:ajax>
                 <f:facet name="header">
                     AGENTES
                 </f:facet>
+                <p:column resizable="true" class="customCell" toggleable="false" selectionMode="multiple" width="15"></p:column>
 
-                <p:ajax event="rowSelect" process="@this,dtListClientes" ></p:ajax>
+
+               <!--
+               selection="#{managedBeanAgentes.clienteSelected}"
+
+               selectionMode="single"
+
+               <p:ajax event="rowSelectCheckbox"  process="@this" ></p:ajax>
+                <p:ajax event="rowUnselectCheckbox"  process="@this" ></p:ajax>
+
+
+                <p:ajax event="rowSelect"  process="@this" ></p:ajax>
+                <p:ajax event="rowUnselect"  process="@this" ></p:ajax>
+                -->
+
                 <p:ajax event="rowEdit" listener="#{managedBeanAgentes.onRowEdit}" update=":frmContent:msgs" />
                 <p:ajax event="rowEditCancel" listener="#{managedBeanAgentes.onRowCancel}" update=":frmContent:msgs" />
 

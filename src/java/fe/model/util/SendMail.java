@@ -37,6 +37,15 @@ public class SendMail implements Serializable {
 
     private HibernateUtilApl hibManagerRO;//Read only interface
 
+
+    public static void main(String[] args) {
+        String correo[] = {"agarcia@ebs.com.mx"};
+
+        new SendMail("s").sendEmail("prueba", "PRUEBA ENVIO CORREO",correo);
+    }
+
+    public SendMail(String c){}
+
     @SuppressWarnings("unchecked")
     public SendMail() {
         ArrayList<MConfig> listaConfig = null;
