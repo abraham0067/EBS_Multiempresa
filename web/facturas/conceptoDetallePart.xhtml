@@ -89,7 +89,7 @@
                 <p:inputText id="itPrecioUnitDet"
                              value="#{managedBeanFacturacionManual.tempConcepto.valorUnitario}"
                              required="true" requiredMessage="El precio unitario es un campo obligatorio."
-                             disabled="#{managedBeanFacturacionManual.disabledInputValorUnitarioDetalleConcepto}"
+
                              converterMessage="Ingrese un numero valido para el precio.">
                     <f:convertNumber pattern="#,###,##0.00" locale="es_MX"/>
                     <f:validateDoubleRange minimum="0.000000"/>

@@ -38,6 +38,7 @@ import lombok.Getter;
 import lombok.Setter;
 import mx.com.ebs.emision.factura.catalogos.CatCapturaManual;
 import mx.com.ebs.emision.factura.utilierias.PintarLog;
+import mx.com.ebs.emision.factura.vo.catalogos.CatalogosBean;
 import org.primefaces.behavior.ajax.AjaxBehavior;
 import org.primefaces.component.fieldset.Fieldset;
 import org.primefaces.component.inputtext.InputText;
@@ -475,6 +476,8 @@ public class ManagedBeanFacturacionManual implements Serializable {
     @Getter @Setter
     private FacturaAudiData facturaAudi;
 
+
+
     static {
         empresasConAddenda = new TreeMap<String, Integer>();
         empresasConAddenda.put(RFC_CME, 1);
@@ -587,6 +590,45 @@ public class ManagedBeanFacturacionManual implements Serializable {
         respuestas = new ArrayList<>();
         initComercioExterior();
         initAdenda();
+
+        //? TRASLADOS COMERCIO
+
+
+        if (tiposDocs != null && tiposDocs.size() > 0) {
+            if (idTipoDoc < 0) {
+                idTipoDoc = tiposDocs.get(0).getId();
+                tipoDocObjFact = LambdasHelper.findTipoDocById(tiposDocs, idTipoDoc);
+                agruparImpuestosComprobante();
+            } else {
+                tipoDocObjFact = LambdasHelper.findTipoDocById(tiposDocs, idTipoDoc);
+                agruparImpuestosComprobante();
+
+            }
+        }
+
+
+        ///Manejar entradas deacuerdo al tipo de documento que se esta manejando
+        if(idTipoDoc>0 && tipoDocObjFact!= null){
+            if(tipoDocObjFact.getcTipoComprobanteByTdocId().getClave().equals("I")){
+
+            }else if(tipoDocObjFact.getcTipoComprobanteByTdocId().getClave().equals("E")){
+
+            } else if(tipoDocObjFact.getcTipoComprobanteByTdocId().getClave().equals("T")){
+                condiciones = "";
+                formaPago = "-1";
+                metodoPago = "-1";
+                disabledInputCondicionesDePago = true;
+                disabledInputFormaDePago = true;
+                disabledInputMetodoDePago = true;
+                disabledFieldSetImpuestosDetalleConcepto = true;
+                disabledInputDescuentoDetalleConcepto = true;
+                disabledInputValorUnitarioDetalleConcepto = true;
+            }
+        } else{
+
+        }
+
+
     }
 
     private void initComercioExterior() {
@@ -604,6 +646,7 @@ public class ManagedBeanFacturacionManual implements Serializable {
         singleDomicilioDestinatarioData = new CustomDomicilioData();
         singleComplementoComercioExteriorData = new CustomComplementoComercioExteriorMetadata();
     }
+
 
     private void initAdenda() {
         usarComplementoAdendaVW = false;
@@ -701,6 +744,7 @@ public class ManagedBeanFacturacionManual implements Serializable {
      * cuadro de dialogo
      */
     public void registrarAgregarNuevoConcepto() {
+        handleChangeTipoCambioUSD();
         boolean resOperation = false;//calback param
         boolean continuar = true;
         MConceptosFacturacion tmp;
@@ -874,6 +918,7 @@ public class ManagedBeanFacturacionManual implements Serializable {
                 if (cptoTmpShldAdd) {
                     flgButtonEliminarDisabled = false;
                     conceptosAsignados.add(tempConcepto);
+                    handleChangeTipoCambioUSD();
                     if (usarComplementoComercioExterior) {
                         transformarConceptosAMercancias();
                     }
@@ -882,7 +927,7 @@ public class ManagedBeanFacturacionManual implements Serializable {
 
                 flgButtonEliminarDisabled = false;
                 this.ejecutaOperaciones();
-                this.ejecutaOperacionComercioExterior();
+               // this.ejecutaOperacionComercioExterior();
                 reiniciarDatosConcepto();
                 FacesContext.getCurrentInstance().addMessage("frmManual", new FacesMessage(FacesMessage.SEVERITY_INFO, "Cambios aplicados.", "Info"));
                 RequestContext.getCurrentInstance().addCallbackParam("succes", true);//Enviamos un parametro al view
@@ -1495,16 +1540,20 @@ public class ManagedBeanFacturacionManual implements Serializable {
 
     public void handleOnTipoDocChange() {
         // TODO: 17/01/2018 MANEJAR COMERCIO EXTERIOR SOLO PARA INGRESO
-        disponibleComercioExterior = false;
+        //disponibleComercioExterior = false;
         condiciones = "";
-        formaPago = "Pago en una sola exhibición";
-        metodoPago = "NO IDENTIFICADO";
+        //formaPago = "Pago en una sola exhibición";
+        //metodoPago = "NO IDENTIFICADO";
+
+        formaPago = "-1";
+        metodoPago = "-1";
         disabledInputCondicionesDePago = false;
         disabledInputFormaDePago = false;
         disabledInputMetodoDePago = false;
         disabledFieldSetImpuestosDetalleConcepto = false;
         disabledInputDescuentoDetalleConcepto = false;
         disabledInputValorUnitarioDetalleConcepto = false;
+
         tipoDocObjFact = LambdasHelper.findTipoDocById(tiposDocs, idTipoDoc);
         if (tipoDocObjFact != null) {
             if (tipoDocObjFact.getcTipoComprobanteByTdocId().getValoMaximo() != null
@@ -1538,23 +1587,25 @@ public class ManagedBeanFacturacionManual implements Serializable {
                                         "No es necesario que usted los llene",
                                 ""));
                 condiciones = "";
-                formaPago = "Pago en una sola exhibición";
-                metodoPago = "NO IDENTIFICADO";
-                /*disabledInputCondicionesDePago = true;
+               // formaPago = "Pago en una sola exhibición";
+               // metodoPago = "NO IDENTIFICADO";
+                formaPago = "-1";
+                metodoPago = "-1";
+                disabledInputCondicionesDePago = true;
                 disabledInputFormaDePago = true;
                 disabledInputMetodoDePago = true;
                 disabledFieldSetImpuestosDetalleConcepto = true;
                 disabledInputDescuentoDetalleConcepto = true;
-                disabledInputValorUnitarioDetalleConcepto = true;*/
+                disabledInputValorUnitarioDetalleConcepto = true;
                 //disponibleComercioExterior = false;
-                flagsEntradasComercioExterior.changeRequiredInputs(TRASLADO_CLAVE);
-            } else if (tipoDocObjFact.getcTipoComprobanteByTdocId().getClave().equalsIgnoreCase(FACTURA_CLAVE)) {
+                //flagsEntradasComercioExterior.changeRequiredInputs(TRASLADO_CLAVE);
+            } /*else if (tipoDocObjFact.getcTipoComprobanteByTdocId().getClave().equalsIgnoreCase(FACTURA_CLAVE)) {
                 disponibleComercioExterior = true;
                 flagsEntradasComercioExterior.changeRequiredInputs(FACTURA_CLAVE);
             } else if (tipoDocObjFact.getcTipoComprobanteByTdocId().getClave().equalsIgnoreCase(NOTA_CREDITO_CLAVE)) {
                 disponibleComercioExterior = false;
                 flagsEntradasComercioExterior.changeRequiredInputs(NOTA_CREDITO_CLAVE);
-            }
+            }*/
             this.ejecutaOperaciones();
         }
     }
@@ -2185,28 +2236,32 @@ public class ManagedBeanFacturacionManual implements Serializable {
             }
             int res = maxValueImporte.compareTo(new BigDecimal(tmpAmm));
             if (res == -1) {
-                if(usarComplementoComercioExterior && tipoDocObjFact.getcTipoComprobanteByTdocId().getClave().equalsIgnoreCase("T")){
+                codConfRequerido = true;
+               /* if(usarComplementoComercioExterior && tipoDocObjFact.getcTipoComprobanteByTdocId().getClave().equalsIgnoreCase("T")){
                     codConfRequerido=false;
                     System.out.println("omitir codigo");
                 }else{
                     codConfRequerido = true;
                     System.out.println("No omitir codigo");
-                }
+                }*/
 
                 if (((String) (inputCodigoConfirmacion.getValue())).length() != LENGTHCODCONF) {
 
-                    if(usarComplementoComercioExterior && tipoDocObjFact.getcTipoComprobanteByTdocId().getClave().equalsIgnoreCase("T")){
+                    inputCodigoConfirmacion.setValid(false);
+
+                  /*  if(usarComplementoComercioExterior && tipoDocObjFact.getcTipoComprobanteByTdocId().getClave().equalsIgnoreCase("T")){
                         inputCodigoConfirmacion.setValid(true);
                         System.out.println("omitir codigo");
 
                     }else{
                         inputCodigoConfirmacion.setValid(false);
                         System.out.println("No omitir codigo");
-                    }
+                    }*/
 
                 }
                 FacesContext.getCurrentInstance().addMessage("frmManual", new FacesMessage(FacesMessage.SEVERITY_WARN,
                         "Debe proporcionar el codigo de confirmación ya que el importe de la factura sobrepasa los limites permitidos.", "Info"));
+
             }
         }
     }
@@ -2225,7 +2280,7 @@ public class ManagedBeanFacturacionManual implements Serializable {
                         FacesContext.getCurrentInstance().addMessage("frmManual", new FacesMessage(FacesMessage.SEVERITY_INFO,
                                 "El tipo de cambio esta fuera del rango permitido, debe ingresar el codigo de confirmación o modificar el valor del tipo de cambio. ", "Info"));
 
-                        if(usarComplementoComercioExterior && tipoDocObjFact.getcTipoComprobanteByTdocId().getClave().equalsIgnoreCase("T")){
+                        /*if(usarComplementoComercioExterior && tipoDocObjFact.getcTipoComprobanteByTdocId().getClave().equalsIgnoreCase("T")){
                             codConfRequerido=false;
                             inputCodigoConfirmacion.setValid(true);
                             inputTipoCambio.setValid(true);
@@ -2234,15 +2289,20 @@ public class ManagedBeanFacturacionManual implements Serializable {
                             codConfRequerido = true;
                             inputTipoCambio.setValid(false);
                             System.out.println("no omitir codigo");
-                        }
+                        }*/
+
+                        inputTipoCambio.setValid(false);
+                        codConfRequerido = true;
                         if (((String) (inputCodigoConfirmacion.getValue())).length() != LENGTHCODCONF) {
-                            if(usarComplementoComercioExterior && tipoDocObjFact.getcTipoComprobanteByTdocId().getClave().equalsIgnoreCase("T")){
+                            /*if(usarComplementoComercioExterior && tipoDocObjFact.getcTipoComprobanteByTdocId().getClave().equalsIgnoreCase("T")){
                                 inputCodigoConfirmacion.setValid(true);
                                 System.out.println("omitir codigo");
                             }else{
                                 inputCodigoConfirmacion.setValid(false);
                                 System.out.println("No omitir codigo");
-                            }
+                            }*/
+
+                            inputCodigoConfirmacion.setValid(false);
 
                         }
                     }
@@ -2427,7 +2487,7 @@ public class ManagedBeanFacturacionManual implements Serializable {
         calculaSubtotalAndDescuento();
         calculaTrasladosYRetencionesTotales();
         calculaTotal();
-        validarMaxTotal();
+        //validarMaxTotal();
 
     }
 
@@ -2439,14 +2499,16 @@ public class ManagedBeanFacturacionManual implements Serializable {
         this.subTotal = 0.0;
         montoDescuento = 0.0;
         for (ConceptoFactura tmp : this.conceptosAsignados) {
-            this.subTotal += tmp.getTotalFormatted();
+           // this.subTotal += tmp.getTotalFormatted();
             if (idTipoDoc > 0) {
                 if (tipoDocObjFact.getcTipoComprobanteByTdocId().getClave().equalsIgnoreCase("T")) {
                     //Operaciones espaciales para  los docs de traslados
                 } else if (tipoDocObjFact.getcTipoComprobanteByTdocId().getClave().equalsIgnoreCase("I")) {
                     montoDescuento += tmp.getDescuento();
+                    this.subTotal += tmp.getTotalFormatted();
                 } else if (tipoDocObjFact.getcTipoComprobanteByTdocId().getClave().equalsIgnoreCase("E")) {
                     montoDescuento += tmp.getDescuento();
+                    this.subTotal += tmp.getTotalFormatted();
                 }
             }
         }
