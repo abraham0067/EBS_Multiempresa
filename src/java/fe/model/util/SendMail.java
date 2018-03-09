@@ -30,6 +30,7 @@ public class SendMail implements Serializable {
 
     private Properties props = new Properties();
     private javax.mail.Session session;
+
     private String servidorSMTP = "smtp.sendgrid.net";
     private String puerto = "25";
     private String usuario = "buzon@ebs.com.mx";
@@ -86,10 +87,17 @@ public class SendMail implements Serializable {
             System.out.println("mail.smtp.host:" + servidorSMTP);
             System.out.println("mail.smtp.port" + puerto);
             System.out.println("mail.smtp.user" + usuario);
+
             props.setProperty("mail.smtp.host", servidorSMTP);
+            props.setProperty("mail.smtp.starttls.enable", "true");
+            // Puerto de gmail para envio de correos
             props.setProperty("mail.smtp.port", puerto);
+            // Nombre del usuario
             props.setProperty("mail.smtp.user", usuario);
+            // Si requiere o no usuario y password para conectarse.
             props.setProperty("mail.smtp.auth", "true");
+
+
             SMTPAuthenticator smtpauthenticator = new SMTPAuthenticator();
             session = javax.mail.Session.getDefaultInstance(props, smtpauthenticator);
             session.setDebug(false);
@@ -105,7 +113,10 @@ public class SendMail implements Serializable {
             mimemessage.setSubject(asunto);
             mimemessage.setSentDate(new Date());
             mimemessage.setText(mensaje);
-            Transport.send(mimemessage);
+
+            Transport transport = session.getTransport("smtp");
+            transport.send(mimemessage);
+            transport.close();
 
             resp = true;
         } catch (MessagingException me) {
