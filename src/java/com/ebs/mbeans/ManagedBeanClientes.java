@@ -32,8 +32,6 @@ public class ManagedBeanClientes implements Serializable {
     private FacesContext facesContext;
     private FacesMessage facesMessage;
     private String appContext;
-
-
     private int idEmpresaSelect;
     private String tipoBusqueda;
     private String paramBusqueda;
@@ -46,7 +44,6 @@ public class ManagedBeanClientes implements Serializable {
     //DAOS
     private EmpresaDAO daoEmpresa;
     private ReceptorDAO daoReceptor;
-    private ClienteDAO daoCliente;
     private DireccionDAO daoDireccion;
     private LogAccesoDAO daoLog;
 
@@ -67,7 +64,6 @@ public class ManagedBeanClientes implements Serializable {
         daoLog = new LogAccesoDAO();
         daoDireccion = new DireccionDAO();
         daoReceptor = new ReceptorDAO();
-        daoCliente = new ClienteDAO();
         daoEmpresa = new EmpresaDAO();
         paramBusqueda = "";
         tipoBusqueda = "Ninguno";
@@ -75,11 +71,7 @@ public class ManagedBeanClientes implements Serializable {
     }
 
     public void buscarClientes() {
-       // if(daoReceptor.BusquedaRFC().equals("BMS030731PC4"))
-         //   clientes = daoCliente.BusquedaParam(mAcceso.getId(), idEmpresaSelect, tipoBusqueda, paramBusqueda);
-        //else
-          //  receptores = daoReceptor.BusquedaParam(mAcceso.getId(), idEmpresaSelect, tipoBusqueda, paramBusqueda);
-
+        receptores = daoReceptor.BusquedaParam(mAcceso.getId(), idEmpresaSelect, tipoBusqueda, paramBusqueda);
         empresas = daoEmpresa.ListaEmpresasPadres(mAcceso.getId());
     }
 
@@ -313,8 +305,4 @@ public class ManagedBeanClientes implements Serializable {
     }
 
 
-
-    public List<MCliente> getClientes() { return clientes;}
-
-    public void setClientes(List<MCliente> clientes) { this.clientes = clientes; }
 }

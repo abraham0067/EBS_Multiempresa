@@ -36,6 +36,7 @@ public class SendMail implements Serializable {
     private String usuario = "buzon@ebs.com.mx";
     private String password = "Buz0n12ebsebs";
 
+
     private HibernateUtilApl hibManagerRO;//Read only interface
 
 
