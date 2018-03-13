@@ -25,8 +25,6 @@ import fe.model.dao.EmpresaDAO;
 import fe.model.dao.MaterialDAO;
 import fe.model.util.CrearZIPFacturas;
 import fe.model.util.Material;
-import fe.ws.CancelarCFDI_PortType;
-import fe.ws.CancelarCFDI_ServiceLocator;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -59,6 +57,7 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.primefaces.component.fileupload.FileUpload;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.LazyDataModel;
+import sun.util.resources.cldr.mg.LocaleNames_mg;
 
 public class ManagedBeanConsultaCFDI implements Serializable {
 
@@ -172,7 +171,9 @@ public class ManagedBeanConsultaCFDI implements Serializable {
     private boolean debug = true;
 
     private final String pswCancelacion = "DqOKzq1gFHIPNtYY0Z1Vr79uIyA=";
-
+    //SUMA HASTA CANCELACION
+    private final String numPerfilCancelacion = "134217728";
+    private boolean cancelar = false;
     /**
      * Creates a new instance of ManagedBeanConsultaCFDI
      */
@@ -233,6 +234,11 @@ public class ManagedBeanConsultaCFDI implements Serializable {
             lista.add(emp.getId());
         });
         idsEmpresasAsignadas = lista.toArray(new Integer[lista.size()]);
+
+        //BUSCA EN LOS PERFILES SI EL USUARIO PUEDE CANCELAR ARCHIVOS
+        //this.cancelar = ((activeUser.getPerfil().getPerfil() & Long.parseLong(numPerfilCancelacion) ) == Long.parseLong(numPerfilCancelacion) ) ? true : false;
+        this.cancelar = true;
+
     }
 
     /**
@@ -1176,5 +1182,11 @@ public class ManagedBeanConsultaCFDI implements Serializable {
         this.faceContext = faceContext;
     }
 
+    public boolean isCancelar() {
+        return cancelar;
+    }
 
+    public void setCancelar(boolean cancelar) {
+        this.cancelar = cancelar;
+    }
 }

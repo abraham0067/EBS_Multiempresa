@@ -112,6 +112,11 @@ public class ManagedBeanDynamicMenu implements Serializable {
         current.setLabel(subm.getTitle());
         //TODO  AGREGAR LOS ICONOS Y SUBMENUS BASADOS EN EL VALOR DE LA POSICION DE LA ENTRADA, ACTUALMENTE DEPENDE DEL ORDEN DE CODIGO
         for (com.ebs.menu.MenuItem item : subm.getItems()) {
+            //System.out.println("item.getTitle() = " + item.getTitle());
+            //SI ES CANCELACION OMITE PEGAR EL MENU YA QUE ES UN BOTON
+            if(item.getTitle().equals("Cancelacion"))
+                continue;
+
             DefaultMenuItem it = new DefaultMenuItem(item.getTitle());
             it.setUrl(item.getUrl());
             if (item.getPerfilValue() == null) {

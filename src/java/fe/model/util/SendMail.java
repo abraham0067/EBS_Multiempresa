@@ -31,20 +31,20 @@ public class SendMail implements Serializable {
     private Properties props = new Properties();
     private javax.mail.Session session;
 
-    private String servidorSMTP = "smtp.sendgrid.net";
+    private String servidorSMTP;
+    private String puerto;
+    private String usuario;
+    private String password;
+
+    /*private String servidorSMTP = "smtp.sendgrid.net";
     private String puerto = "25";
     private String usuario = "buzon@ebs.com.mx";
-    private String password = "Buz0n12ebsebs";
+    private String password = "Buz0n12ebsebs"; */
 
 
     private HibernateUtilApl hibManagerRO;//Read only interface
 
 
-    public static void main(String[] args) {
-        String correo[] = {"agarcia@ebs.com.mx"};
-
-        new SendMail("s").sendEmail("prueba", "PRUEBA ENVIO CORREO",correo);
-    }
 
     public SendMail(String c){}
 
@@ -85,9 +85,9 @@ public class SendMail implements Serializable {
         boolean resp = false;
         try {
             System.out.println("SENDING MAIL USING:");
-            System.out.println("mail.smtp.host:" + servidorSMTP);
-            System.out.println("mail.smtp.port" + puerto);
-            System.out.println("mail.smtp.user" + usuario);
+            System.out.println("mail.smtp.host: " + servidorSMTP);
+            System.out.println("mail.smtp.port: " + puerto);
+            System.out.println("mail.smtp.user_ " + usuario);
 
             props.setProperty("mail.smtp.host", servidorSMTP);
             props.setProperty("mail.smtp.starttls.enable", "true");

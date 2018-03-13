@@ -137,8 +137,10 @@
                     -->
                     <p:commandButton value="Material" onclick="PF('confirmMaterial').show()" rendered="#{managedBeanConsultaCFDI.esClienteEmpresa eq false}" >
                     </p:commandButton>
-                    <p:commandButton value="Cancelar CFDI" onclick="PF('confirmCancel').show()" rendered="#{managedBeanConsultaCFDI.esClienteEmpresa eq false}" >
-                    </p:commandButton>
+                    <c:if test="#{managedBeanConsultaCFDI.cancelar eq true }">
+                        <p:commandButton value="Cancelar CFDI" onclick="PF('confirmCancel').show()" rendered="#{managedBeanConsultaCFDI.esClienteEmpresa eq false}" ></p:commandButton>
+                    </c:if>
+
                 </f:facet>
             </p:panelGrid>
             <pe:blockUI widgetVar="blockUIWidget" target="formContent:registrosCFDI" centerY="false">
