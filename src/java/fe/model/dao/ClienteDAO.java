@@ -27,6 +27,11 @@ public class ClienteDAO implements Serializable {
     public boolean GuardarActualizar(MCliente cliente) {
         boolean val = false;
         try {
+            cliente.setEmail(cliente.getEmail().trim());
+            cliente.setRazonSocial(cliente.getRazonSocial().trim());
+            cliente.setNoCliente(cliente.getNoCliente().trim());
+            cliente.setRfc(cliente.getRfc().trim());
+
             hibManagerSU.initTransaction();
             hibManagerSU.getSession().saveOrUpdate(cliente);
             hibManagerSU.getTransaction().commit();

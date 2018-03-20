@@ -18,11 +18,7 @@ import fe.db.MConfig;
 import fe.db.MEmpresa;
 import fe.db.MOtro;
 import fe.db.MapearCfdArchi;
-import fe.model.dao.ArchivosCfdDAO;
-import fe.model.dao.CfdiDAO;
-import fe.model.dao.ConfigDAO;
-import fe.model.dao.EmpresaDAO;
-import fe.model.dao.MaterialDAO;
+import fe.model.dao.*;
 import fe.model.util.CrearZIPFacturas;
 import fe.model.util.Material;
 
@@ -174,6 +170,9 @@ public class ManagedBeanConsultaCFDI implements Serializable {
     //SUMA HASTA CANCELACION
     private final String numPerfilCancelacion = "134217728";
     private boolean cancelar = false;
+
+    private LogAccesoDAO daoLog;
+
     /**
      * Creates a new instance of ManagedBeanConsultaCFDI
      */
@@ -211,6 +210,8 @@ public class ManagedBeanConsultaCFDI implements Serializable {
         serie = "";
         razonSocial = "";
         numPolizaSeguro = "";
+
+        daoLog = new LogAccesoDAO();
         //cargamos los cfdi por default
         cargarEmpresasUsuario();
         cargarCFDI();
@@ -236,8 +237,7 @@ public class ManagedBeanConsultaCFDI implements Serializable {
         idsEmpresasAsignadas = lista.toArray(new Integer[lista.size()]);
 
         //BUSCA EN LOS PERFILES SI EL USUARIO PUEDE CANCELAR ARCHIVOS
-        //this.cancelar = ((activeUser.getPerfil().getPerfil() & Long.parseLong(numPerfilCancelacion) ) == Long.parseLong(numPerfilCancelacion) ) ? true : false;
-        this.cancelar = true;
+        this.cancelar = ((activeUser.getPerfil().getPerfil() & Long.parseLong(numPerfilCancelacion) ) == Long.parseLong(numPerfilCancelacion) ) ? true : false;
 
     }
 
@@ -685,6 +685,9 @@ public class ManagedBeanConsultaCFDI implements Serializable {
                             //System.out.println("sAcuse = " + sAcuse);
                             if (sAcuse.contains("<Error") || sAcuse.trim().length() <= 70) {
                                 System.out.println("Factura no cancelada");
+
+                                daoLog.guardaRegistro(activeUser,"El usuario " + activeUser.getUsuario() +" intento cancelar la factura con UUID: " + cfd.getUuid());
+
                                 acuse = null;
                             }
 
@@ -702,6 +705,9 @@ public class ManagedBeanConsultaCFDI implements Serializable {
                                         } else {
                                             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "No fue posible recuperar el error.", "Error"));
                                         }
+
+                                        if(EstatusUUID.equals("201") || EstatusUUID.equals("202"))
+                                            daoLog.guardaRegistro(activeUser,"El usuario " + activeUser.getUsuario() +" cancelo la factura con UUID: " + cfd.getUuid());
                                     }
                                 } else {
                                     inicio = Statusacuse.indexOf("CodEstatus=");

@@ -221,6 +221,7 @@ public class ManagedBeanPerfiles implements Serializable {
                         values[i] = ((perfil.getPerfil() & tmp2.getPerfilValue()) == tmp2.getPerfilValue())? true:false;
                         is3.setValue(values[i]);//Para prueba
 
+
                         pg.getChildren().add(ol1);
                         pg.getChildren().add(ol2);
                         pg.getChildren().add(is3);

@@ -45,9 +45,6 @@ public class SendMail implements Serializable {
     private HibernateUtilApl hibManagerRO;//Read only interface
 
 
-
-    public SendMail(String c){}
-
     @SuppressWarnings("unchecked")
     public SendMail() {
         ArrayList<MConfig> listaConfig = null;
@@ -87,7 +84,7 @@ public class SendMail implements Serializable {
             System.out.println("SENDING MAIL USING:");
             System.out.println("mail.smtp.host: " + servidorSMTP);
             System.out.println("mail.smtp.port: " + puerto);
-            System.out.println("mail.smtp.user_ " + usuario);
+            System.out.println("mail.smtp.user: " + usuario);
 
             props.setProperty("mail.smtp.host", servidorSMTP);
             props.setProperty("mail.smtp.starttls.enable", "true");

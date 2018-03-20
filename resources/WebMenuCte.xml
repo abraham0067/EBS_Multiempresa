@@ -4,7 +4,7 @@
         <menuEntry name="consultaCFD" title="Facturas CFD" url="/facturas/facturasCFD.xhtml" perfil="1048576" icon="no" nivel="3" position="1" />
         <menuEntry name="consultaFA" title="Facturas CFDI" url="/facturas/facturasCFDI.xhtml" perfil="2" icon="no" nivel="3" position="2" />
         <menuEntry name="consultaRetenciones" title="Consulta de Retenciones" url="/facturas/retenciones.xhtml" perfil="16777216" icon="no" nivel="3" position="3" />
-        <menuEntry name="generaRetenciones" title="Genera Retenciones" url="/facturas/retenciones.xhtml" perfil="33554432" icon="no" nivel="3" position="4" />
+        <menuEntry name="genersraRetenciones" title="Genera Retenciones" url="/facturas/retenciones.xhtml" perfil="33554432" icon="no" nivel="3" position="4" />
         <menuEntry name="Manual"  title="Facturación Manual"  url="/facturas/facturasManual.xhtml"  perfil="8192" icon="no" nivel="3" position="5" />
         <menuEntry name="complementoPago"  title="Complemento de pago manual"  url="/facturas/factComplementoPago.xhtml"  perfil="2097152" icon="no" nivel="3" position="6" />
         <menuEntry name="consultaFP" title="Facturas Proforma" url="/facturas/proforma/consulta.xhtml" perfil="4194304" icon="no" nivel="3" position="7" />
