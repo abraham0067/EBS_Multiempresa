@@ -686,7 +686,7 @@ public class ManagedBeanConsultaCFDI implements Serializable {
                             if (sAcuse.contains("<Error") || sAcuse.trim().length() <= 70) {
                                 System.out.println("Factura no cancelada");
 
-                                daoLog.guardaRegistro(activeUser,"El usuario " + activeUser.getUsuario() +" intento cancelar la factura con UUID: " + cfd.getUuid());
+                                daoLog.guardaRegistro(activeUser,"El usuario '" + activeUser.getUsuario() +"' intento cancelar la factura con UUID: " + cfd.getUuid());
 
                                 acuse = null;
                             }
@@ -707,7 +707,7 @@ public class ManagedBeanConsultaCFDI implements Serializable {
                                         }
 
                                         if(EstatusUUID.equals("201") || EstatusUUID.equals("202"))
-                                            daoLog.guardaRegistro(activeUser,"El usuario " + activeUser.getUsuario() +" cancelo la factura con UUID: " + cfd.getUuid());
+                                            daoLog.guardaRegistro(activeUser,"El usuario '" + activeUser.getUsuario() +"' cancelo la factura con UUID: " + cfd.getUuid());
                                     }
                                 } else {
                                     inicio = Statusacuse.indexOf("CodEstatus=");
