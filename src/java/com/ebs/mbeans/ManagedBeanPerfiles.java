@@ -218,7 +218,14 @@ public class ManagedBeanPerfiles implements Serializable {
                         is3.setValueExpression("value", createValueExpression("#{managedBeanPerfiles.values['" + i + "']}", String.class));
                         is3.setOffLabel("No");
                         is3.setOnLabel("Si");
-                        values[i] = ((perfil.getPerfil() & tmp2.getPerfilValue()) == tmp2.getPerfilValue())? true:false;
+                        //SE AGREGA EL TRY PORQUE ALGUNOS PERFILES NO CARGAN CORRECTAMENTE
+                        try {
+                            values[i] = ((perfil.getPerfil() & tmp2.getPerfilValue()) == tmp2.getPerfilValue())? true:false;
+                        }catch(Exception e){
+                            //SI NO CARGA LOS DATOS CORRECTAMENTE, SE AGREGA UN FALSO
+                            values[i] = false;
+                        }
+
                         is3.setValue(values[i]);//Para prueba
 
 

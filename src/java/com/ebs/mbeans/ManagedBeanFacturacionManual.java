@@ -1871,7 +1871,7 @@ public class ManagedBeanFacturacionManual implements Serializable {
             MEmpresaMTimbre m = daoEmpTimp.ObtenerClaveWSEmpresaTimbre(idEmpresa);
             if (m != null) {
                 respuestaServicio = new ClienteFacturaManual().exeGenFactura(getComprobanteData(), m.getClaveWS(), ambiente, DEBUG);
-                PintarLog.println("respuestaServicio:" + respuestaServicio);
+                //PintarLog.println("respuestaServicio:" + respuestaServicio);
                 if (checkRespuestaServicio(respuestaServicio)) {
                     this.reset();
                     FacesContext.getCurrentInstance().addMessage("frmManual", new FacesMessage(FacesMessage.SEVERITY_INFO, "La factura se genero correctamente.", "Error"));

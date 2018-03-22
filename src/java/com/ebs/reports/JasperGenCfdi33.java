@@ -47,7 +47,7 @@ public class JasperGenCfdi33 {
         SAXBuilder sax = new SAXBuilder();
         Document doc = null;
         try {
-            System.out.println(new String(xml));
+            //System.out.println(new String(xml));
             doc = sax.build(new ByteArrayInputStream(xml));
         } catch (JDOMException e) {
             e.printStackTrace(System.out);
