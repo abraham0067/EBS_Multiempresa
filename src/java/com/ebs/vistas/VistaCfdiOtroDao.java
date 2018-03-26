@@ -66,7 +66,7 @@ public class VistaCfdiOtroDao {
             }
 
             if (numPolizaSeguro != null && !numPolizaSeguro.isEmpty()) {
-                cr.add(Restrictions.eq("noPolizaSeguro", numPolizaSeguro.trim()));
+                cr.add(Restrictions.ilike("noPolizaSeguro", numPolizaSeguro.trim(), MatchMode.ANYWHERE ));
             }
             if (folioErp != null && !folioErp.isEmpty()) {
                 String[] folios = folioErp.trim().split(",");
@@ -80,7 +80,8 @@ public class VistaCfdiOtroDao {
                 cr.add(Restrictions.in("serie", series));
             }
             if (noCliente != null && !noCliente.isEmpty()) {
-                cr.add(Restrictions.eq("noCliente", noCliente.trim()));
+                //System.out.println("noCliente1 = " + noCliente);
+                cr.add(Restrictions.ilike("noCliente", "%"+noCliente.trim()+"%",  MatchMode.ANYWHERE ));
             }
             if (razonSocial != null && !razonSocial.isEmpty()) {
                 cr.add(Restrictions.like("razonSocial", "%"+razonSocial.trim()+"%", MatchMode.ANYWHERE));
@@ -182,15 +183,16 @@ public class VistaCfdiOtroDao {
                     String[] series = serie.trim().split(",");
                     cr.add(Restrictions.in("serie", series));
                 }
+
                 if (noCliente != null && !noCliente.isEmpty()) {
-                    System.out.println("noCliente = " + noCliente);
-                    cr.add(Restrictions.eq("noCliente", noCliente.trim()));
+                    //System.out.println("noCliente = " + noCliente);
+                    cr.add(Restrictions.like("noCliente", "%"+noCliente.trim()+"%",  MatchMode.ANYWHERE ));
                 }
                 if (razonSocial != null && !razonSocial.isEmpty()) {
                     cr.add(Restrictions.like("razonSocial", razonSocial.trim(),MatchMode.ANYWHERE));
                 }
                 if (numPolizaSeguro != null && !numPolizaSeguro.isEmpty()) {
-                    cr.add(Restrictions.eq("otro.noPolizaSeguro", numPolizaSeguro.trim()));
+                    cr.add(Restrictions.ilike("noPolizaSeguro" , numPolizaSeguro.trim(), MatchMode.ANYWHERE ));
                 }
 
                 if (fechaDesde != null) {
