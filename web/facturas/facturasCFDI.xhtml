@@ -25,7 +25,7 @@
         <h:form id="formConsultasCFD" enctype="multipart/form-data" >
             <p:growl id="messages" showDetail="false" sticky="false"  life="16000" autoUpdate="true" />
             <p:panelGrid columns="8"
-                         columnClasses="ui-grid-col-1, ui-grid-col-1, ui-grid-col-3, ui-grid-col-1, ui-grid-col-1, ui-grid-col-3, ui-grid-col-1, ui-grid-col-3" 
+                         columnClasses="ui-grid-col-1, ui-grid-col-1, ui-grid-col-3, ui-grid-col-1, ui-grid-col-1, ui-grid-col-3, ui-grid-col-1, ui-grid-col-3"
                          layout="grid">
 
 
@@ -78,7 +78,6 @@
                     <p:ajax event="change" process="@parent"/>
                 </p:selectOneMenu>
 
-
                 <p:outputLabel/>
                 <p:outputLabel  value="Razón Social:"/>
                 <p:inputText id="itRazonSocial" value="#{managedBeanConsultaCFDI.razonSocial}" />
@@ -114,13 +113,16 @@
                     <p:outputLabel />
                     <p:outputLabel />
                 </c:if>
-
+                <p:outputLabel/>
+                <p:outputLabel for="uuid" value="UUID:"/>
+                <p:inputText id="uuid" value="#{managedBeanConsultaCFDI.UUID}" />
+                <p:outputLabel/>
 
 
                 <f:facet name="footer" >
                     <p:commandButton id="cbBuscar" value="Buscar" ajax="true" icon="fa fa-fw fa-search"
                                      actionListener="#{managedBeanConsultaCFDI.cargarCFDI()}" update="formContent:registrosCFDI, messages"
-                                     process="itNoCliente,itSerie,itRfcCliente,itFolioErp,itNumeroFactura,itRazonSocial,somEstatus,calDesde,calHasta,@this"
+                                     process="itNoCliente,itSerie,itRfcCliente,itFolioErp,itNumeroFactura,itRazonSocial,somEstatus,calDesde,calHasta,uuid, @this"
                                      onstart="PF('blockUIWidget').block()" oncomplete="PF('blockUIWidget').unblock()"/>
                     <p:commandButton id="cbClean" value="Limpiar" ajax="true"  actionListener="#{managedBeanConsultaCFDI.limpiarFiltros()}" 
                                      update="itNumPoliza,itNoCliente,itSerie,itRfcCliente,itFolioErp,itNumeroFactura,itRazonSocial,formContent:registrosCFDI, somEmpresas, somEstatus, calDesde, calHasta, messages"

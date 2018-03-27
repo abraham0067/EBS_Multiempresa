@@ -112,7 +112,11 @@ public class ManagedBeanConsultaCFDI implements Serializable {
 
     @Getter
     @Setter
-    private String   numPolizaSeguro;//Parametro de busqueda de bupa mexico
+    private String numPolizaSeguro;//Parametro de busqueda de bupa mexico
+
+    @Getter
+    @Setter
+    private String UUID;
 
 
     private String contentName;
@@ -191,6 +195,7 @@ public class ManagedBeanConsultaCFDI implements Serializable {
         razonSocial = "";
         numPolizaSeguro = "";
         esClienteEmpresa = false;
+        UUID = "";
     }
 
     @PostConstruct
@@ -210,7 +215,7 @@ public class ManagedBeanConsultaCFDI implements Serializable {
         serie = "";
         razonSocial = "";
         numPolizaSeguro = "";
-
+        UUID = "";
         daoLog = new LogAccesoDAO();
         //cargamos los cfdi por default
         cargarEmpresasUsuario();
@@ -224,7 +229,7 @@ public class ManagedBeanConsultaCFDI implements Serializable {
 
         noCliente = activeUser.getCliente();
         String tipoUser = activeUser.getPerfil().getTipoUser();
-        if(tipoUser.equalsIgnoreCase("CLIENTE")  &&   (noCliente != null && !noCliente.isEmpty())){
+        if (tipoUser.equalsIgnoreCase("CLIENTE") && (noCliente != null && !noCliente.isEmpty())) {
             esClienteEmpresa = true;
         } else {
             esClienteEmpresa = false;
@@ -237,7 +242,7 @@ public class ManagedBeanConsultaCFDI implements Serializable {
         idsEmpresasAsignadas = lista.toArray(new Integer[lista.size()]);
 
         //BUSCA EN LOS PERFILES SI EL USUARIO PUEDE CANCELAR ARCHIVOS
-        this.cancelar = ((activeUser.getPerfil().getPerfil() & Long.parseLong(numPerfilCancelacion) ) == Long.parseLong(numPerfilCancelacion) ) ? true : false;
+        this.cancelar = ((activeUser.getPerfil().getPerfil() & Long.parseLong(numPerfilCancelacion)) == Long.parseLong(numPerfilCancelacion)) ? true : false;
 
     }
 
@@ -270,12 +275,14 @@ public class ManagedBeanConsultaCFDI implements Serializable {
                         datDesde,
                         datHasta,
                         activeUser.getCliente(),
-                        numPolizaSeguro);
+                        numPolizaSeguro,
+                        UUID);
 
             }
         } else//otro usuario
             if (validacionOtro()) {
                 System.out.println("Buscando cliente EBS");
+                System.out.println("UUID: " + UUID);
                 listMapMCA = new LazyCfdiDataModel(
                         esClienteEmpresa,
                         activeUser.getId(),
@@ -290,7 +297,8 @@ public class ManagedBeanConsultaCFDI implements Serializable {
                         datHasta,
                         activeUser.getCliente(),
                         strEstatus,
-                        numPolizaSeguro);
+                        numPolizaSeguro,
+                        UUID);
             }
     }
 
@@ -573,7 +581,7 @@ public class ManagedBeanConsultaCFDI implements Serializable {
                 }
             }
         }
-        for (Integer tmpId: selectedCFDSIds) {
+        for (Integer tmpId : selectedCFDSIds) {
             MCfd tmp = daoCFDI.BuscarId(tmpId);
             canCancel = true;
             MOtro otroTemp = daoCFDI.Otro(tmp.getId());
@@ -606,7 +614,7 @@ public class ManagedBeanConsultaCFDI implements Serializable {
                             port = serviceLocator.getCancelarCFDIPort();*/
                             config = DAOCong.BuscarConfigDatoClasificacion("AMBIENTE", "SERVIDOR");
                             byte[] acuse = null;
-                            String folio2 =cfd.getFolioErp2();
+                            String folio2 = cfd.getFolioErp2();
                             String rfcEmpresa = daoEmp.getRfcEmpresaById(cfd.getIdEmpresa());
                             System.out.println("-----CANCELACION DESDE EL PORTAL DETECTADA------");
                             System.out.println("rfcEmpresa: " + rfcEmpresa);
@@ -618,13 +626,13 @@ public class ManagedBeanConsultaCFDI implements Serializable {
                                     CancelaCFDITest cancela = new CancelaCFDITest();
 
                                     //CANCELA FACTURAS CON UUID´S ANTERIORES
-                                    if(cfd.getUuid().startsWith("PRUEBA")){
-                                        if(folio2 != null && !folio2.isEmpty())
+                                    if (cfd.getUuid().startsWith("PRUEBA")) {
+                                        if (folio2 != null && !folio2.isEmpty())
                                             acuse = cancela.cancelaTestFolioErp2(rfcEmpresa, cfd.getSerieErp(), cfd.getFolioErp(), folio2, pswCancelacion);
                                         else
                                             acuse = cancela.cancelaTest(rfcEmpresa, cfd.getSerieErp(), cfd.getFolioErp(), pswCancelacion);
-                                    }else
-                                        acuse = cancela.cancelaTestUuid(rfcEmpresa, cfd.getUuid(), pswCancelacion );
+                                    } else
+                                        acuse = cancela.cancelaTestUuid(rfcEmpresa, cfd.getUuid(), pswCancelacion);
 
 
                                 } else {
@@ -632,7 +640,7 @@ public class ManagedBeanConsultaCFDI implements Serializable {
                                     acuse = new CancelaCFDI().cancelaUuid(rfcEmpresa, cfd.getUuid(), pswCancelacion);
                                 }
 
-                            } else{
+                            } else {
                                 System.out.print("Cancelando->Produccion");
                                 acuse = new CancelaCFDI().cancelaUuid(rfcEmpresa, cfd.getUuid(), pswCancelacion);
                             }
@@ -686,7 +694,7 @@ public class ManagedBeanConsultaCFDI implements Serializable {
                             if (sAcuse.contains("<Error") || sAcuse.trim().length() <= 70) {
                                 System.out.println("Factura no cancelada");
 
-                                daoLog.guardaRegistro(activeUser,"El usuario '" + activeUser.getUsuario() +"' intento cancelar la factura con UUID: " + cfd.getUuid());
+                                daoLog.guardaRegistro(activeUser, "El usuario '" + activeUser.getUsuario() + "' intento cancelar la factura con UUID: " + cfd.getUuid());
 
                                 acuse = null;
                             }
@@ -706,8 +714,8 @@ public class ManagedBeanConsultaCFDI implements Serializable {
                                             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "No fue posible recuperar el error.", "Error"));
                                         }
 
-                                        if(EstatusUUID.equals("201") || EstatusUUID.equals("202"))
-                                            daoLog.guardaRegistro(activeUser,"El usuario '" + activeUser.getUsuario() +"' cancelo la factura con UUID: " + cfd.getUuid());
+                                        if (EstatusUUID.equals("201") || EstatusUUID.equals("202"))
+                                            daoLog.guardaRegistro(activeUser, "El usuario '" + activeUser.getUsuario() + "' cancelo la factura con UUID: " + cfd.getUuid());
                                     }
                                 } else {
                                     inicio = Statusacuse.indexOf("CodEstatus=");
@@ -754,7 +762,7 @@ public class ManagedBeanConsultaCFDI implements Serializable {
         folioErp = "";
         rfc = "";
         serie = "";
-        if(!esClienteEmpresa) {
+        if (!esClienteEmpresa) {
             noCliente = "";
         }
         razonSocial = "";
@@ -1087,7 +1095,6 @@ public class ManagedBeanConsultaCFDI implements Serializable {
     public void setListEmpresas(List<MEmpresa> listEmpresas) {
         this.listEmpresas = listEmpresas;
     }
-
 
 
     /**

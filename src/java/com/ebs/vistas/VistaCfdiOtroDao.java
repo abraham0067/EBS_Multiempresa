@@ -28,14 +28,15 @@ public class VistaCfdiOtroDao {
 
 
     public List<VistaCfdiOtro> ListaParametros(int idUser, Integer[] idsEmpresas,
-                                      String numeroFactura,
-                                      String folioErp,
-                                      String rfc,
-                                      String serie,
-                                      String noCliente,
-                                      String razonSocial, Date fechaDesde, Date fechaHasta, int estatus,
-                                      String numPolizaSeguro,
-                                      int first, int pageSize) {
+                                               String numeroFactura,
+                                               String folioErp,
+                                               String rfc,
+                                               String serie,
+                                               String noCliente,
+                                               String razonSocial, Date fechaDesde, Date fechaHasta, int estatus,
+                                               String numPolizaSeguro,
+                                               String UUID,
+                                               int first, int pageSize) {
 
         List<VistaCfdiOtro> listacfd = null;
         try {
@@ -66,7 +67,7 @@ public class VistaCfdiOtroDao {
             }
 
             if (numPolizaSeguro != null && !numPolizaSeguro.isEmpty()) {
-                cr.add(Restrictions.ilike("noPolizaSeguro", numPolizaSeguro.trim(), MatchMode.ANYWHERE ));
+                cr.add(Restrictions.ilike("noPolizaSeguro", numPolizaSeguro.trim(), MatchMode.ANYWHERE));
             }
             if (folioErp != null && !folioErp.isEmpty()) {
                 String[] folios = folioErp.trim().split(",");
@@ -81,10 +82,14 @@ public class VistaCfdiOtroDao {
             }
             if (noCliente != null && !noCliente.isEmpty()) {
                 //System.out.println("noCliente1 = " + noCliente);
-                cr.add(Restrictions.ilike("noCliente", "%"+noCliente.trim()+"%",  MatchMode.ANYWHERE ));
+                cr.add(Restrictions.ilike("noCliente", "%" + noCliente.trim() + "%", MatchMode.ANYWHERE));
             }
             if (razonSocial != null && !razonSocial.isEmpty()) {
-                cr.add(Restrictions.like("razonSocial", "%"+razonSocial.trim()+"%", MatchMode.ANYWHERE));
+                cr.add(Restrictions.like("razonSocial", "%" + razonSocial.trim() + "%", MatchMode.ANYWHERE));
+            }
+            if (UUID != null && !UUID.isEmpty()) {
+                System.out.println(UUID.trim());
+                cr.add(Restrictions.like("uuid", "%" + UUID.trim() + "%", MatchMode.ANYWHERE));
             }
 
 
@@ -133,104 +138,107 @@ public class VistaCfdiOtroDao {
     }
 
 
-
-
-
     public List<VistaCfdiOtro> ListaParametrosClientes(int idUser, Integer[] idsEmpresas, String numeroFactura,
-                                              String folioErp,
-                                              String rfc,
-                                              String serie,
-                                              String noCliente,///Inmutable
-                                              String razonSocial,
-                                              Date fechaDesde, Date fechaHasta,
-                                              String numPolizaSeguro,
-                                              int first, int pageSize) {
+                                                       String folioErp,
+                                                       String rfc,
+                                                       String serie,
+                                                       String noCliente,///Inmutable
+                                                       String razonSocial,
+                                                       Date fechaDesde, Date fechaHasta,
+                                                       String numPolizaSeguro,
+                                                       String UUID,
+                                                       int first, int pageSize) {
         List<VistaCfdiOtro> listacfd = null;
         try {
 
-                hibManagerRO.initTransaction();
-                boolean estan = true;
-                Criteria cr = hibManagerRO.getSession().createCriteria(VistaCfdiOtro.class);
-                MAcceso usuario = (MAcceso) hibManagerRO.getSession().get(MAcceso.class, idUser);
-                String[] sector = null;
-                if (usuario.getSector() != null && !"".equals(usuario.getSector().trim())) {
-                    sector = usuario.getSector().split(",");
-                }
+            hibManagerRO.initTransaction();
+            boolean estan = true;
+            Criteria cr = hibManagerRO.getSession().createCriteria(VistaCfdiOtro.class);
+            MAcceso usuario = (MAcceso) hibManagerRO.getSession().get(MAcceso.class, idUser);
+            String[] sector = null;
+            if (usuario.getSector() != null && !"".equals(usuario.getSector().trim())) {
+                sector = usuario.getSector().split(",");
+            }
 
-                if (idsEmpresas == null || idsEmpresas.length == 0) {
-                    if (usuario.getEmpresas() != null && !usuario.getEmpresas().isEmpty()) {
-                        Integer[] idsemp = new Integer[usuario.getEmpresas().size()];
-                        for (int z = 0; z < usuario.getEmpresas().size(); z++) {
-                            idsemp[z] = usuario.getEmpresas().get(z).getId();
-                        }
-                        cr.add(Restrictions.in("idEmpresa", idsemp));
+            if (idsEmpresas == null || idsEmpresas.length == 0) {
+                if (usuario.getEmpresas() != null && !usuario.getEmpresas().isEmpty()) {
+                    Integer[] idsemp = new Integer[usuario.getEmpresas().size()];
+                    for (int z = 0; z < usuario.getEmpresas().size(); z++) {
+                        idsemp[z] = usuario.getEmpresas().get(z).getId();
                     }
-                } else {
-                    cr.add(Restrictions.in("idEmpresa", idsEmpresas));
+                    cr.add(Restrictions.in("idEmpresa", idsemp));
                 }
+            } else {
+                cr.add(Restrictions.in("idEmpresa", idsEmpresas));
+            }
 
-                if (numeroFactura != null && !numeroFactura.isEmpty()) {
-                    cr.add(Restrictions.eq("numeroFactura", numeroFactura.trim()));
-                }
-                if (folioErp != null && !folioErp.isEmpty()) {
-                    String[] folios = folioErp.trim().split(",");
-                    cr.add(Restrictions.in("folioErp", folios));
-                }
-                if (rfc != null && !rfc.isEmpty()) {
-                    cr.add(Restrictions.eq("rfc", rfc.trim()));
-                }
-                if (serie != null && !serie.isEmpty()) {
-                    String[] series = serie.trim().split(",");
-                    cr.add(Restrictions.in("serie", series));
-                }
+            if (numeroFactura != null && !numeroFactura.isEmpty()) {
+                cr.add(Restrictions.eq("numeroFactura", numeroFactura.trim()));
+            }
+            if (folioErp != null && !folioErp.isEmpty()) {
+                String[] folios = folioErp.trim().split(",");
+                cr.add(Restrictions.in("folioErp", folios));
+            }
+            if (rfc != null && !rfc.isEmpty()) {
+                cr.add(Restrictions.eq("rfc", rfc.trim()));
+            }
+            if (serie != null && !serie.isEmpty()) {
+                String[] series = serie.trim().split(",");
+                cr.add(Restrictions.in("serie", series));
+            }
 
-                if (noCliente != null && !noCliente.isEmpty()) {
-                    //System.out.println("noCliente = " + noCliente);
-                    cr.add(Restrictions.like("noCliente", "%"+noCliente.trim()+"%",  MatchMode.ANYWHERE ));
-                }
-                if (razonSocial != null && !razonSocial.isEmpty()) {
-                    cr.add(Restrictions.like("razonSocial", razonSocial.trim(),MatchMode.ANYWHERE));
-                }
-                if (numPolizaSeguro != null && !numPolizaSeguro.isEmpty()) {
-                    cr.add(Restrictions.ilike("noPolizaSeguro" , numPolizaSeguro.trim(), MatchMode.ANYWHERE ));
-                }
+            if (noCliente != null && !noCliente.isEmpty()) {
+                //System.out.println("noCliente = " + noCliente);
+                cr.add(Restrictions.like("noCliente", "%" + noCliente.trim() + "%", MatchMode.ANYWHERE));
+            }
+            if (razonSocial != null && !razonSocial.isEmpty()) {
+                cr.add(Restrictions.like("razonSocial", razonSocial.trim(), MatchMode.ANYWHERE));
+            }
+            if (numPolizaSeguro != null && !numPolizaSeguro.isEmpty()) {
+                cr.add(Restrictions.ilike("noPolizaSeguro", numPolizaSeguro.trim(), MatchMode.ANYWHERE));
+            }
 
-                if (fechaDesde != null) {
-                    Calendar dia = Calendar.getInstance();
-                    dia.setTime(fechaDesde);
-                    dia.set(Calendar.HOUR, 0);
-                    dia.set(Calendar.MINUTE, 0);
-                    dia.set(Calendar.SECOND, 0);
-                    fechaDesde = dia.getTime();
-                    cr.add(Expression.ge("fecha", fechaDesde));
-                }
+            if (UUID != null && !UUID.isEmpty()) {
+                System.out.println(UUID.trim());
+                cr.add(Restrictions.like("uuid", "%" + UUID.trim() + "%", MatchMode.ANYWHERE));
+            }
 
-                if (fechaHasta != null) {
-                    Calendar diaF = Calendar.getInstance();
-                    diaF.setTime(fechaHasta);
-                    diaF.set(Calendar.HOUR, 23);
-                    diaF.set(Calendar.MINUTE, 59);
-                    diaF.set(Calendar.SECOND, 59);
-                    fechaHasta = diaF.getTime();
-                    cr.add(Expression.le("fecha", fechaHasta));
-                }
+            if (fechaDesde != null) {
+                Calendar dia = Calendar.getInstance();
+                dia.setTime(fechaDesde);
+                dia.set(Calendar.HOUR, 0);
+                dia.set(Calendar.MINUTE, 0);
+                dia.set(Calendar.SECOND, 0);
+                fechaDesde = dia.getTime();
+                cr.add(Expression.ge("fecha", fechaDesde));
+            }
 
-                cr.addOrder(Order.desc("fecha"));
+            if (fechaHasta != null) {
+                Calendar diaF = Calendar.getInstance();
+                diaF.setTime(fechaHasta);
+                diaF.set(Calendar.HOUR, 23);
+                diaF.set(Calendar.MINUTE, 59);
+                diaF.set(Calendar.SECOND, 59);
+                fechaHasta = diaF.getTime();
+                cr.add(Expression.le("fecha", fechaHasta));
+            }
 
-                //paginacion
-                cr.setProjection(Projections.rowCount());
-                rowCount = (Integer) cr.uniqueResult();
+            cr.addOrder(Order.desc("fecha"));
 
-                //Reset
-                cr.setProjection(null);
-                cr.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
+            //paginacion
+            cr.setProjection(Projections.rowCount());
+            rowCount = (Integer) cr.uniqueResult();
 
-                //Pagination
-                cr.setFirstResult(first);
-                cr.setMaxResults(pageSize);
+            //Reset
+            cr.setProjection(null);
+            cr.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
 
-                listacfd = cr.list();
-                hibManagerRO.getTransaction().commit();
+            //Pagination
+            cr.setFirstResult(first);
+            cr.setMaxResults(pageSize);
+
+            listacfd = cr.list();
+            hibManagerRO.getTransaction().commit();
         } catch (HibernateException ex) {
             hibManagerRO.getTransaction().rollback();
             ex.printStackTrace();

@@ -4,8 +4,15 @@
     <session-factory>
         <!-- Pool de conexiones con permisos de solo lectura(SELECT) -->
         <!--JNDI -->
-        <property name="connection.datasource">java:comp/env/jdbc/Emision_apl</property>
+       <property name="connection.datasource">java:comp/env/jdbc/Emision_apl</property>
         <!-- using the configuration defined in this file-->
+
+
+       <!-- <property name="hibernate.connection.url">jdbc:mysql://192.155.230.106:3306/FACCORP_APL?zeroDateTimeBehavior=convertToNull</property>
+        <property name="hibernate.connection.username">carlogs</property>
+        <property name="hibernate.connection.password">e4bhse12</property>-->
+
+
         <property name="connection.driver_class">com.mysql.jdbc.Driver</property>
         <property name="dialect">org.hibernate.dialect.MySQLDialect</property>
         <property name="current_session_context_class">thread</property>

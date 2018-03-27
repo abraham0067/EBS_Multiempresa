@@ -9,10 +9,10 @@ public class PruebaConsultaVistas {
     public static void main(String[] args) {
         VistaCfdiOtroDao dao = new VistaCfdiOtroDao();
         Integer[] idsEmpresas = new Integer[1];
-        idsEmpresas[0] = 4;
+        idsEmpresas[0] = 5;
 
-        List<VistaCfdiOtro> resultados = dao.ListaParametros(1, idsEmpresas, "DI.4", "", "", "", "", "",
-                null, null, -1, "", 0, 50);
+        List<VistaCfdiOtro> resultados = dao.ListaParametros(0, idsEmpresas, null, "", "", "", "", "",
+                null, null, -1, "","7A63521B-D59B-4D41-9260-3D7589D50829", 0, 50);
 
 
 

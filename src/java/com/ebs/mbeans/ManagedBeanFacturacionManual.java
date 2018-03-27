@@ -1697,6 +1697,16 @@ public class ManagedBeanFacturacionManual implements Serializable {
                         cuentaPredialData.setNumero(tmp.getNoCuentaPredial());
                         cptoData.setCuentaPredial(cuentaPredialData);
                     }
+
+                    //Pedimento v33
+                    if(tmp.getPedimento() != null && !tmp.getPedimento().trim().isEmpty()){
+                        InformacionAduaneraData informacion = new InformacionAduaneraData();
+                        informacion.setNumero(tmp.getPedimento());
+                        List<InformacionAduanera> listInfo = new ArrayList<>();
+                        listInfo.add(informacion);
+                        cptoData.setInformacionAduanera(listInfo);
+                    }
+
                     ///Buscamos el indice maximo
                     for (Integer tempIdx : tmp.getIndicesParams()) {
                         if (max < tempIdx) {

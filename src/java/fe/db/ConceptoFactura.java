@@ -31,6 +31,9 @@ public class ConceptoFactura implements Serializable {
     private String noCuentaPredial;
     @Getter
     @Setter
+    private String pedimento = "";
+    @Getter
+    @Setter
     private double valorUnitario = 0.0;
     @Getter
     @Setter
