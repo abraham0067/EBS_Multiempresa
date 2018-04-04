@@ -5,7 +5,12 @@
         <!--Pool de conexiones usado para accctualizaciones y modificaciones 
         en la base de datos-->
         <!--JNDI-->
-        <property name="connection.datasource">java:comp/env/jdbc/Emision</property>
+        <!--<property name="connection.datasource">java:comp/env/jdbc/Emision</property>-->
+
+        <property name="hibernate.connection.url">jdbc:mysql://192.155.230.106:3306/FACCORP_APL?zeroDateTimeBehavior=convertToNull</property>
+        <property name="hibernate.connection.username">carlogs</property>
+        <property name="hibernate.connection.password">e4bhse12</property>
+
 
         <!-- TEST USING CONFIGURATION PARAMETERS OF THIS FILE-->
         <property name="connection.driver_class">com.mysql.jdbc.Driver</property>
