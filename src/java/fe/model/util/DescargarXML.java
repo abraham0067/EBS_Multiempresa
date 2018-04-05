@@ -107,7 +107,7 @@ public class DescargarXML {
                 nombreFactura = "";
             }
 
-			//System.out.println("CFD, " + idCFD);
+			//System.out.println("clientFiles, " + idCFD);
 			// ===========================================================
             // VALIDACION DE INFORMACION
             // =================================================================
@@ -193,7 +193,7 @@ public class DescargarXML {
                 nombreFactura = "";
             }
 
-			//System.out.println("CFD, " + idCFD);
+			//System.out.println("clientFiles, " + idCFD);
 			// ===========================================================
             // VALIDACION DE INFORMACION
             // =================================================================

@@ -59,6 +59,7 @@ public class SessionUrlFilter implements Filter {
         String regURL =  "/login/autoRegistro.xhtml";
         String recURL =  "/recovery/passwordRecovery.xhtml";
         String activationURL =  "/activation.xhtml";
+        String context = request.getServletContext().getContextPath();
         
         boolean loggedIn = (session != null) && (session.getAttribute("macceso") != null);
         boolean loginRequest = request.getRequestURI().contains(loginURL);
@@ -68,6 +69,7 @@ public class SessionUrlFilter implements Filter {
         boolean activationRequest = request.getRequestURI().contains(activationURL);
         boolean resourceRequest = request.getRequestURI().contains( ResourceHandler.RESOURCE_IDENTIFIER + "/");
         boolean ajaxRequest = "partial/ajax".equals(request.getHeader("Faces-Request"));
+
         boolean canAcces = true;//ALLOW login page on first time
 
         //Set secureflag and httponlyflag on cookie
@@ -84,7 +86,8 @@ public class SessionUrlFilter implements Filter {
             if (!canAcces && !homePageRequested) {
                 ///System.out.printf("El usuario  <%s> NO puede acceder a <%s>\n",((String)session.getAttribute("usernick")), request.getRequestURL().toString());
                 // TODO resolver el error TO_MANY_REDIRECTS
-                response.sendRedirect(request.getContextPath()+ homePage); // So, just perform standard synchronous redirect.
+                response.sendRedirect(context + homePage); // So, just perform standard synchronous redirect.
+
             } else{
                 ///System.out.printf("El usuario  <%s> SI puede acceder a <%s>\n",((String)session.getAttribute("usernick")), request.getRequestURL().toString());
             }
@@ -99,9 +102,9 @@ public class SessionUrlFilter implements Filter {
         } else if (ajaxRequest) {
             response.setContentType("text/xml");
             response.setCharacterEncoding("UTF-8");
-            response.getWriter().printf(AJAX_REDIRECT_XML, request.getContextPath() +loginURL); // So, return special XML response instructing JSF ajax to send a redirect.
+            response.getWriter().printf(AJAX_REDIRECT_XML, context +loginURL); // So, return special XML response instructing JSF ajax to send a redirect.
         } else {
-            response.sendRedirect(request.getContextPath() +loginURL); // So, just perform standard synchronous redirect.
+            response.sendRedirect(context +loginURL); // So, just perform standard synchronous redirect.
         }
     }
 

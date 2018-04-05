@@ -5,7 +5,7 @@ package fe.db;
  * @Author Carlo Garcia Sanchez
  * @Date 04-10-2012
  *
- * Tabla de M_CFD para almacenar documentos CFD / CFDi
+ * Tabla de M_CFD para almacenar documentos clientFiles / CFDi
  *
  *
  */
@@ -62,7 +62,7 @@ public class MCfd implements Serializable {
     private Date fechaCancelacion;
     private String tipoDocumento = "FACTURA";
     private int tipoComprobante = 0;
-    private int tipoFiscal = 0; // 0 - CFD, 1 - CFDi
+    private int tipoFiscal = 0; // 0 - clientFiles, 1 - CFDi
     private int formaPago = 1; // 1 - Una exhibicion, n > 1 - Paricalidades
     private int parcialidad = 1;
     private String facturaOrigen = "";

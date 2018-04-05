@@ -36,7 +36,7 @@ public class JasperGenCfdi33 {
         java.net.URL path2 = AuxDomainAction.class.getProtectionDomain().getCodeSource().getLocation();
         String rutaAbsoluta = loginDao.ObtenerRuta(path2.getPath());
         rutaAbsoluta = loginDao.obtenerRutaDeDirectorioAnterior(rutaAbsoluta, "WEB-INF");// Rutad
-
+        System.out.println("Ruta absoluta: " + rutaAbsoluta);
         hm.put("VISTA", "1");
         hm.put("IMAGES", rutaAbsoluta + "imagenesReportes/");
         hm.put("ESTATUS", "" + edoDocumento);

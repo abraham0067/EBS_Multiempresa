@@ -5,30 +5,22 @@
  */
 package com.ebs.mbeans;
 
-import com.ebs.reports.JasperGenCfdi32;
-import com.ebs.reports.JasperGenCfdi33;
+import com.ebs.clienteFEWS.ClienteFEWS;
 import com.lowagie.text.Paragraph;
 import com.lowagie.text.pdf.PdfWriter;
 import eu.medsea.mimeutil.MimeUtil;
 import fe.db.MArchivosCfd;
 import fe.db.MCancelados;
-import fe.db.MCfd;
 import fe.db.MCfdPagos;
 import fe.db.MCfdProforma;
-import fe.db.MCfdXml;
 import fe.db.MCfdXmlPagos;
 import fe.db.MCfdXmlProforma;
 import fe.db.MCfdXmlRetencion;
-import fe.db.MInvoice;
-import fe.db.MOtro;
-import fe.db.MOtroPagos;
-import fe.db.MOtroProforma;
 import fe.db.MOtroRetencion;
 import fe.db.MPlantilla;
 import fe.db.McfdRetencion;
 import fe.model.dao.*;
 import fe.xml.CharUnicode;
-import fe.xml.Sat;
 
 import java.awt.Image;
 import java.awt.image.BufferedImage;
@@ -40,7 +32,6 @@ import java.io.InputStream;
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
-import javax.faces.bean.RequestScoped;
 import javax.faces.context.FacesContext;
 import java.io.Serializable;
 import java.net.URL;
@@ -67,15 +58,10 @@ import mx.com.ebs.emision.factura.utilierias.QRImagen;
 import mx.com.ebs.emision.factura.vistas.AuxDomainAction;
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.JRException;
-import net.sf.jasperreports.engine.JRParameter;
 import net.sf.jasperreports.engine.JasperRunManager;
 import net.sf.jasperreports.engine.data.JRXmlDataSource;
 import net.sf.jasperreports.engine.fill.JRFileVirtualizer;
-import org.apache.commons.io.FileUtils;
-import org.jdom.Document;
-import org.jdom.input.SAXBuilder;
 import org.primefaces.model.DefaultStreamedContent;
-import org.primefaces.model.StreamedContent;
 
 /**
  * @author Eduardo C. Flores Ambrosio
@@ -94,6 +80,7 @@ public class ManagedBeanFileUtil implements Serializable {
     private PlantillaDAO daoPlantilla;
     private MArchivosCfd archivoSelectCfd;
     private CharUnicode charUnicode;
+    private ClienteFEWS clienteFEWS;
 
 
     /**
@@ -121,6 +108,7 @@ public class ManagedBeanFileUtil implements Serializable {
         daoProforma = new ProformaDao();
         daoPagos = new AutoPagosDao();
         charUnicode = new CharUnicode();
+        clienteFEWS = new ClienteFEWS();
 
     }
 
@@ -132,16 +120,22 @@ public class ManagedBeanFileUtil implements Serializable {
      * @return
      */
     public void downloadXmlCfdiFile(Integer idCfd, String nombreArchivo) {
-        MCfd doc = daoCFDI.BuscarId(idCfd);
+
         scFile = null;
-        byte[] xmlDoc = "".getBytes();
+        byte[] xmlDoc = new byte[0];
+        try {
+            xmlDoc = clienteFEWS.clienteFEWS("XML", idCfd);
+        } catch (Exception e) {
+            PintarLog
+                    .println(" ***======= Error al llamar al metodo writeXmlBytes: " + e.getMessage());
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Xml Exception." + e.getMessage(), "Detail"));
+            e.printStackTrace();
+        }
         FacturaManejador facturaManejador = new FacturaManejador();
-        List<MCfdXml> archivosFactura = null;
-        MOtro otro = null;
         String name = "xml" + ".xml";
         setScFile(null);//Clear data
-        try {
-            //String nombreFactura = request.getParameter("numeroFactura");
+        if (xmlDoc != null) {
+           /* //String nombreFactura = request.getParameter("numeroFactura");
             if (nombreArchivo == null) {
                 nombreArchivo = "";
             }
@@ -176,18 +170,19 @@ public class ManagedBeanFileUtil implements Serializable {
                     }
                 }
             }
+
             String str = new String(xmlDoc).trim();
             byte[] bytes = str.getBytes();
             if (bytes == null) {
                 bytes = "".getBytes();
-            }
+            }*/
+
             name = nombreArchivo + "_" + ManejadorFechas.obtenIdEvent() + ".xml";
-            scFile = new DefaultStreamedContent(new ByteArrayInputStream(bytes), "application/xml", name);
-        } catch (Exception e) {
+            scFile = new DefaultStreamedContent(new ByteArrayInputStream(xmlDoc), "application/xml", name);
+        } else {
             PintarLog
-                    .println(" ***======= Error al llamar al metodo writeXmlBytes: "
-                            + e.getMessage());
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Xml Exception." + e.getMessage(), "Detail"));
+                    .println(" ***======= Error al llamar al metodo writeXmlBytes: ");
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Xml Exception.", "Detail"));
         }
     }
 
@@ -250,7 +245,7 @@ public class ManagedBeanFileUtil implements Serializable {
         String name = "xml" + ".xml";
         try {
             //String nombreFactura = request.getParameter("numeroFactura");
-            if (nombreArchivo == null) {
+           /* if (nombreArchivo == null) {
                 nombreArchivo = "";
             }
             // ===========================================================
@@ -269,9 +264,15 @@ public class ManagedBeanFileUtil implements Serializable {
             byte[] bytes = str.getBytes();
             if (bytes == null) {
                 bytes = "".getBytes();
+            }*/
+            xmlDoc = clienteFEWS.clienteFEWS("XML_PAGO", idCfd);
+            if(xmlDoc != null){
+                name = nombreArchivo + "_" + ManejadorFechas.obtenIdEvent() + ".xml";
+                scFile = new DefaultStreamedContent(new ByteArrayInputStream(xmlDoc), "application/xml", name);
+            }else{
+
             }
-            name = nombreArchivo + "_" + ManejadorFechas.obtenIdEvent() + ".xml";
-            scFile = new DefaultStreamedContent(new ByteArrayInputStream(bytes), "application/xml", name);
+
         } catch (Exception e) {
             PintarLog.println(" ***======= Error al llamar al metodo writeXMlPagos: " + e.getMessage());
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(
@@ -287,7 +288,27 @@ public class ManagedBeanFileUtil implements Serializable {
      * @param nombreArchivo
      */
     public void downloadPdfCfdiFile(int idCfd, String nombreArchivo) {
-        MOtro otro = daoCFDI.Otro(idCfd);
+
+        byte[] pdfBytes = null;
+        scFile = null;
+        String rutaPDF = null;
+        String name = "pdf.pdf";
+        try {
+            pdfBytes = clienteFEWS.clienteFEWS("PDF", idCfd);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        if (pdfBytes != null) {
+            name = nombreArchivo + "_" + ManejadorFechas.obtenIdEvent() + ".pdf";
+            scFile = new DefaultStreamedContent(new ByteArrayInputStream(pdfBytes), "application/pdf", name);
+        } else {
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+                    "Lo sentimos, al parecer el registro no tiene asociado una plantilla.", "Detail"));
+        }
+
+
+        /*MOtro otro = daoCFDI.Otro(idCfd);
         MCfd cfdi = daoCFDI.BuscarId(idCfd);
         MPlantilla plantilla = null;
         if (cfdi != null && cfdi.getIdPlantilla() != null) {
@@ -391,25 +412,32 @@ public class ManagedBeanFileUtil implements Serializable {
         } else {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
                     "Lo sentimos, al parecer el registro no tiene asociado una plantilla.", "Detail"));
-        }
+        }*/
     }
 
     public void downloadPdfProformaFile(int idCfd, String nombreArchivo) {
-        MCfdProforma cfdi = daoProforma.BuscarId(idCfd);
+        /*MCfdProforma cfdi = daoProforma.BuscarId(idCfd);
         MOtroProforma otro = daoProforma.Otro(idCfd);
         MPlantilla plantilla = null;
         if (cfdi != null && cfdi.getPlantillaId() != null) {
             plantilla = daoPlantilla.BuscarPlantilla(cfdi.getPlantillaId());
         }
-        MCfdXmlProforma xmlProf = daoProforma.findXmlByCfdiId(idCfd);
+        MCfdXmlProforma xmlProf = daoProforma.findXmlByCfdiId(idCfd);*/
         scFile = null;
         String rutaPDF = null;
         String name = "pdf.pdf";
         byte[] xmlDoc = null;
         byte[] xmlXml = null;
         byte[] pdfBytes = null;
-        if (plantilla != null && plantilla.getPlantilla() != null) {
-            if (xmlProf != null && xmlProf.getXmlp() != null) {
+        try {
+            pdfBytes = clienteFEWS.clienteFEWS("PDF_PROFORMA", idCfd);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        if (pdfBytes != null) {
+            name = nombreArchivo + "_" + ManejadorFechas.obtenIdEvent() + ".pdf";
+            scFile = new DefaultStreamedContent(new ByteArrayInputStream(pdfBytes), "application/pdf", name);
+           /* if (xmlProf != null && xmlProf.getXmlp() != null) {
                 ///RUN REPORTER
                 name = nombreArchivo + "_" + ManejadorFechas.obtenIdEvent() + ".pdf";
                 if (otro != null) {
@@ -465,7 +493,7 @@ public class ManagedBeanFileUtil implements Serializable {
             } else {
                 FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
                         "Lo sentimos, no pudimos encontrar el Xml.", "Detail"));
-            }
+            }*/
         } else {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
                     "Lo sentimos, al parecer el registor no tiene asociado una plantilla.", "Detail"));
@@ -479,21 +507,35 @@ public class ManagedBeanFileUtil implements Serializable {
      * @param nombreArchivo
      */
     public void downloadPdfPagoFile(int idCfd, String nombreArchivo) {
-        MCfdPagos cfdi = daoPagos.BuscarId(idCfd);
+       /* MCfdPagos cfdi = daoPagos.BuscarId(idCfd);
         MOtroPagos otro = daoPagos.Otro(idCfd);
         MPlantilla plantilla = null;
         if (cfdi != null && cfdi.getPlantillaId() != null) {
             plantilla = daoPlantilla.BuscarPlantilla(cfdi.getPlantillaId());
         }
-        MCfdXmlPagos xmlPago = daoPagos.findXmlByCfdiId(idCfd);
+        MCfdXmlPagos xmlPago = daoPagos.findXmlByCfdiId(idCfd);*/
         scFile = null;
         String rutaPDF = null;
         String name = "pdf.pdf";
         byte[] xmlDoc = null;
         byte[] xmlXml = null;
         byte[] pdfBytes = null;
-        if (plantilla != null && plantilla.getPlantilla() != null) {
-            if (xmlPago != null && xmlPago.getXmlp() != null) {
+
+        try {
+            pdfBytes = clienteFEWS.clienteFEWS("PDF_PAGO_FILE", idCfd);
+            if (pdfBytes != null) {
+                name = nombreArchivo + "_" + ManejadorFechas.obtenIdEvent() + ".pdf";
+                name = nombreArchivo + "_" + ManejadorFechas.obtenIdEvent() + ".pdf";
+                scFile = new DefaultStreamedContent(new ByteArrayInputStream(pdfBytes), "application/pdf", name);
+            } else {
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+                        "Lo sentimos, no pudimos encontrar el PDF.", "Detail"));
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+          /*  if (xmlPago != null && xmlPago.getXmlp() != null) {
                 ///RUN REPORTER
                 name = nombreArchivo + "_" + ManejadorFechas.obtenIdEvent() + ".pdf";
                 if (otro != null) {
@@ -549,11 +591,8 @@ public class ManagedBeanFileUtil implements Serializable {
             } else {
                 FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
                         "Lo sentimos, no pudimos encontrar el Xml.", "Detail"));
-            }
-        } else {
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
-                    "Lo sentimos, al parecer el registor no tiene asociado una plantilla.", "Detail"));
-        }
+            }*/
+
     }
 
     public void genPdfError(String message) {
@@ -638,7 +677,7 @@ public class ManagedBeanFileUtil implements Serializable {
     }
 
     /**
-     * Download the xml File for CFD Invoice
+     * Download the xml File for clientFiles Invoice
      *
      * @param numeroFactura
      * @param nombreFactura
@@ -651,7 +690,7 @@ public class ManagedBeanFileUtil implements Serializable {
         CfdDAO cfdDAO = new CfdDAO();
         String name = "xml.xml";
         try {
-            if (numeroFactura == null) {
+           /* if (numeroFactura == null) {
                 numeroFactura = "0";
             }
             MInvoice datosFactura = cfdDAO.BuscarId(Limpiador.cleanStringToIntegers(numeroFactura));
@@ -676,9 +715,10 @@ public class ManagedBeanFileUtil implements Serializable {
             byte[] bytes = str.getBytes();
             if (bytes == null) {
                 bytes = "".getBytes();
-            }
+            }*/
+            xmlDoc = clienteFEWS.clientFiles("clientFiles", numeroFactura);
             name = nombreFactura + "_" + ManejadorFechas.obtenIdEvent() + ".xml";
-            scFile = new DefaultStreamedContent(new ByteArrayInputStream(bytes), "application/xml", name);
+            scFile = new DefaultStreamedContent(new ByteArrayInputStream(xmlDoc), "application/xml", name);
             // ========================================================================================================================================================
         } catch (Exception e) {
             PintarLog
@@ -701,14 +741,15 @@ public class ManagedBeanFileUtil implements Serializable {
         byte[] plantilla = "".getBytes();
         byte[] bytes;
         String name = "pdf.pdf";
+       /*
         CfdDAO cfdDAO = new CfdDAO();
         HashMap hm = new HashMap();
         MInvoice datosFactura = null;
         java.net.URL path2 = AuxDomainAction.class.getProtectionDomain().getCodeSource().getLocation();
         String rutaAbsoluta = DAO.ObtenerRuta(path2.getPath());
-        rutaAbsoluta = DAO.obtenerRutaDeDirectorioAnterior(rutaAbsoluta, "WEB-INF");// Ruta
+        rutaAbsoluta = DAO.obtenerRutaDeDirectorioAnterior(rutaAbsoluta, "WEB-INF");// Ruta*/
         try {
-            if (numeroFactura == null) {
+           /* if (numeroFactura == null) {
                 numeroFactura = "0";
             }
             datosFactura = cfdDAO.BuscarId(Limpiador.cleanStringToIntegers(numeroFactura));
@@ -790,7 +831,8 @@ public class ManagedBeanFileUtil implements Serializable {
             // =============================================================================================
             if (bytes == null) {
                 bytes = "".getBytes();
-            }
+            }*/
+            bytes = clienteFEWS.clientFiles("PDFCFD", numeroFactura);
             name = nombreFactura + "_" + ManejadorFechas.obtenIdEvent() + ".pdf";
             scFile = new DefaultStreamedContent(new ByteArrayInputStream(bytes), "application/pdf", name);
         } catch (Exception e) {
@@ -979,12 +1021,13 @@ public class ManagedBeanFileUtil implements Serializable {
 
     public void downloadXmlRetenFile(String idCFD, String nombreFactura) throws Exception {
         scFile = null;
-        byte[] xmlDoc = "".getBytes();
+        byte[] bytes = "".getBytes();
         final FacturaManejador facturaManejador = new FacturaManejador();
-        List<MCfdXmlRetencion> archivosFactura = new ArrayList<MCfdXmlRetencion>();
-        MOtroRetencion otro = null;
+        //List<MCfdXmlRetencion> archivosFactura = new ArrayList<MCfdXmlRetencion>();
+        //MOtroRetencion otro = null;
         try {
-            if ("".equalsIgnoreCase(idCFD)) {
+
+           /* if ("".equalsIgnoreCase(idCFD)) {
                 xmlDoc = new String("No se pudo obtener la factura debido a un error, idFactura nulo.").getBytes();
             } else {
                 otro = facturaManejador.ObtenerMOtroPorCFDIXMLRetencion(Integer.parseInt(idCFD));
@@ -1013,7 +1056,8 @@ public class ManagedBeanFileUtil implements Serializable {
             byte[] bytes = str.getBytes();
             if (bytes == null) {
                 bytes = "".getBytes();
-            }
+            }*/
+            bytes = clienteFEWS.clientFiles("XML_RETENCIONES", idCFD);
             nombreFactura += "_" + ManejadorFechas.obtenIdEvent() + ".xml";
             scFile = new DefaultStreamedContent(new ByteArrayInputStream(bytes), "application/octet-stream", nombreFactura);
         } catch (Exception e2) {
@@ -1025,11 +1069,25 @@ public class ManagedBeanFileUtil implements Serializable {
     public void downloadPdfRetenFile(String idCFD, String nombreFactura) {
         scFile = null;
         String recordPath = "/Retenciones";
-        FacturaManejador facturaManejador = new FacturaManejador();
-        List<MCfdXmlRetencion> listaFacturas = new ArrayList<MCfdXmlRetencion>();
-        MOtroRetencion otro = null;
+        // FacturaManejador facturaManejador = new FacturaManejador();
+        // List<MCfdXmlRetencion> listaFacturas = new ArrayList<MCfdXmlRetencion>();
+        //MOtroRetencion otro = null;
         byte[] xmlDoc = "".getBytes();
-        URL path2 = AuxDomainAction.class.getProtectionDomain().getCodeSource().getLocation();
+
+        try {
+            xmlDoc = clienteFEWS.clientFiles("PDF_RETENCIONES", idCFD);
+            if (xmlDoc != null) {
+                nombreFactura += "_" + ManejadorFechas.obtenIdEvent() + ".pdf";
+                scFile = new DefaultStreamedContent(new ByteArrayInputStream(xmlDoc), "application/pdf", nombreFactura);
+            } else {
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "No se encontraron registros de la factura seleccionada", "--"));
+
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        /*URL path2 = AuxDomainAction.class.getProtectionDomain().getCodeSource().getLocation();
         String rutaAbsoluta = DAO.ObtenerRuta(path2.getPath());
         rutaAbsoluta = DAO.obtenerRutaDeDirectorioAnterior(rutaAbsoluta, "WEB-INF");
         String rutaPDF = null;
@@ -1147,7 +1205,7 @@ public class ManagedBeanFileUtil implements Serializable {
         }
         if (Runtime.getRuntime().totalMemory() > 700.0 * Math.pow(2.0, 20.0)) {
             System.gc();
-        }
+        }*/
     }
 
     /**
