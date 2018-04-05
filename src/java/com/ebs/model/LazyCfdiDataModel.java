@@ -40,6 +40,7 @@ public class LazyCfdiDataModel extends LazyDataModel<VistaCfdiOtro> {
     private String cliente;
     private String estatus;
     private String numPolizaSeguro;
+    private String UUID;
 
     public LazyCfdiDataModel() {
         this.setRowCount(0);
@@ -47,18 +48,19 @@ public class LazyCfdiDataModel extends LazyDataModel<VistaCfdiOtro> {
 
     ///Constructor clientes de los clientes
     public LazyCfdiDataModel(boolean isCliente,
-                                       int idAcceso,
-                                       Integer[] idsEmpresas,
-                                       String numeroFactura,
-                                       String folioErp,
-                                       String rfc,
-                                       String serie,
-                                       String noCliente,
-                                       String razonSocial,
-                                       Date datDesde,
-                                       Date datHasta,
-                                       String cliente,
-                                       String numPolizaSeguro
+                             int idAcceso,
+                             Integer[] idsEmpresas,
+                             String numeroFactura,
+                             String folioErp,
+                             String rfc,
+                             String serie,
+                             String noCliente,
+                             String razonSocial,
+                             Date datDesde,
+                             Date datHasta,
+                             String cliente,
+                             String numPolizaSeguro,
+                             String UUID
     ) {
         this.isCliente = isCliente;
         this.idAcceso = idAcceso;
@@ -73,24 +75,26 @@ public class LazyCfdiDataModel extends LazyDataModel<VistaCfdiOtro> {
         this.datHasta = datHasta;
         this.cliente = cliente;
         this.numPolizaSeguro = numPolizaSeguro;
+        this.UUID = UUID;
         this.setRowCount(0);
     }
 
     ///Constructor clientes de EBS
     public LazyCfdiDataModel(boolean isCliente,
-                                       int idAcceso,
-                                       Integer[] idsEmpresas,
-                                       String numeroFactura,
-                                       String folioErp,
-                                       String rfc,
-                                       String serie,
-                                       String noCliente,
-                                       String razonSocial,
-                                       Date datDesde,
-                                       Date datHasta,
-                                       String cliente,
-                                       String estatus,
-                                       String numPolizaSeguro
+                             int idAcceso,
+                             Integer[] idsEmpresas,
+                             String numeroFactura,
+                             String folioErp,
+                             String rfc,
+                             String serie,
+                             String noCliente,
+                             String razonSocial,
+                             Date datDesde,
+                             Date datHasta,
+                             String cliente,
+                             String estatus,
+                             String numPolizaSeguro,
+                             String UUID
     ) {
         this.isCliente = isCliente;
         this.idAcceso = idAcceso;
@@ -106,6 +110,7 @@ public class LazyCfdiDataModel extends LazyDataModel<VistaCfdiOtro> {
         this.cliente = cliente;
         this.estatus = estatus;
         this.numPolizaSeguro = numPolizaSeguro;
+        this.UUID = UUID;
         this.setRowCount(0);
     }
 
@@ -149,6 +154,7 @@ public class LazyCfdiDataModel extends LazyDataModel<VistaCfdiOtro> {
                     datDesde,
                     datHasta,
                     numPolizaSeguro,
+                    UUID,
                     first,
                     pageSize);
         } else {
@@ -166,6 +172,7 @@ public class LazyCfdiDataModel extends LazyDataModel<VistaCfdiOtro> {
                     datHasta,
                     Integer.parseInt(estatus),
                     numPolizaSeguro,
+                    UUID,
                     first, pageSize);
         }
         ///rowCount

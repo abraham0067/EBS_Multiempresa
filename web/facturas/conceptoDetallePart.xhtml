@@ -117,12 +117,20 @@
                     <p:ajax event="change" process="@this,itNoCuentaPredial" update="itNoCuentaPredial"/>
                 </p:inputText>
 
+                <h:outputLabel for="itPedimento" value="Pedimento:"/>
+                <p:inputText id="itPedimento"
+                             value="#{managedBeanFacturacionManual.tempConcepto.pedimento}"
+                             required="false" requiredMessage=""
+                             maxlength="150">
+                    <p:ajax event="change" process="@this,itPedimento" update="itPedimento"/>
+                </p:inputText>
+
 
                 <f:facet name="footer">
                     <p:fieldset id="fsCamposComplementoComercioExterior" legend="Com.Exterior." toggleable="true" toggleSpeed="500"
                                 collapsed="false" >
                         <p:panelGrid id="pgCamposComercioExterior" columns="2" columnClasses="ui-grid-col-5, ui-grid-col-7"
-                                     style="text-align: center; width: 600px;"
+                                     style="text-align: center; width: 100%;"
                                      layout="grid" styleClass="ui-panelgrid-blank, ui-noborder">
                             <p:outputLabel value="Fraccion Arancelaria:"/>
                             <p:inputText id="itFraccionArancelaria"
