@@ -2056,8 +2056,7 @@ public class ManagedBeanFacturacionManual implements Serializable {
             }
             if (uuidNuevo != null && !uuidNuevo.isEmpty() && uuidNuevo.length() == 36) {
 
-                if (uuidNuevo.matches(UUIDREGEXPATT) ||
-                        uuidNuevo.matches(ATEBREGEXPATT)) {
+                if (uuidNuevo.matches(UUIDREGEXPATT) ||  uuidNuevo.matches(ATEBREGEXPATT)) {
                     System.out.println("UUID->" + uuidNuevo);
                     //ok
                 } else {
