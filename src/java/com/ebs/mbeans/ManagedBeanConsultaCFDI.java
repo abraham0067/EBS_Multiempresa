@@ -9,6 +9,7 @@ import com.ebs.CancelacionCFDI.CancelaCFDITest;
 import com.ebs.CancelacionCFDI.CancelaCFDI;
 import com.ebs.catalogos.TiposComprobante;
 import com.ebs.catalogos.TiposDocumento;
+import com.ebs.clienteFEWS.ClienteFEWS;
 import com.ebs.model.LazyCfdiDataModel;
 import com.ebs.vistas.VistaCfdiOtro;
 import fe.db.MAcceso;
@@ -334,8 +335,14 @@ public class ManagedBeanConsultaCFDI implements Serializable {
                     OutputStream output = ec.getResponseOutputStream();
                     //Now you can write the InputStream of the file to the above OutputStream the usual way.
                     //...
-                    CrearZIPFacturas crear = new CrearZIPFacturas();
-                    crear.ZipCfdis(listCFDSAux, output);
+                    //CrearZIPFacturas crear = new CrearZIPFacturas();
+                    //crear.ZipCfdis(listCFDSAux, output);
+
+                    ClienteFEWS clienteFEWS = new ClienteFEWS();
+                    byte[] bytesZip = clienteFEWS.zip(listCFDSAux, "Zip");
+
+                    output.write(bytesZip);
+
                     fc.responseComplete(); // Important! Otherwise JSF will attempt to render the response which obviously will fail since it's already written with a file and closed.
                     //FacesContext.getCurrentInstance().responseComplete(); //Equal
                 } catch (Exception e) {

@@ -106,13 +106,14 @@ public class LoginFilter implements Filter {
         HttpServletRequest request = (HttpServletRequest) req;
         HttpServletResponse response = (HttpServletResponse) res;
         HttpSession session = request.getSession(false);
+        String context = request.getServletContext().getContextPath();
 
         MAcceso auth = (MAcceso) ((session != null) ? session.getAttribute("macceso") : null);
-        String iniURL = request.getContextPath() + "/main/principal.xhtml";
+        String iniURL = context + "/main/principal.xhtml";
 
         boolean loggedIn = auth != null;
         //boolean loginRequest = request.getRequestURI().equals(loginURL);
-        boolean isResourceRequest = request.getRequestURI().startsWith(request.getContextPath() + "/faces" + ResourceHandler.RESOURCE_IDENTIFIER);
+        boolean isResourceRequest = request.getRequestURI().startsWith(context + "/faces" + ResourceHandler.RESOURCE_IDENTIFIER);
         //Not logged
         if (!loggedIn ) {
             chain.doFilter(request, response);

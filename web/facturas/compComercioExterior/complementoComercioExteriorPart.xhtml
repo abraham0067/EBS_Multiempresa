@@ -257,7 +257,7 @@
                     <p:ajax event="change" process="@this"/>
                 </p:inputText>-->
                 <p:outputLabel value="Residencia Fiscal(Pais):"/>
-                <p:inputText value="#{managedBeanFacturacionManual.singlePropietarioData.residenciaFiscal}">
+                <p:inputText value="#{managedBeanFacturacionManual.singlePropietarioData.residenciaFiscal.clave}">
                     <p:ajax event="change" process="@this"/>
                     <p:watermark value="Catalogo" for="@parent" />
                 </p:inputText>

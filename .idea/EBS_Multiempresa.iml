@@ -40,5 +40,14 @@
     <orderEntry type="library" name="antlr:antlr:2.7.7" level="project" />
     <orderEntry type="library" name="joda-time:joda-time:2.9.9" level="project" />
     <orderEntry type="library" name="AddendaVolksWagen" level="project" />
+    <orderEntry type="library" name="jersey-client" level="project" />
+    <orderEntry type="library" name="javax.ws.rs-api-2.0" level="project" />
+    <orderEntry type="library" name="jersey-client-2.5.1-sources" level="project" />
+    <orderEntry type="library" name="jersey-common" level="project" />
+    <orderEntry type="library" name="jersey-container-servlet" level="project" />
+    <orderEntry type="library" name="cglib-2.2.0-b21" level="project" />
+    <orderEntry type="library" name="eclipselink" level="project" />
+    <orderEntry type="library" name="feProcess.3.4.047" level="project" />
+    <orderEntry type="library" name="primefaces-6.0" level="project" />
   </component>
 </module>

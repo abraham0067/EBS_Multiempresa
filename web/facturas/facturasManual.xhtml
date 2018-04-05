@@ -424,8 +424,8 @@
                         </p:selectOneMenu>
                         <p:inputText id="itUuidRel" value="#{managedBeanFacturacionManual.uuidTmp}"
                                      validatorMessage="El UUID no es valido">
-                            <f:validateRegex
-                                    pattern="[a-f0-9A-F]{8}-[a-f0-9A-F]{4}-[a-f0-9A-F]{4}-[a-f0-9A-F]{4}-[a-f0-9A-F]{12}"/>
+                           <!--<f:validateRegex-->
+                                    <!--pattern="[a-f0-9A-F]{8}-[a-f0-9A-F]{4}-[a-f0-9A-F]{4}-[a-f0-9A-F]{4}-[a-f0-9A-F]{12}"/>-->
                             <p:watermark value="UUID" for="itUuidRel"/>
                         </p:inputText>
                         <p:commandButton value="Agregar UUID"

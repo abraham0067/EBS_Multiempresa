@@ -273,7 +273,6 @@
     <copy file="${basedir}/lib/jsf-api-2.2.12.jar" tofile="${artifact.output.ebs_multiempresa:war_exploded}/WEB-INF/lib/jsf-api-2.2.12.jar"/>
     <copy file="${basedir}/lib/jsr173_1.0_api.jar" tofile="${artifact.output.ebs_multiempresa:war_exploded}/WEB-INF/lib/jsr173_1.0_api.jar"/>
     <copy file="${basedir}/lib/kotlin-reflect.jar" tofile="${artifact.output.ebs_multiempresa:war_exploded}/WEB-INF/lib/kotlin-reflect.jar"/>
-    <copy file="${basedir}/lib/primefaces-5.3.jar" tofile="${artifact.output.ebs_multiempresa:war_exploded}/WEB-INF/lib/primefaces-5.3.jar"/>
     <copy file="${basedir}/lib/webservices-rt.jar" tofile="${artifact.output.ebs_multiempresa:war_exploded}/WEB-INF/lib/webservices-rt.jar"/>
     <copy file="${basedir}/lib/asm-commons-3.1.jar" tofile="${artifact.output.ebs_multiempresa:war_exploded}/WEB-INF/lib/asm-commons-3.1.jar"/>
     <copy file="${basedir}/lib/csrfguard-3.1.0.jar" tofile="${artifact.output.ebs_multiempresa:war_exploded}/WEB-INF/lib/csrfguard-3.1.0.jar"/>

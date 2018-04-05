@@ -7,6 +7,7 @@ package com.ebs.mbeans;
 
 import com.ebs.catalogos.TiposComprobante;
 import com.ebs.catalogos.TiposDocumento;
+import com.ebs.clienteFEWS.ClienteFEWS;
 import com.ebs.model.LazyMPagoDataModel;
 import com.ebs.util.ZipperFacturasCfdi33;
 import fe.db.MAcceso;
@@ -93,12 +94,18 @@ public class ManagedBeanConsultaPagos implements Serializable {
     @Getter
     @Setter
     private List<MCfdPagos> listCFDS;
+    /*@Getter
+    @Setter
+    private List<MCfdPagos> listCFDSAux;*/
     @Getter
     @Setter
-    private List<MCfdPagos> listCFDSAux;
+    private List<Integer> listCFDSAux;
+    /*@Getter
+    @Setter
+    private List<MCfdPagos> selectedCFDS;//Donde se guardaran los cfdi extraidos del listmap*/
     @Getter
     @Setter
-    private List<MCfdPagos> selectedCFDS;//Donde se guardaran los cfdi extraidos del listmap
+    private List<Integer> selectedCFDS;//Donde se guardaran los cfdi extraidos del listmap
     @Getter
     @Setter
     private MCfdPagos selectedMCFD;//FACTURA axiliar
@@ -226,7 +233,7 @@ public class ManagedBeanConsultaPagos implements Serializable {
             selectedCFDS = new ArrayList();
         }
         for (MCfdPagos tmp : this.listMapMCASelecteds) {
-            selectedCFDS.add(tmp);
+            selectedCFDS.add(tmp.getId());
         }
     }
     
@@ -250,8 +257,11 @@ public class ManagedBeanConsultaPagos implements Serializable {
                     OutputStream output = ec.getResponseOutputStream();
                     //Now you can write the InputStream of the file to the above OutputStream the usual way.
                     //...
-                    ZipperFacturasCfdi33 zipperFacturasCfdi33 = new ZipperFacturasCfdi33();
-                    zipperFacturasCfdi33.ZipCfdisPagos(listCFDSAux, output);
+                    //ZipperFacturasCfdi33 zipperFacturasCfdi33 = new ZipperFacturasCfdi33();
+                    //zipperFacturasCfdi33.ZipCfdisPagos(listCFDSAux, output);
+                    ClienteFEWS clienteFEWS = new ClienteFEWS();
+                    byte[] zipPagos = clienteFEWS.zip(listCFDSAux, "ZIP_PAGOS");
+                    output.write(zipPagos);
                     fc.responseComplete(); // Important! Otherwise JSF will attempt to render the response which obviously will fail since it's already written with a file and closed.
                     //FacesContext.getCurrentInstance().responseComplete(); //Equal
                 } catch (Exception e) {

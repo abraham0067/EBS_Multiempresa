@@ -145,7 +145,7 @@ public class ManagedBeanFacturacionManual implements Serializable {
     private List<AdendaFe> lstAdd = new ArrayList<AdendaFe>();
 
 
-    private int idConcepto;
+    private int idConcepto = -1;
     private MFolios folio;
 
     private double subTotal;
@@ -471,11 +471,12 @@ public class ManagedBeanFacturacionManual implements Serializable {
     @Getter
     @Setter
     private FacturaVWData factura;
-    @Getter @Setter
+    @Getter
+    @Setter
     private String codigoImpuestoAdenda;
-    @Getter @Setter
+    @Getter
+    @Setter
     private FacturaAudiData facturaAudi;
-
 
 
     static {
@@ -520,7 +521,7 @@ public class ManagedBeanFacturacionManual implements Serializable {
         daoPais = new PaisDAO();
 
         idTipoDoc = -1;
-        idConcepto = 0;
+        idConcepto = -1;
         conceptosAsignados = new ArrayList<>();
         conceptosAsignadosSelect = new ArrayList<>();
         tempConcepto = new ConceptoFactura(idGen.incrementAndGet());//Creacion y agregacion
@@ -542,7 +543,7 @@ public class ManagedBeanFacturacionManual implements Serializable {
         quitarconcepto = "";
         codigoConfirmacion = "";
         codigoPostal = "";
-        uuidTmp = "";
+        uuidTmp = null;
         tipoRelacion = "";
         regimenFiscal = "";
         usoCfdi = "";
@@ -608,12 +609,12 @@ public class ManagedBeanFacturacionManual implements Serializable {
 
 
         ///Manejar entradas deacuerdo al tipo de documento que se esta manejando
-        if(idTipoDoc>0 && tipoDocObjFact!= null){
-            if(tipoDocObjFact.getcTipoComprobanteByTdocId().getClave().equals("I")){
+        if (idTipoDoc > 0 && tipoDocObjFact != null) {
+            if (tipoDocObjFact.getcTipoComprobanteByTdocId().getClave().equals("I")) {
 
-            }else if(tipoDocObjFact.getcTipoComprobanteByTdocId().getClave().equals("E")){
+            } else if (tipoDocObjFact.getcTipoComprobanteByTdocId().getClave().equals("E")) {
 
-            } else if(tipoDocObjFact.getcTipoComprobanteByTdocId().getClave().equals("T")){
+            } else if (tipoDocObjFact.getcTipoComprobanteByTdocId().getClave().equals("T")) {
                 condiciones = "";
                 formaPago = "-1";
                 metodoPago = "-1";
@@ -624,7 +625,7 @@ public class ManagedBeanFacturacionManual implements Serializable {
                 disabledInputDescuentoDetalleConcepto = true;
                 disabledInputValorUnitarioDetalleConcepto = true;
             }
-        } else{
+        } else {
 
         }
 
@@ -819,10 +820,10 @@ public class ManagedBeanFacturacionManual implements Serializable {
 
     private boolean validarCamposRequeridosConceptoComercioExterior(ConceptoFactura conceptoValida) {
 
-        String fraccionArancelaria = conceptoValida.getFraccionArancelaria();
-        String NoIdentificacion = conceptoValida.getClaveconcepto();
-        String UnidadAduana = conceptoValida.getUnidadAduana();
-        String marca = conceptoValida.getMarca();
+        String fraccionArancelaria = conceptoValida.getFraccionArancelaria() == null ? "" : conceptoValida.getFraccionArancelaria();
+        String NoIdentificacion = conceptoValida.getClaveconcepto() == null ? "" : conceptoValida.getClaveconcepto();
+        String UnidadAduana = conceptoValida.getUnidadAduana() == null ? "" : conceptoValida.getUnidadAduana();
+        String marca = conceptoValida.getMarca() == null ? "" : conceptoValida.getMarca();
 
         if (singleComplementoComercioExteriorData.getTipoCambioUSD() == 1.0) {
             FacesContext.getCurrentInstance().addMessage("frmManual", new FacesMessage(FacesMessage.SEVERITY_ERROR,
@@ -927,7 +928,7 @@ public class ManagedBeanFacturacionManual implements Serializable {
 
                 flgButtonEliminarDisabled = false;
                 this.ejecutaOperaciones();
-               // this.ejecutaOperacionComercioExterior();
+                // this.ejecutaOperacionComercioExterior();
                 reiniciarDatosConcepto();
                 FacesContext.getCurrentInstance().addMessage("frmManual", new FacesMessage(FacesMessage.SEVERITY_INFO, "Cambios aplicados.", "Info"));
                 RequestContext.getCurrentInstance().addCallbackParam("succes", true);//Enviamos un parametro al view
@@ -1073,7 +1074,7 @@ public class ManagedBeanFacturacionManual implements Serializable {
         cptoTmpShldAdd = false;
         tempConcepto = null;
         tempConcepto = new ConceptoFactura(idGen.incrementAndGet());
-        //idConcepto = -1;
+        idConcepto = -1;
         initImpuestosConcepto();
         creaCamposAdicionalesCpto();
     }
@@ -1204,11 +1205,10 @@ public class ManagedBeanFacturacionManual implements Serializable {
 
         }
 
-        if (tipoDocObjFact.getcTipoComprobanteByTdocId().getClave().equalsIgnoreCase("T")){
+        if (tipoDocObjFact.getcTipoComprobanteByTdocId().getClave().equalsIgnoreCase("T")) {
             System.out.println("Entro trasalado exterior");
             comercioExteriorData.setMotivoTraslado(singleComplementoComercioExteriorData.getMotivoTraslado());
         }
-
 
 
         List<ComplementoFe> complementos = cdata.getComplementosFe();
@@ -1221,7 +1221,7 @@ public class ManagedBeanFacturacionManual implements Serializable {
         return cdata;
     }
 
-    public void facturaVw(String nombreProveedor, String sociedad){
+    public void facturaVw(String nombreProveedor, String sociedad) {
 
         if (tipoDocObjFact.getcTipoComprobanteByTdocId().getClave().equalsIgnoreCase("E")) {
             factura.setTipoDocumentoFiscal("CR");
@@ -1250,7 +1250,7 @@ public class ManagedBeanFacturacionManual implements Serializable {
 
     }
 
-    public void facturaAudi(){
+    public void facturaAudi() {
 
         facturaAudi.setTipo(adendaProductos ? FacturaAudi.TIPO.MATERIALES : FacturaAudi.TIPO.SERVICIO);
 
@@ -1261,27 +1261,27 @@ public class ManagedBeanFacturacionManual implements Serializable {
         }
 
         if (!moneda.toUpperCase().equals("MXN")) {
-            facturaAudi.tipoMoneda ="MXP";
+            facturaAudi.tipoMoneda = "MXP";
         } else {
             facturaAudi.tipoMoneda = moneda;
             facturaAudi.tipoCambio = tipoCambioDatosFacturaInput;
         }
 
         facturaAudi.noProveedor = dataReferenciaAdenda.getCodigoProveedor();
-        facturaAudi.codigoDestino= dataReferenciaAdenda.getCodigoDestino();
+        facturaAudi.codigoDestino = dataReferenciaAdenda.getCodigoDestino();
         facturaAudi.correoSolicitante = dataReferenciaAdenda.getCorreoSolicitante();
         facturaAudi.eMail = dataReferenciaAdenda.getCorreoContacto();
 
     }
 
-    public void usarAddenda(){
+    public void usarAddenda() {
         usarComplementoAdendaAudi = false;
         usarComplementoAdendaVW = false;
         System.out.println("valor addenda: " + clienteAddenda);
-        if(clienteAddenda.equalsIgnoreCase("1")){
+        if (clienteAddenda.equalsIgnoreCase("1")) {
             usarComplementoAdendaVW = true;
             System.out.println("usa addenda vw");
-        }else if(clienteAddenda.equalsIgnoreCase("2")){
+        } else if (clienteAddenda.equalsIgnoreCase("2")) {
             System.out.println("usa addenda audi");
             usarComplementoAdendaAudi = true;
         }
@@ -1299,17 +1299,17 @@ public class ManagedBeanFacturacionManual implements Serializable {
         List<ParteAudi> partesAudi = new ArrayList<>();
         try {
 
-        if(usarComplementoAdendaVW){
-            factura = new FacturaVWData();
-            usarComplementoAdendaVW = true;
-            facturaVw(nombreProveedor, "");
-        }else if(usarComplementoAdendaAudi){
-            usarComplementoAdendaAudi = true;
-            facturaAudi = new FacturaAudiData();
-            facturaAudi();
-        }
+            if (usarComplementoAdendaVW) {
+                factura = new FacturaVWData();
+                usarComplementoAdendaVW = true;
+                facturaVw(nombreProveedor, "");
+            } else if (usarComplementoAdendaAudi) {
+                usarComplementoAdendaAudi = true;
+                facturaAudi = new FacturaAudiData();
+                facturaAudi();
+            }
 
-            if(usarComplementoAdendaAudi){
+            if (usarComplementoAdendaAudi) {
 
                 for (Partes parte : listPartes) {
 
@@ -1327,10 +1327,10 @@ public class ManagedBeanFacturacionManual implements Serializable {
 
                     partesAudi.add(parteAudi);
 
-                    facturaAudi.partes  = partesAudi.toArray(facturaAudi.getPartes());
+                    facturaAudi.partes = partesAudi.toArray(facturaAudi.getPartes());
                 }
 
-            }else if(usarComplementoAdendaVW){
+            } else if (usarComplementoAdendaVW) {
                 for (Partes parte : listPartes) {
 
                     ParteVWData tmpParte = new ParteVWData();
@@ -1362,7 +1362,7 @@ public class ManagedBeanFacturacionManual implements Serializable {
             lstAdd.add(adendaVolksWagen);
             System.out.println("Entro agregar adenda vw");
 
-        }else if(usarComplementoAdendaAudi){
+        } else if (usarComplementoAdendaAudi) {
             lstAdd.add(facturaAudi);
             System.out.println("Entro agregar adenda audi");
         }
@@ -1415,33 +1415,42 @@ public class ManagedBeanFacturacionManual implements Serializable {
      * CARGA INFORMACION DE UN CONCEPTO CON LOS DATOS QUE YA EXISTEN
      */
     public void cargaInfoConceptoFromDB() {
-        MConceptosFacturacion res = daoConFact.BuscarConceptoId(this.idConcepto);
-        reiniciarDatosConcepto();
-        tempConcepto.setClaveconcepto(res.getClaveconcepto());
-        tempConcepto.setConceptofacturacion(res.getConceptofacturacion());
-        tempConcepto.setUnidad(res.getUnidadMedida());
-        cptoTmpShldAdd = true;//Indicamos que el concepto se debe agregar a la lista de conceptos uan vez que se realizen las
-        currentOperationOverCpto = OPERACION.MODIFICACION;
+
+        if (this.idConcepto > 0) {
+            MConceptosFacturacion res = daoConFact.BuscarConceptoId(this.idConcepto);
+            reiniciarDatosConcepto();
+            tempConcepto.setClaveconcepto(res.getClaveconcepto() == null ? "" : res.getClaveconcepto());
+            tempConcepto.setConceptofacturacion(res.getConceptofacturacion());
+            tempConcepto.setUnidad(res.getUnidadMedida());
+            cptoTmpShldAdd = true;//Indicamos que el concepto se debe agregar a la lista de conceptos uan vez que se realizen las
+            currentOperationOverCpto = OPERACION.MODIFICACION;
 
 
-        tipoDocObjFact = LambdasHelper.findTipoDocById(tiposDocs, idTipoDoc);
-        if (tipoDocObjFact != null) {
-            if (tipoDocObjFact.getcTipoComprobanteByTdocId().getClave().equalsIgnoreCase("I")) {
-                tempConcepto.setValorUnitario(res.getPrecioUnitario());
-            } else if (tipoDocObjFact.getcTipoComprobanteByTdocId().getClave().equalsIgnoreCase("E")) {
-                tempConcepto.setValorUnitario(res.getPrecioUnitario());
-            } else if (tipoDocObjFact.getcTipoComprobanteByTdocId().getClave().equalsIgnoreCase("T")) {
-                tempConcepto.setValorUnitario(0.0);
+            tipoDocObjFact = LambdasHelper.findTipoDocById(tiposDocs, idTipoDoc);
+            if (tipoDocObjFact != null) {
+                if (tipoDocObjFact.getcTipoComprobanteByTdocId().getClave().equalsIgnoreCase("I")) {
+                    tempConcepto.setValorUnitario(res.getPrecioUnitario());
+                } else if (tipoDocObjFact.getcTipoComprobanteByTdocId().getClave().equalsIgnoreCase("E")) {
+                    tempConcepto.setValorUnitario(res.getPrecioUnitario());
+                } else if (tipoDocObjFact.getcTipoComprobanteByTdocId().getClave().equalsIgnoreCase("T")) {
+                    tempConcepto.setValorUnitario(0.0);
+                }
             }
         }
 
     }
 
     public void agregarValorAdditionalParamsCpto(ConceptoFactura tmp) {
+
         if (tmp.getParams().size() > 0) {
-            valuesAdditionalDataCpto = tmp.getParams().toArray(valuesAdditionalDataCpto);
-            valuesAdditionalDataCptoIndexes = tmp.getParams().toArray(valuesAdditionalDataCptoIndexes);
+            /*valuesAdditionalDataCpto = tmp.getParams().toArray(valuesAdditionalDataComp);
+            valuesAdditionalDataCptoIndexes = tmp.getParams().toArray(valuesAdditionalDataCptoIndexes);*/
+            valuesAdditionalDataCpto = tmp.getParams().toArray(new String[0]);
+            valuesAdditionalDataCptoIndexes = tmp.getIndicesParams().toArray(new Integer[0]);
         }
+
+        //System.out.println("values: " + Arrays.toString(valuesAdditionalDataCpto));
+        //System.out.println("values: " + Arrays.toString(valuesAdditionalDataCptoIndexes));
 
     }
 
@@ -1587,8 +1596,8 @@ public class ManagedBeanFacturacionManual implements Serializable {
                                         "No es necesario que usted los llene",
                                 ""));
                 condiciones = "";
-               // formaPago = "Pago en una sola exhibición";
-               // metodoPago = "NO IDENTIFICADO";
+                // formaPago = "Pago en una sola exhibición";
+                // metodoPago = "NO IDENTIFICADO";
                 formaPago = "-1";
                 metodoPago = "-1";
                 disabledInputCondicionesDePago = true;
@@ -1699,7 +1708,7 @@ public class ManagedBeanFacturacionManual implements Serializable {
                     }
 
                     //Pedimento v33
-                    if(tmp.getPedimento() != null && !tmp.getPedimento().trim().isEmpty()){
+                    if (tmp.getPedimento() != null && !tmp.getPedimento().trim().isEmpty()) {
                         InformacionAduaneraData informacion = new InformacionAduaneraData();
                         informacion.setNumero(tmp.getPedimento());
                         List<InformacionAduanera> listInfo = new ArrayList<>();
@@ -1871,7 +1880,7 @@ public class ManagedBeanFacturacionManual implements Serializable {
             agregarEmailCliente();
 
             //agregaAddendas();
-            if(usarComplementoAdendaVW || usarComplementoAdendaAudi){
+            if (usarComplementoAdendaVW || usarComplementoAdendaAudi) {
                 System.out.println("Addendas");
                 transformarConceptosAProdServicios();
                 addAddenda(getComprobanteData());
@@ -2509,7 +2518,7 @@ public class ManagedBeanFacturacionManual implements Serializable {
         this.subTotal = 0.0;
         montoDescuento = 0.0;
         for (ConceptoFactura tmp : this.conceptosAsignados) {
-           // this.subTotal += tmp.getTotalFormatted();
+            // this.subTotal += tmp.getTotalFormatted();
             if (idTipoDoc > 0) {
                 if (tipoDocObjFact.getcTipoComprobanteByTdocId().getClave().equalsIgnoreCase("T")) {
                     //Operaciones espaciales para  los docs de traslados

@@ -142,7 +142,7 @@ public class VistaCfdiOtro implements Serializable{
     @Column(name = "TIPO_FISCAL", nullable = false, precision = 1, scale = 0)
     @Getter
     @Setter
-    private int tipoFiscal = 0; // 0 - CFD, 1 - CFDi
+    private int tipoFiscal = 0; // 0 - clientFiles, 1 - CFDi
 
     @Column(name = "FORMA_PAGO", nullable = false)
     @Getter
