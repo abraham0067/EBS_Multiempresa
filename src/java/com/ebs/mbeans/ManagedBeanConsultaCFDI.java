@@ -427,13 +427,18 @@ public class ManagedBeanConsultaCFDI implements Serializable {
                                 Cell celda1 = fila.createCell(1);
                                 celda1.setCellValue(cfd.getFolioErp());
                                 Cell celda2 = fila.createCell(2);
-                                MOtro otro = daoCFDI.Otro(cfd.getId());
-                                if (otro != null) {
-                                    celda2.setCellValue(otro.getParam5() != null ? otro.getParam5() : "");
-                                } else {
-                                    celda2.setCellValue("");
+                                if(cfd.getNoCliente() != null && !cfd.getNoCliente().isEmpty())
+                                    celda2.setCellValue(cfd.getNoCliente());
+                                else {
+                                    MOtro otro = daoCFDI.Otro(cfd.getId());
+                                    if (otro != null) {
+                                        celda2.setCellValue(otro.getParam5() != null ? otro.getParam5() : "");
+                                    } else {
+                                        celda2.setCellValue("");
+                                    }
+                                    otro = null;
                                 }
-                                otro = null;
+
                                 Cell celda3 = fila.createCell(3);
                                 celda3.setCellValue(cfd.getRazonSocial());
                                 Cell celda4 = fila.createCell(4);
