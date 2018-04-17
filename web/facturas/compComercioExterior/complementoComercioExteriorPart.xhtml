@@ -9,7 +9,7 @@
 </h:head>
 <h:body>
     <ui:composition>
-        <p:fieldset id="flsComecioExteriorSection" legend="Comercio exterior" toggleable="true" toggleSpeed="500" collapsed="false">
+        <p:fieldset id="flsComecioExteriorSection" legend="Comercio exterior" toggleable="true" toggleSpeed="500" collapsed="false" rendered="#{managedBeanFacturacionManual.servicioComercioExterior}">
             <p:panelGrid columns="4" style="width: 100%;" styleClass="ui-noborder"
                          columnClasses="ui-grid-col-1,ui-grid-col-2, ui-grid-col-8 ui-grid-col-1">
                 <p:outputLabel/>

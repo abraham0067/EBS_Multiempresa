@@ -34,10 +34,13 @@ public class ConceptoFactura implements Serializable {
     private String pedimento = "";
     @Getter
     @Setter
-    private double valorUnitario = 0.0;
+    private double valorUnitario;
     @Getter
     @Setter
     private double cantidad = 1.0;
+    @Getter
+    @Setter
+    private double cantidadAduana = 1.0;
     @Getter
     @Setter
     private double descuento;//
@@ -52,7 +55,7 @@ public class ConceptoFactura implements Serializable {
     private String unidad;//unidad de medida
     @Getter
     @Setter
-    private double importe = 0.0;//
+    private double importe = 0.00;//
     @Getter
     @Setter
     private String busquedaProdServ = "";
@@ -216,7 +219,8 @@ public class ConceptoFactura implements Serializable {
     }
 
     public void calcularMontos() {
-        importe = valorUnitario * cantidad;
+
+        this.importe = (valorUnitario*cantidad);
         calcularTraslados();
         calcularRetenciones();
     }
@@ -224,11 +228,21 @@ public class ConceptoFactura implements Serializable {
     public void calcularMontoComercioExterior(Double tipoCambio){
 
         this.valorDolares = (importe * tipoCambio) / tipoCambioUsd;
-        System.out.println("Montos: " + this.valorDolares);
+
     }
 
-    public void calcularValorUnitarioAduana(Double tipoCambio){
-        this.valorUnitarioAduana = (valorUnitario * tipoCambio) / tipoCambioUsd;
+    public void calcularValorUnitarioAduana(){
+
+        if(cantidadAduana > 0){
+            DecimalFormat df = new DecimalFormat("#.000000");
+            this.valorUnitarioAduana = (valorUnitario*cantidad) / cantidadAduana;
+            String number = df.format(valorUnitarioAduana);
+            this.valorUnitarioAduana = Double.parseDouble(number);
+        }
+
+
+
+        //this.valorUnitarioAduana = (valorUnitario * tipoCambio) / tipoCambioUsd;
         System.out.println("Montos aduana: " + this.valorUnitarioAduana);
     }
 

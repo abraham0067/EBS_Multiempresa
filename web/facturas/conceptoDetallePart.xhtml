@@ -91,8 +91,8 @@
                              required="true" requiredMessage="El precio unitario es un campo obligatorio."
 
                              converterMessage="Ingrese un numero valido para el precio.">
-                    <f:convertNumber pattern="#,###,##0.00" locale="es_MX"/>
-                    <f:validateDoubleRange minimum="0.000000"/>
+                  <!--  <f:convertNumber pattern="#,###,##0.000000" locale="es_MX"/>
+                    <f:validateDoubleRange minimum="0.000000"/>-->
                     <p:ajax event="change" process="@this,itPrecioUnitDet" update="msgs,itPrecioUnitDet"/>
                 </p:inputText>
 
@@ -175,6 +175,25 @@
                                          value="#{managedBeanFacturacionManual.tempConcepto.marca}"
                                          disabled="#{managedBeanFacturacionManual.usarComplementoComercioExterior eq false}"
                                          required="false" requiredMessage=""
+                                         maxlength="35">
+                                <p:ajax event="change" process="@this"/>
+                            </p:inputText>
+                            
+                             <p:outputLabel for="itCantidadAduana" value="Cantidad aduana: "/>
+                            <p:inputText id="itCantidadAduana"
+                                         value="#{managedBeanFacturacionManual.tempConcepto.cantidadAduana}"
+                                         disabled="#{managedBeanFacturacionManual.usarComplementoComercioExterior eq false}"
+                                         required="true" requiredMessage=""
+                                         maxlength="35">
+                                <p:ajax event="change" process="@this" listener="#{managedBeanFacturacionManual.handleChangeValorUnitarioAduana}"
+                                        update="itValorUnitarioCE"/>
+                            </p:inputText>
+
+                            <p:outputLabel value="Valor unitario aduana: "/>
+                            <p:inputText id="itValorUnitarioCE"
+                                         value="#{managedBeanFacturacionManual.tempConcepto.valorUnitarioAduana}"
+                                         disabled="#{managedBeanFacturacionManual.usarComplementoComercioExterior eq false}"
+                                         required="true" requiredMessage=""
                                          maxlength="35">
                                 <p:ajax event="change" process="@this"/>
                             </p:inputText>

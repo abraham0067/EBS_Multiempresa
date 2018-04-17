@@ -18,7 +18,7 @@ public class CustomDestinatarioData {
     CustomDomicilioData Domicilio;
 
     public CustomDestinatarioData() {
-        this("","", new CustomDomicilioData());
+        new CustomDomicilioData();
     }
 
     public CustomDestinatarioData(String numRegIdTrib, String nombre, CustomDomicilioData domicilio) {

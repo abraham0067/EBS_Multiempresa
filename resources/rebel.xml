@@ -7,13 +7,13 @@
 <application generated-by="intellij" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.zeroturnaround.com" xsi:schemaLocation="http://www.zeroturnaround.com http://update.zeroturnaround.com/jrebel/rebel-2_1.xsd">
 
 	<classpath>
-		<dir name="C:/Users/Josel/IdeaProjects/EBS_Multiempresa/out/production/EBS_Multiempresa">
+		<dir name="C:/Users/Erik/IdeaProjects/EBS_Multiempresa/out/production/FacturacionElectronica">
 		</dir>
 	</classpath>
 
 	<web>
 		<link target="/">
-			<dir name="C:/Users/Josel/IdeaProjects/EBS_Multiempresa/web">
+			<dir name="C:/Users/Erik/IdeaProjects/EBS_Multiempresa/web">
 			</dir>
 		</link>
 	</web>
