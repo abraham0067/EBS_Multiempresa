@@ -1,0 +1,369 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <p:dialog header="Detalle concepto." widgetVar="dlgAdd" showEffect="fade"
+              modal="true" resizable="false" draggable="false" position="top" closeOnEscape="true">
+        <p:scrollPanel style="width: 620px;height: 400px;" mode="native">
+            <p:panelGrid id="pgCptoDetail" columns="2" columnClasses="ui-grid-col-5, ui-grid-col-7,"
+                         style="text-align: center; width: 600px;"
+                         layout="grid" styleClass="ui-panelgrid-blank, ui-noborder">
+                <!--Clave prod servicio-->
+                <p:inputText id="itProdServDet" value="#{managedBeanCatalogos.descProdServ}"
+                             style="width: 100%;">
+                    <p:ajax event="change" listener="#{managedBeanCatalogos.buscarProductos()}"
+                            update="somClaveProdServDet"/>
+                    <p:ajax event="change"
+                            listener="#{managedBeanFacturacionManual.saveParamProd(managedBeanCatalogos.descProdServ)}"/>
+                    <p:watermark value="Busque descripción del producto SAT" for="itProdServDet"/>
+                </p:inputText>
+                <p:selectOneMenu id="somClaveProdServDet"
+                                 value="#{managedBeanFacturacionManual.tempConcepto.claveProdServ}"
+                                 title="Selecciona un producto o servicio"
+                                 style="width: 100%;" required="true"
+                                 requiredMessage="La clave del concepto es necesaria."
+                                 filter="true" filterMatchMode="contains">
+                    <f:selectItem itemLabel="Elige una opción" itemValue="" noSelectionOption="true"/>
+                    <f:selectItems value="#{managedBeanCatalogos.productos}" var="prod"
+                                   itemLabel="#{prod.clave}-#{prod.descripcion}"
+                                   itemValue="#{prod.clave}-#{prod.descripcion}"/>
+                    <p:ajax event="change" process="@this,somClaveProdServDet" update="msgs,somClaveProdServDet"/>
+                    <p:tooltip id="toolTipCPSDet" for="somClaveProdServDet" showEvent="focus" hideEvent="blur"/>
+                </p:selectOneMenu>
+
+                <h:outputLabel value="No identificación:"/>
+                <p:inputText id="itClaveCrearDet"
+                             value="#{managedBeanFacturacionManual.tempConcepto.claveconcepto}"
+                             maxlength="50">
+                    <p:ajax event="change" process="@this,itClaveCrearDet"/>
+                </p:inputText>
+
+                <h:outputLabel for="itCantidadCrearDet" value="Cantidad:"/>
+                <p:inputText id="itCantidadCrearDet"
+                             value="#{managedBeanFacturacionManual.tempConcepto.cantidad}"
+                             required="true"
+                             requiredMessage="La cantidad es un campo obligatorio."
+                             converterMessage="Por favor ingrese solo numeros en el campo de cantidad.">
+                    <p:ajax event="change" process="@this,itCantidadCrearDet" update="msgs,itCantidadCrearDet"/>
+                </p:inputText>
+
+                <!--Clave unidad-->
+                <p:inputText id="itClaveUnidadDet" value="#{managedBeanCatalogos.descUnidad}"
+                             style="width: 100%;">
+                    <p:ajax event="change" listener="#{managedBeanCatalogos.buscarUnidades()}"
+                            update="somUnidadesDet"/>
+                    <p:ajax event="change"
+                            listener="#{managedBeanFacturacionManual.saveParamUnidad(managedBeanCatalogos.descUnidad)}"/>
+                    <p:watermark value="Busque descripción unidad SAT" for="itClaveUnidadDet"/>
+                </p:inputText>
+                <p:selectOneMenu id="somUnidadesDet"
+                                 value="#{managedBeanFacturacionManual.tempConcepto.claveUnidad}"
+                                 style="width: 100%;" required="true"
+                                 requiredMessage="La clave de la unidad es obligatoria."
+                                 filter="true" filterMatchMode="contains"
+                                 title="Selecciona una unidad de medida">
+                    <f:selectItem itemLabel="Elige una opción" itemValue="" noSelectionOption="true"/>
+                    <f:selectItems value="#{managedBeanCatalogos.unidades}" var="un"
+                                   itemLabel="#{un.clave}-#{un.nombre}" itemValue="#{un.clave}-#{un.nombre}"/>
+                    <p:ajax event="change" process="@this,somUnidadesDet" update="msgs,somUnidadesDet"/>
+                    <p:tooltip id="toolTipCUDet" for="somUnidadesDet" showEvent="focus" hideEvent="blur"/>
+                </p:selectOneMenu>
+
+                <h:outputLabel for="itUnidadMedidaDet" value="Unidad de medida:"/>
+                <p:inputText id="itUnidadMedidaDet"
+                             value="#{managedBeanFacturacionManual.tempConcepto.unidad}"
+                             required="true" requiredMessage="La unidad de medida es un campo obligatorio."
+                             maxlength="30">
+                </p:inputText>
+
+                <h:outputLabel for="itCtoFactDet" value="Descripción Cpto:"/>
+                <p:inputTextarea id="itCtoFactDet"
+                                 value="#{managedBeanFacturacionManual.tempConcepto.conceptofacturacion}"
+                                 required="true" requiredMessage="El concepto de facturación campo obligatorio."
+                                 maxlength="500" cols="25" rows="3">
+                    <p:watermark value="Descripcion del producto o servicio." for="itCtoFactDet"/>
+                </p:inputTextarea>
+
+                <h:outputLabel value="Valor unitario:" for="itPrecioUnitDet"/>
+                <p:inputText id="itPrecioUnitDet"
+                             value="#{managedBeanFacturacionManual.tempConcepto.valorUnitario}"
+                             required="true" requiredMessage="El precio unitario es un campo obligatorio."
+
+                             converterMessage="Ingrese un numero valido para el precio.">
+                    <f:convertNumber pattern="#,###,##0.00" locale="es_MX"/>
+                    <f:validateDoubleRange minimum="0.000000"/>
+                    <p:ajax event="change" process="@this,itPrecioUnitDet" update="msgs,itPrecioUnitDet"/>
+                </p:inputText>
+
+                <h:outputLabel value="Descuento:" for="itDescuentoDet"/>
+                <p:inputText id="itDescuentoDet"
+                             value="#{managedBeanFacturacionManual.tempConcepto.descuento}"
+                             required="false" requiredMessage="Debe ingresar el descuento."
+                             converterMessage="Ingrese un numero valido para el descuento."
+                            disabled="#{managedBeanFacturacionManual.disabledInputDescuentoDetalleConcepto}">
+                    <f:convertNumber pattern="#,###,##0.00" locale="es_MX"/>
+                    <p:ajax event="change" process="@this,itPrecioUnitDet,itDescuentoDet"/>
+                    <f:validateDoubleRange minimum="0.0" />
+                    <p:watermark value="Opcional" for="itDescuentoDet"/>
+                    <p:ajax event="change" process="@this,itDescuentoDet" update="msgs,itDescuentoDet"/>
+                </p:inputText>
+
+                <h:outputLabel for="itNoCuentaPredial" value="No. Cuenta Predial:"/>
+                <p:inputText id="itNoCuentaPredial"
+                             value="#{managedBeanFacturacionManual.tempConcepto.noCuentaPredial}"
+                             required="false" requiredMessage=""
+                             maxlength="150">
+                    <p:ajax event="change" process="@this,itNoCuentaPredial" update="itNoCuentaPredial"/>
+                </p:inputText>
+
+                <h:outputLabel for="itPedimento" value="Pedimento:"/>
+                <p:inputText id="itPedimento"
+                             value="#{managedBeanFacturacionManual.tempConcepto.pedimento}"
+                             required="false" requiredMessage=""
+                             maxlength="150">
+                    <p:ajax event="change" process="@this,itPedimento" update="itPedimento"/>
+                </p:inputText>
+
+
+                <f:facet name="footer">
+                    <p:fieldset id="fsCamposComplementoComercioExterior" legend="Com.Exterior." toggleable="true" toggleSpeed="500"
+                                collapsed="false" >
+                        <p:panelGrid id="pgCamposComercioExterior" columns="2" columnClasses="ui-grid-col-5, ui-grid-col-7"
+                                     style="text-align: center; width: 100%;"
+                                     layout="grid" styleClass="ui-panelgrid-blank, ui-noborder">
+                            <p:outputLabel value="Fraccion Arancelaria:"/>
+                            <p:inputText id="itFraccionArancelaria"
+                                         value="#{managedBeanFacturacionManual.tempConcepto.fraccionArancelaria}"
+                                         required="false" requiredMessage=""
+                                         maxlength="150" disabled="#{managedBeanFacturacionManual.usarComplementoComercioExterior eq false}">
+                                <p:ajax event="change" process="@this"/>
+                            </p:inputText>
+
+                            <p:outputLabel value="Unidad Aduana:"/>
+                            <p:selectOneMenu id="itUnidadAduana"
+                                         value="#{managedBeanFacturacionManual.tempConcepto.unidadAduana}"
+                                             disabled="#{managedBeanFacturacionManual.usarComplementoComercioExterior eq false}">
+                                <f:selectItem itemLabel="Seleccione" itemValue=""/>
+                                <f:selectItem itemLabel="01	KILO" itemValue="01"/>
+                                <f:selectItem itemLabel="02	GRAMO" itemValue="02"/>
+                                <f:selectItem itemLabel="03	METRO LINEAL" itemValue="03"/>
+                                <f:selectItem itemLabel="04	METRO CUADRADO" itemValue="04"/>
+                                <f:selectItem itemLabel="05	METRO CUBICO" itemValue="05"/>
+                                <f:selectItem itemLabel="06	PIEZA" itemValue="06"/>
+                                <f:selectItem itemLabel="07	CABEZA" itemValue="07"/>
+                                <f:selectItem itemLabel="08	LITRO" itemValue="08"/>
+                                <f:selectItem itemLabel="09	PAR" itemValue="09"/>
+                                <f:selectItem itemLabel="10	KILOWATT" itemValue="10"/>
+                                <f:selectItem itemLabel="11	MILLAR" itemValue="11"/>
+                                <f:selectItem itemLabel="12	JUEGO" itemValue="12"/>
+                                <f:selectItem itemLabel="13	KILOWATT/HORA" itemValue="13"/>
+                                <f:selectItem itemLabel="14	TONELADA" itemValue="14"/>
+                                <f:selectItem itemLabel="15	BARRIL" itemValue="15"/>
+                                <f:selectItem itemLabel="16	GRAMO NETO" itemValue="16"/>
+                                <f:selectItem itemLabel="17	DECENAS" itemValue="17"/>
+                                <f:selectItem itemLabel="18	CIENTOS" itemValue="18"/>
+                                <f:selectItem itemLabel="19	DOCENAS" itemValue="19"/>
+                                <f:selectItem itemLabel="20	CAJA" itemValue="20"/>
+                                <f:selectItem itemLabel="21	BOTELLA" itemValue="21"/>
+                                <f:selectItem itemLabel="99	SERVICIO" itemValue="99"/>
+                                <p:ajax event="change" process="@this"/>
+                            </p:selectOneMenu>
+
+                            <p:outputLabel value="Marca:"/>
+                            <p:inputText id="itMarca"
+                                         value="#{managedBeanFacturacionManual.tempConcepto.marca}"
+                                         disabled="#{managedBeanFacturacionManual.usarComplementoComercioExterior eq false}"
+                                         required="false" requiredMessage=""
+                                         maxlength="35">
+                                <p:ajax event="change" process="@this"/>
+                            </p:inputText>
+
+                        </p:panelGrid>
+                    </p:fieldset>
+                    <p:fieldset id="fsParamsCpto" legend="Campos adicionales." toggleable="true" toggleSpeed="500"
+                                collapsed="false" binding="#{managedBeanFacturacionManual.fieldSetRefCpto}">
+                    </p:fieldset>
+                    <p:fieldset id="fsTyR" legend="Impuestos" toggleable="true" toggleSpeed="500"
+                                collapsed="false">
+                        <p:panelGrid id="pgTrasladosCptoDev" style="width: 100%;">
+                            <f:facet name="header">
+                                <p:row>
+                                    <p:column
+                                            colspan="4">Traslados, en caso de que un impuesto no aplique seleccione NA o deje sin seleccionar.</p:column>
+                                </p:row>
+                            </f:facet>
+                            <p:row>
+                                <!--NOMBRE DEL IMPUESTO-->
+                                <p:column style="width: 25%;">
+                                    <p:outputLabel
+                                            value="#{managedBeanFacturacionManual.ivaTrasladado.descripcionImpuesto}"/>
+                                </p:column>
+
+                                <!--TIPOFACTOR, EXENTO (SIGNIFICA QUE NO SE AGREGA), TASA O COUTA, EL IVA SOLO TIENE TASA -->
+                                <p:column style="width: 25%;">
+                                    <p:selectOneListbox id="somIvaTrasTipFactDev"
+                                                        value="#{managedBeanFacturacionManual.ivaTrasladado.tipoFactor}"
+                                                        style="width: 100%;"
+                                                        disabled="#{managedBeanFacturacionManual.disabledFieldSetImpuestosDetalleConcepto}">
+                                        <f:selectItems value="#{managedBeanCatalogos.factoresAll}" var="fc"
+                                                       itemLabel="#{fc.clave}" itemValue="#{fc.clave}"/>
+                                        <p:ajax event="change" process="somIvaTrasTipFactDev, @this"
+                                                listener="#{managedBeanCatalogos.buscarIvaTasasPorFactorTras(managedBeanFacturacionManual.ivaTrasladado.tipoFactor)}"
+                                                update="somTasasIvaTrasDev"/>
+                                    </p:selectOneListbox>
+                                </p:column>
+                                <p:column style="width: 25%;text-align: right;">
+                                    <p:selectOneListbox id="somTasasIvaTrasDev"
+                                                        value="#{managedBeanFacturacionManual.ivaTrasladado.tasaOcuota}"
+                                                        style="width: 100%;">
+                                        <f:selectItems value="#{managedBeanCatalogos.ivaTasasTraslados}" var="ivt"
+                                                       itemLabel="#{ivt.porcentajeMaximo}"
+                                                       itemValue="#{ivt.porcentajeMaximo}"/>
+                                        <p:ajax event="change"
+                                                listener="#{managedBeanFacturacionManual.calculaTrasladosYRetencionesTotales()}"
+                                                update="itImporteIVATransDev" process="somTasasIvaTrasDev,@this"/>
+                                    </p:selectOneListbox>
+                                </p:column>
+                                <p:column style="width: 25%;text-align: right;">
+                                    <p:outputLabel id="itImporteIVATransDev"
+                                                   value="#{managedBeanFacturacionManual.ivaTrasladado.importe}">
+                                        <f:convertNumber type="currency" currencySymbol="$" locale="es_MX"/>
+                                    </p:outputLabel>
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column style="width: 25%;">
+                                    <p:outputLabel
+                                            value="#{managedBeanFacturacionManual.iepsTrasladado.descripcionImpuesto}"/>
+                                </p:column>
+                                <p:column style="width: 25%;">
+                                    <p:selectOneListbox id="somIepsTrasTipFactDev"
+                                                        value="#{managedBeanFacturacionManual.iepsTrasladado.tipoFactor}"
+                                                        style="width: 100%;"
+                                                        disabled="#{managedBeanFacturacionManual.disabledFieldSetImpuestosDetalleConcepto}">
+                                        <f:selectItems value="#{managedBeanCatalogos.factoresAll}" var="fc"
+                                                       itemLabel="#{fc.clave}" itemValue="#{fc.clave}"/>
+                                        <p:ajax event="change" process="somIepsTrasTipFactDev, @this"
+                                                listener="#{managedBeanCatalogos.buscarIepsTasasPorFactorTras((managedBeanFacturacionManual.iepsTrasladado.tipoFactor))}"
+                                                update="somTasasIepsTrasDev"/>
+                                    </p:selectOneListbox>
+                                </p:column>
+                                <p:column style="width: 25%;text-align: right;">
+                                    <p:selectOneListbox id="somTasasIepsTrasDev"
+                                                        value="#{managedBeanFacturacionManual.iepsTrasladado.tasaOcuota}"
+                                                        style="width: 100%;">
+                                        <f:selectItems value="#{managedBeanCatalogos.iepsTasasTraslados}" var="ivt"
+                                                       itemLabel="#{ivt.porcentajeMaximo}"
+                                                       itemValue="#{ivt.porcentajeMaximo}"/>
+                                        <!--TODO probablemente la llamada al calculo de traslados y retenciones totales se pueda eliminar desde aqui y llamarla desde el mbean -->
+                                        <p:ajax event="change"
+                                                listener="#{managedBeanFacturacionManual.calculaTrasladosYRetencionesTotales()}"
+                                                update="itImporteIepsTransDev" process="somTasasIepsTrasDev,@this"/>
+                                    </p:selectOneListbox>
+                                </p:column>
+                                <p:column style="width: 25%;text-align: right;">
+                                    <p:outputLabel id="itImporteIepsTransDev"
+                                                   value="#{managedBeanFacturacionManual.iepsTrasladado.importe}">
+                                        <f:convertNumber type="currency" currencySymbol="$" locale="es_MX"/>
+                                    </p:outputLabel>
+                                </p:column>
+                            </p:row>
+                        </p:panelGrid>
+
+
+                        <p:panelGrid id="pgRetencionesCptoDev" style="width: 100%;">
+                            <f:facet name="header">
+                                <p:row>
+                                    <p:column
+                                            colspan="4">Retenciones, en caso de que un impuesto no aplique seleccione NA o deje sin seleccionar.</p:column>
+                                </p:row>
+                            </f:facet>
+                            <p:row>
+                                <p:column style="width: 25%;">
+                                    <p:outputLabel value="#{managedBeanFacturacionManual.ivaRetenido.descripcionImpuesto}"/>
+                                </p:column>
+                                <p:column style="width: 25%;">
+                                    <p:selectOneListbox id="somIvaRetsTipFactDev"
+                                                        value="#{managedBeanFacturacionManual.ivaRetenido.tipoFactor}"
+                                                        style="width: 100%;"
+                                                        disabled="#{managedBeanFacturacionManual.disabledFieldSetImpuestosDetalleConcepto}">
+                                        <f:selectItems value="#{managedBeanCatalogos.factoresRets}" var="fc"
+                                                       itemLabel="#{fc.clave}" itemValue="#{fc.clave}"/>
+                                        <p:ajax event="change" process="somIvaRetsTipFactDev, @this"
+                                                listener="#{managedBeanCatalogos.buscarTasasIvaRetenciones((managedBeanFacturacionManual.ivaRetenido.tipoFactor))}"
+                                                update="somTasasIvaRetsDev"/>
+                                    </p:selectOneListbox>
+                                </p:column>
+                                <p:column style="width: 25%;text-align: right;">
+                                    <p:selectOneListbox id="somTasasIvaRetsDev"
+                                                        value="#{managedBeanFacturacionManual.ivaRetenido.tasaOcuota}"
+                                                        style="width: 100%;">
+                                        <f:selectItems value="#{managedBeanCatalogos.ivaTasasRetenciones}" var="ivatr"
+                                                       itemLabel="#{ivatr.porcentajeMaximo}" itemValue="#{ivatr.porcentajeMaximo}"/>
+                                        <p:ajax event="change"
+                                                listener="#{managedBeanFacturacionManual.calculaTrasladosYRetencionesTotales}"
+                                                update="itImporteIvaRetDev" process="somTasasIvaRetsDev,@this"/>
+                                    </p:selectOneListbox>
+                                </p:column>
+                                <p:column style="width: 25%;text-align: right;">
+                                    <p:outputLabel id="itImporteIvaRetDev"
+                                                   value="#{managedBeanFacturacionManual.ivaRetenido.importe}">
+                                        <f:convertNumber type="currency" currencySymbol="$" locale="es_MX"/>
+                                    </p:outputLabel>
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column style="width: 25%;">
+                                    <p:outputLabel value="#{managedBeanFacturacionManual.isrRetenido.descripcionImpuesto}"/>
+                                </p:column>
+                                <p:column style="width: 25%;">
+                                    <p:selectOneListbox id="somIsrRetsTipFactDev"
+                                                        value="#{managedBeanFacturacionManual.isrRetenido.tipoFactor}"
+                                                        style="width: 100%;"
+                                                        disabled="#{managedBeanFacturacionManual.disabledFieldSetImpuestosDetalleConcepto}">
+                                        <f:selectItems value="#{managedBeanCatalogos.factoresRets}" var="fc"
+                                                       itemLabel="#{fc.clave}" itemValue="#{fc.clave}"/>
+                                        <p:ajax event="change" process="somIsrRetsTipFactDev, @this"
+                                                listener="#{managedBeanCatalogos.buscarTasasIsrRetenciones(managedBeanFacturacionManual.isrRetenido.tipoFactor)}"
+                                                update="somTasasIsrRetsDet"/>
+                                    </p:selectOneListbox>
+                                </p:column>
+                                <p:column style="width: 25%;text-align: right;">
+                                    <p:selectOneListbox id="somTasasIsrRetsDet"
+                                                        value="#{managedBeanFacturacionManual.isrRetenido.tasaOcuota}"
+                                                        style="width: 100%;">
+                                        <f:selectItems value="#{managedBeanCatalogos.isrTasasRetenciones}" var="isrtr"
+                                                       itemLabel="#{isrtr.porcentajeMaximo}" itemValue="#{isrtr.porcentajeMaximo}"/>
+                                        <p:ajax event="change"
+                                                listener="#{managedBeanFacturacionManual.calculaTrasladosYRetencionesTotales()}"
+                                                update="itImporteIsrRetDet" process="somTasasIsrRetsDet,@this"/>
+                                    </p:selectOneListbox>
+                                </p:column>
+                                <p:column style="width: 25%;text-align: right;">
+                                    <p:outputLabel id="itImporteIsrRetDet"
+                                                   value="#{managedBeanFacturacionManual.isrRetenido.importe}">
+                                        <f:convertNumber type="currency" currencySymbol="$" locale="es_MX"/>
+                                    </p:outputLabel>
+                                </p:column>
+                            </p:row>
+                        </p:panelGrid>
+                    </p:fieldset>
+                    <br/>
+                </f:facet>
+            </p:panelGrid>
+        </p:scrollPanel>
+        <p:panelGrid styleClass="panelCentered">
+            <p:commandButton value="Aplicar cambios"
+                             ajax="true"
+                             styleClass="customButtonTwo"
+                             actionListener="#{managedBeanFacturacionManual.procesarConcepto()}"
+                             process="somClaveProdServDet,itCantidadCrearDet,somUnidadesDet,itUnidadMedidaDet,
+                                     itCtoFactDet,itPrecioUnitDet,pgTrasladosCptoDev:,pgRetencionesCptoDev:,@this"
+                             update="somClaveProdServDet,itCantidadCrearDet,somUnidadesDet,itUnidadMedidaDet,
+                                     itCtoFactDet,itPrecioUnitDet,msgs,cbEliminar, dtListaConceptos,somConceptos,itCodConf,pgResumen:"
+                             oncomplete="handleAddRequest(xhr, status, args)">
+            </p:commandButton>
+        </p:panelGrid>
+    </p:dialog>
+</ui:composition>

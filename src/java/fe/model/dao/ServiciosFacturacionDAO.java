@@ -3,6 +3,7 @@ package fe.model.dao;
 import fe.db.CServiciosFacturacion;
 import fe.db.MServiciosFacturacion;
 import fe.model.util.hibernateutil.HibernateUtilApl;
+import fe.model.util.hibernateutil.HibernateUtilEmi;
 import org.bouncycastle.asn1.isismtt.x509.Restriction;
 import org.hibernate.Criteria;
 import org.hibernate.Hibernate;
@@ -17,9 +18,11 @@ import java.util.List;
 public class ServiciosFacturacionDAO {
 
     private HibernateUtilApl hibernateUtilApl;
+    private HibernateUtilEmi hibernateUtilEmi;
 
     public ServiciosFacturacionDAO() {
         hibernateUtilApl = new HibernateUtilApl();
+        hibernateUtilEmi = new HibernateUtilEmi();
     }
 
 
@@ -66,15 +69,15 @@ public class ServiciosFacturacionDAO {
         boolean res = true;
 
         try {
-            hibernateUtilApl.initTransaction();
-            hibernateUtilApl.getSession().saveOrUpdate(mServiciosFacturacion);
-            hibernateUtilApl.getTransaction().commit();
+            hibernateUtilEmi.initTransaction();
+            hibernateUtilEmi.getSession().saveOrUpdate(mServiciosFacturacion);
+            hibernateUtilEmi.getTransaction().commit();
 
         } catch (HibernateException ex) {
             res = false;
-            hibernateUtilApl.getTransaction().rollback();
+            hibernateUtilEmi.getTransaction().rollback();
         } finally {
-            hibernateUtilApl.closeSession();
+            hibernateUtilEmi.closeSession();
         }
 
         return res;
@@ -84,20 +87,20 @@ public class ServiciosFacturacionDAO {
     public boolean borrarServicio(int id) {
         boolean flag = true;
 
-        hibernateUtilApl.initTransaction();
+        hibernateUtilEmi.initTransaction();
 
         try {
             String hql = "DELETE FROM MServiciosFacturacion WHERE idEmpresa = :id";
-            Query query = hibernateUtilApl.getSession().createQuery(hql);
+            Query query = hibernateUtilEmi.getSession().createQuery(hql);
             query.setInteger("id", id);
             int rowCount = query.executeUpdate();
-            hibernateUtilApl.getTransaction().commit();
+            hibernateUtilEmi.getTransaction().commit();
         } catch (HibernateException ex) {
             ex.printStackTrace();
-            hibernateUtilApl.getTransaction().rollback();
+            hibernateUtilEmi.getTransaction().rollback();
             flag = false;
         } finally {
-            hibernateUtilApl.closeSession();
+            hibernateUtilEmi.closeSession();
         }
 
         return flag;
@@ -107,17 +110,18 @@ public class ServiciosFacturacionDAO {
 
         boolean flag = true;
         try{
+            hibernateUtilEmi.initTransaction();
             String hql = "DELETE FROM MServiciosFacturacion WHERE idEmpresa = :id";
-            Query query = hibernateUtilApl.getSession().createQuery(hql);
+            Query query = hibernateUtilEmi.getSession().createQuery(hql);
             query.setInteger("id", idServicios);
             int rowCount = query.executeUpdate();
-            hibernateUtilApl.getTransaction().commit();
+            hibernateUtilEmi.getTransaction().commit();
 
         }catch(HibernateException ex){
-            hibernateUtilApl.getTransaction().rollback();
+            hibernateUtilEmi.getTransaction().rollback();
             flag = false;
         }finally {
-            hibernateUtilApl.closeSession();
+            hibernateUtilEmi.closeSession();
         }
 
         return flag;
@@ -128,14 +132,14 @@ public class ServiciosFacturacionDAO {
 
         boolean flag = true;
         try {
-            hibernateUtilApl.initTransaction();
-            hibernateUtilApl.getSession().saveOrUpdate(cServiciosFacturacion);
-            hibernateUtilApl.getTransaction().commit();
+            hibernateUtilEmi.initTransaction();
+            hibernateUtilEmi.getSession().saveOrUpdate(cServiciosFacturacion);
+            hibernateUtilEmi.getTransaction().commit();
         } catch (HibernateException ex) {
             flag = false;
-            hibernateUtilApl.getTransaction().rollback();
+            hibernateUtilEmi.getTransaction().rollback();
         } finally {
-            hibernateUtilApl.closeSession();
+            hibernateUtilEmi.closeSession();
         }
         return flag;
     }
@@ -160,16 +164,16 @@ public class ServiciosFacturacionDAO {
     public void borrarServicioCatalogo(int id) throws HibernateException {
         boolean flag = true;
 
-        hibernateUtilApl.initTransaction();
+        hibernateUtilEmi.initTransaction();
 
         try {
             String hql = "DELETE FROM CServiciosFacturacion WHERE id = :id";
-            Query query = hibernateUtilApl.getSession().createQuery(hql);
+            Query query = hibernateUtilEmi.getSession().createQuery(hql);
             query.setInteger("id", id);
             int rowCount = query.executeUpdate();
-            hibernateUtilApl.getTransaction().commit();
+            hibernateUtilEmi.getTransaction().commit();
         } finally {
-            hibernateUtilApl.closeSession();
+            hibernateUtilEmi.closeSession();
         }
     }
 
