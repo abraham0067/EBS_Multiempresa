@@ -225,4 +225,9 @@
         <managed-bean-class>com.ebs.mbeans.ManagedBeanUtils</managed-bean-class>
         <managed-bean-scope>request</managed-bean-scope>
     </managed-bean>
+    <managed-bean>
+        <managed-bean-name>managedBeanServicios</managed-bean-name>
+        <managed-bean-class>com.ebs.mbeans.ManagedBeanServicios</managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
+    </managed-bean>
 </faces-config>

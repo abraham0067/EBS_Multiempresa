@@ -1,10 +1,7 @@
 package com.ebs.mbeans;
 
 
-import com.ebs.adenda.Adenda;
-import com.ebs.adenda.Partes;
-import com.ebs.adenda.Proveedor;
-import com.ebs.adenda.Referencias;
+import com.ebs.adenda.*;
 import com.ebs.complementoextdata.*;
 import com.ebs.exceptions.BadImpuestoTypeException;
 import com.ebs.util.FloatsNumbersUtil;
@@ -61,6 +58,7 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.faces.component.UIInput;
+import javax.ws.rs.GET;
 
 import fe.vw.*;
 import fe.audi.*;
@@ -133,6 +131,7 @@ public class ManagedBeanFacturacionManual implements Serializable {
     private ParamsAdditionalDao daoParamsFactMan;
     private TipoDocsFactManDao daoTipoDocs;
     private PaisDAO daoPais;
+    private ServiciosFacturacionDAO serviciosFacturacionDAO;
 
     //Elementos del form
     private MEmpresa empresaEmisora;
@@ -452,6 +451,9 @@ public class ManagedBeanFacturacionManual implements Serializable {
     List<Partes> dataPartesAdenda;
     @Getter
     @Setter
+    Map<String, Integer> listAdenda;
+    @Getter
+    @Setter
     private boolean usarComplementoAdendaVW;
     @Getter
     @Setter
@@ -477,6 +479,25 @@ public class ManagedBeanFacturacionManual implements Serializable {
     @Getter
     @Setter
     private FacturaAudiData facturaAudi;
+
+    @Getter
+    @Setter
+    private boolean servicioComercioExterior;
+    @Getter
+    @Setter
+    private boolean servAdendaVW;
+    @Getter
+    @Setter
+    private boolean servAdendaAudi;
+    @Getter
+    @Setter
+    private boolean servAdenda;
+
+    private ServiciosDisponibles serviciosDisponibles;
+
+    @Getter
+    @Setter
+    private List<CatalogoAdenda> catalogoAdendaList;
 
 
     static {
@@ -519,6 +540,7 @@ public class ManagedBeanFacturacionManual implements Serializable {
         daoParamsFactMan = new ParamsAdditionalDao();
         daoTipoDocs = new TipoDocsFactManDao();
         daoPais = new PaisDAO();
+        serviciosFacturacionDAO = new ServiciosFacturacionDAO();
 
         idTipoDoc = -1;
         idConcepto = -1;
@@ -589,7 +611,13 @@ public class ManagedBeanFacturacionManual implements Serializable {
         }
 
         respuestas = new ArrayList<>();
+        //servicios disponibles
+
+        serviciosDisponibles = new ServiciosDisponibles();
+        int idEmpresaservicio = empresa.getId();
+        servicioComercioExterior = serviciosDisponibles.servicioAsignado(idEmpresaservicio, "Comercio exterior");
         initComercioExterior();
+
         initAdenda();
 
         //? TRASLADOS COMERCIO
@@ -629,7 +657,6 @@ public class ManagedBeanFacturacionManual implements Serializable {
 
         }
 
-
     }
 
     private void initComercioExterior() {
@@ -650,11 +677,39 @@ public class ManagedBeanFacturacionManual implements Serializable {
 
 
     private void initAdenda() {
+
+        catalogoAdendaList = new ArrayList<CatalogoAdenda>();
+
         usarComplementoAdendaVW = false;
         usarComplementoAdendaAudi = false;
         dataPartesAdenda = new ArrayList<>();
         dataReferenciaAdenda = new Referencias();
         dataProveedorAdenda = new Proveedor();
+
+        servAdendaVW = serviciosDisponibles.servicioAsignado(empresa.getId(), "Adenda VOLKSWAGEN");
+        servAdendaAudi = serviciosDisponibles.servicioAsignado(empresa.getId(), "Adenda AUDI");
+
+        if (servAdendaAudi || servAdendaVW) {
+            servAdenda = true;
+        } else {
+            servAdenda = false;
+        }
+
+        CatalogoAdenda catAdendaVw = new CatalogoAdenda();
+        catAdendaVw.setIdTipoAdenda(1);
+        catAdendaVw.setAdenda("Volkswagen");
+
+        CatalogoAdenda catAdendaAudi = new CatalogoAdenda();
+        catAdendaAudi.setIdTipoAdenda(2);
+        catAdendaAudi.setAdenda("Audi");
+
+        if (servAdendaVW) {
+            catalogoAdendaList.add(catAdendaVw);
+        }
+
+        if (servAdendaAudi) {
+            catalogoAdendaList.add(catAdendaAudi);
+        }
     }
 
 
@@ -1136,6 +1191,8 @@ public class ManagedBeanFacturacionManual implements Serializable {
 
         DestinatarioComercioData destinatarioComercioData = new DestinatarioComercioData();
         destinatarioComercioData.setDomicilio(domicilios);
+        destinatarioComercioData.setNombre(singleDestinatarioData.getNombre());
+        destinatarioComercioData.setNumRegIdTrib(singleDestinatarioData.getNumRegIdTrib());
 
 
         ///-------------------------------------------------------------------------------------------------------------
@@ -2481,13 +2538,17 @@ public class ManagedBeanFacturacionManual implements Serializable {
         ejecutaOperacionComercioExterior();
     }
 
+    public void handleChangeValorUnitarioAduana() {
+        tempConcepto.calcularValorUnitarioAduana();
+    }
+
     public void ejecutaOperacionComercioExterior() {
         singleComplementoComercioExteriorData.setTotalUSD(0.0);
         double tempTotalUsd = 0.0;
         for (ConceptoFactura tmp : this.conceptosAsignados) {
             tmp.setTipoCambioUsd(singleComplementoComercioExteriorData.getTipoCambioUSD());
             tmp.calcularMontoComercioExterior(tipoCambioDatosFacturaInput);
-            tmp.calcularValorUnitarioAduana(tipoCambioDatosFacturaInput);
+            tmp.calcularValorUnitarioAduana();
             tempTotalUsd += tmp.getValorDolares();
         }
 
@@ -2649,7 +2710,7 @@ public class ManagedBeanFacturacionManual implements Serializable {
             }
 
             if (!match && !tmp.getTipoFactor().equalsIgnoreCase(IMP_NA)) {
-                // TODO: 20/09/2017 INVESTIGAR SI CUANDO 
+                // TODO: 20/09/2017 INVESTIGAR SI CUANDO
                 ImpuestoContainer nuevoImpuestoComp = new ImpuestoContainer(tmp.getImpuesto(),
                         tmp.getBase(),
                         tmp.getTipoFactor(),

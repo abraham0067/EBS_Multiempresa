@@ -321,7 +321,7 @@
                 </p:fieldset>
                 <!--ADDENDAS SOLO APERECERA SI ESTA EN LA LISTA DE EMPRESAS CON ADDENDA, APARECEN DE ACUERDO A LA EMPRESA-->
                 <!--ADDENDA COATS-->
-                <p:fieldset id="flsAddenda" legend="Addenda Volkswagen/Audi" toggleable="true" toggleSpeed="500" collapsed="false">
+                <p:fieldset id="flsAddenda" legend="Addenda Volkswagen/Audi" toggleable="true" toggleSpeed="500" collapsed="false" rendered="#{managedBeanFacturacionManual.servAdenda}">
 
                     <p:panelGrid columns="4"
                                  columnClasses="ui-grid-col-2, ui-grid-col-4, ui-grid-col-2, ui-grid-col-4"
@@ -330,9 +330,11 @@
 
                         <p:outputLabel for="itClienteAdenda" value="Cliente addenda*" />
                         <p:selectOneMenu id="itClienteAdenda" value="#{managedBeanFacturacionManual.clienteAddenda}">
-                            <f:selectItem itemLabel="Selecciona un cliente" itemValue="-1" />
-                            <f:selectItem itemLabel="Volkswagen" itemValue="1" />
-                            <f:selectItem itemLabel="Audi" itemValue="2" />
+                            <f:selectItem itemLabel="Selecciona un cliente" itemValue="-1"/>
+                            <f:selectItems value="#{managedBeanFacturacionManual.catalogoAdendaList}" var="catAdenda"
+                                           itemValue="#{catAdenda.idTipoAdenda}" itemLabel="#{catAdenda.adenda}"/>
+                           <!-- <f:selectItem itemLabel="Volkswagen" itemValue="1" rendered="#{managedBeanFacturacionManual.servAdendaVW}"/>
+                            <f:selectItem itemLabel="Audi" itemValue="2" rendered="#{managedBeanFacturacionManual.servAdendaAudi}"/>-->
                             <p:ajax event="change" listener="#{managedBeanFacturacionManual.usarAddenda()}" process="@this"/>
                         </p:selectOneMenu>
 

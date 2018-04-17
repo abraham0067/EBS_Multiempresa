@@ -1,16 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE hibernate-configuration PUBLIC "-//Hibernate/Hibernate Configuration DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">
+<!DOCTYPE hibernate-configuration PUBLIC "-//Hibernate/Hibernate Configuration DTD 3.0//EN"
+        "http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">
 <hibernate-configuration>
     <session-factory>
         <!-- Pool de conexiones con permisos de solo lectura(SELECT) -->
         <!--JNDI -->
-       <property name="connection.datasource">java:comp/env/jdbc/Emision_apl</property>
+        <property name="connection.datasource">java:comp/env/jdbc/Emision_apl</property>
         <!-- using the configuration defined in this file-->
 
 
-       <!-- <property name="hibernate.connection.url">jdbc:mysql://192.155.230.106:3306/FACCORP_APL?zeroDateTimeBehavior=convertToNull</property>
-        <property name="hibernate.connection.username">carlogs</property>
-        <property name="hibernate.connection.password">e4bhse12</property>-->
+        <!-- <property name="hibernate.connection.url">jdbc:mysql://192.155.230.106:3306/FACCORP_APL?zeroDateTimeBehavior=convertToNull</property>
+         <property name="hibernate.connection.username">carlogs</property>
+         <property name="hibernate.connection.password">e4bhse12</property>-->
 
 
         <property name="connection.driver_class">com.mysql.jdbc.Driver</property>
@@ -21,8 +22,8 @@
 
 
         <property name="connection.autoReconnect">true</property>
-        <property name="connection.autoReconnectForPools"> true </property>
-        <property name="connection.is-connection-validation-required"> true </property>
+        <property name="connection.autoReconnectForPools">true</property>
+        <property name="connection.is-connection-validation-required">true</property>
 
 
         <mapping class="fe.db.MCfd"/>
@@ -58,7 +59,7 @@
         <mapping class="fe.db.MJars"/>
         <mapping class="fe.db.McfdRetencion"/>
         <mapping class="fe.db.MCfdXmlRetencion"/>
-        <mapping class="fe.db.MOtroRetencion"/>	
+        <mapping class="fe.db.MOtroRetencion"/>
         <mapping class="fe.db.MEmpresaServicio"/>
         <mapping class="fe.db.MServicio"/>
         <mapping class="fe.db.MCmetodoPago"/>
@@ -94,5 +95,7 @@
         <mapping class="fe.db.MOtroProforma"/>
         <mapping class="fe.db.MArchivosCfdProforma"/>
         <mapping class="com.ebs.vistas.VistaCfdiOtro"/>
+        <mapping class="fe.db.CServiciosFacturacion"/>
+        <mapping class="fe.db.MServiciosFacturacion"/>
     </session-factory>
 </hibernate-configuration>

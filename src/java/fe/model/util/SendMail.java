@@ -85,6 +85,7 @@ public class SendMail implements Serializable {
             System.out.println("mail.smtp.host: " + servidorSMTP);
             System.out.println("mail.smtp.port: " + puerto);
             System.out.println("mail.smtp.user: " + usuario);
+            System.out.println("mail.smtp.password: " + password);
 
             props.setProperty("mail.smtp.host", servidorSMTP);
             props.setProperty("mail.smtp.starttls.enable", "true");

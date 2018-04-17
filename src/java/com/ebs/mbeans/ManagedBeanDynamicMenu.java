@@ -14,6 +14,7 @@ import javax.faces.model.SelectItem;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import fe.model.dao.ServiciosDisponibles;
 import org.primefaces.model.menu.DefaultMenuItem;
 import org.primefaces.model.menu.DefaultMenuModel;
 import org.primefaces.model.menu.DefaultSubMenu;
@@ -41,6 +42,8 @@ public class ManagedBeanDynamicMenu implements Serializable {
     private static String menuStringInter;
     private static String menuStringCte;
     private long perfilu = 0l;
+    private ServiciosDisponibles serviciosDisponibles;
+    private  boolean servDisp;
     static {
         //Init static attributes
         ManagedBeanDynamicMenu.staticInit();
@@ -81,6 +84,7 @@ public class ManagedBeanDynamicMenu implements Serializable {
             opciones.add(new SelectItem("noCliente", "No. Cliente"));
             opciones.add(new SelectItem("razonSocial", "Razón Social"));
         }
+
     }
 
     private static void staticInit(){
@@ -91,6 +95,8 @@ public class ManagedBeanDynamicMenu implements Serializable {
 
     private void buildMenu(WebMenu obj) {
         menubar = new DefaultMenuModel();//Main container
+        serviciosDisponibles = new ServiciosDisponibles();
+        servDisp = serviciosDisponibles.servicioAsignado(cuentaUsuario.getEmpresa().getId(), "Complemento de pago manual");
         for (SubMenu sbm : obj.getMenus()) {
             menubar.addElement(buildSubMenu(sbm));
         }
@@ -103,6 +109,7 @@ public class ManagedBeanDynamicMenu implements Serializable {
      * @return
      */
     private DefaultSubMenu buildSubMenu(SubMenu subm) {
+
         if (subm.getItems().isEmpty() && subm.getMenus().isEmpty()) {
             return null;
         }
@@ -110,12 +117,17 @@ public class ManagedBeanDynamicMenu implements Serializable {
         DefaultSubMenu current = new DefaultSubMenu();
         current.setIcon(subm.getIcon());
         current.setLabel(subm.getTitle());
+
+       // System.out.println("flag: " + servDisp);
+
         //TODO  AGREGAR LOS ICONOS Y SUBMENUS BASADOS EN EL VALOR DE LA POSICION DE LA ENTRADA, ACTUALMENTE DEPENDE DEL ORDEN DE CODIGO
         for (com.ebs.menu.MenuItem item : subm.getItems()) {
             //System.out.println("item.getTitle() = " + item.getTitle());
             //SI ES CANCELACION OMITE PEGAR EL MENU YA QUE ES UN BOTON
-            if(item.getTitle().equals("Cancelacion"))
+            if(item.getTitle().equals("Cancelacion")){
                 continue;
+            }
+
 
             DefaultMenuItem it = new DefaultMenuItem(item.getTitle());
             it.setUrl(item.getUrl());
@@ -123,7 +135,16 @@ public class ManagedBeanDynamicMenu implements Serializable {
                 current.addElement(it);//add when perfil property not found
             } else {
                 if ((perfilu & item.getPerfilValue()) == item.getPerfilValue())//Only add if have rights
-                    current.addElement(it);
+
+                    if(item.getTitle().equalsIgnoreCase("Complemento de pago manual")){
+                        if(servDisp){
+                            current.addElement(it);
+                        }
+                    }else{
+                        current.addElement(it);
+                    }
+
+
             }
 
         }

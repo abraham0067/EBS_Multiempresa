@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+                template="../templates/templateContent.xhtml"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+
+    <ui:define name="breadcrum">
+        <p:breadCrumb class="breadcrumbStyle" style="padding: 1px 1px 1px 1px;">
+            <p:menuitem value="Inicio" url="#"/>
+            <p:menuitem value="Administraci&oacute;n" url="#"/>
+            <p:menuitem value="Servicios" url="#"/>
+        </p:breadCrumb>
+    </ui:define>
+
+    <ui:define name="controls">
+        <script type="text/javascript">
+            function handleAddRequest(xhr, status, args) {
+
+                if (args.validationFailed || !args.resOperation) {
+                    PF('nuevoServicio').jq.effect("shake", {times: 5}, 100);
+                    //console.log("false");
+                    //console.log(args.validationFailed);
+                    //console.log(args.succes);
+
+                } else {
+                    PF('nuevoServicio').hide();
+                    //console.log("true");
+                }
+            }
+
+            function handleAddRequestDelete(xhr, status, args) {
+
+                if (args.validationFailed || !args.resDelete) {
+                    PF('delete').jq.effect("shake", {times: 5}, 100);
+                    //console.log("false");
+                    //console.log(args.validationFailed);
+                    //console.log(args.succes);
+
+                } else {
+                    PF('delete').hide();
+                    //console.log("true");
+                }
+            }
+
+        </script>
+        <ui:debug />
+
+
+        <h:form id="formAdminServ">
+
+            <p:dialog header="Agreagar servicio" widgetVar="nuevoServicio" modal="true" height="100">
+                <p:panelGrid id="pgNuevoServicio" columns="1" columnClasses="ui-grid-col-12" layout="grid" styleClass="ui-panelgrid-blank, ui-noborder">
+                    <p:outputLabel value="Nombre: " />
+                    <p:inputText value="#{managedBeanServicios.nombreServicio}" id="nombreServicio" required="true"
+                                requiredMessage="El nombre del servicio es obligatorio."/>
+                </p:panelGrid>
+                <p:panelGrid columns="2" columnClasses="ui-grid-col-6, ui-grid-col-6" layout="grid" styleClass="ui-panelgrid-blank, ui-noborder">
+                   <p:outputLabel/>
+                    <p:commandButton value="Guardar" process="pgNuevoServicio, @this" update="msg,pgNuevoServicio,empresa, formServicios,pgEliminar" actionListener="#{managedBeanServicios.agregarServicio()}"
+                                     oncomplete="handleAddRequest(xhr, status, args)" />
+                </p:panelGrid>
+
+            </p:dialog>
+
+            <p:dialog widgetVar="delete" header="Eliminar servicios" modal="true">
+                <p:panelGrid id="pgEliminar" columns="1" columnClasses="ui-grid-col-12" layout="grid" styleClass="ui-panelgrid-blank, ui-noborder">
+                    <h:outputLabel for="serviciosList" value="Servicios:" />
+                    <p:selectCheckboxMenu id="serviciosList" value="#{managedBeanServicios.valuesServiciosDelete}" label="Servicios" multiple="true"
+                                          filter="true" filterMatchMode="startsWith" panelStyle="width:250px">
+                        <f:selectItems value="#{managedBeanServicios.servicios}" var="tmpServ" itemLabel="#{tmpServ.servicio}" itemValue="#{tmpServ.id}"/>
+                        <p:ajax event="change" process="@this,serviciosList"/>
+                    </p:selectCheckboxMenu>
+                    <p:commandButton value="Eliminar" process="pgEliminar, @this" update="msg, pgEliminar, formServicios, empresa" actionListener="#{managedBeanServicios.borrarServicio()}"
+                                     oncomplete="handleAddRequestDelete(xhr, status, args)"/>
+                </p:panelGrid>
+
+            </p:dialog>
+
+
+        <p:growl id="msg" showDetail="false" sticky="false" life="16000" autoUpdate="false"/>
+
+            <p:panelGrid columns="4" columnClasses="ui-grid-col-4, ui-grid-col-2, ui-grid-col-4, ui-grid-col-2"
+                         layout="grid" styleClass="ui-panelgrid-blank, ui-noborder">
+                <p:outputLabel value=""/>
+                <p:outputLabel value=""/>
+                <p:outputLabel value=""/>
+                <p:outputLabel value=""/>
+
+                <p:outputLabel value="Empresa:" for="empresa"/>
+                <p:selectOneMenu id="empresa" value="#{managedBeanServicios.idEmpresaSelect}"
+                                 required="true" requiredMessage="Se debe seleccionar la empresa" style="width: 350px;"
+                                 filter="true" filterMatchMode="contains">
+                    <f:selectItem itemLabel="Selecciona una empresa" itemValue="-1" noSelectionOption="true"/>
+                    <f:selectItems value="#{managedBeanEmpresasAsignadas.empresasAsignadas}" var="tmp"
+                                   itemLabel="#{tmp.rfcOrigen}-#{tmp.razonSocial}" itemValue="#{tmp.id}"/>
+                    <p:ajax event="change" process="@this,empresa" update="formServicios"
+                            listener="#{managedBeanServicios.mostrarServicios}"/>
+                </p:selectOneMenu>
+
+                <p:outputLabel value=""/>
+                <p:outputLabel value=""/>
+                <p:outputLabel value=""/>
+                <p:outputLabel value=""/>
+                <p:outputLabel value=""/>
+                <p:outputLabel value=""/>
+
+                <f:facet name="footer">
+                    <p:commandButton type="button" value="Nuevo" onclick="PF('nuevoServicio').show();"/>
+                    <p:commandButton type="button" value="Borrar" onclick="PF('delete').show()"/>
+                </f:facet>
+
+
+                <p:outputLabel/>
+            </p:panelGrid>
+        </h:form>
+
+    </ui:define>
+
+
+    <ui:define name="content">
+
+
+        <h:form id="formServicios" binding="#{managedBeanServicios.serviciosForm}">
+
+        </h:form>
+
+    </ui:define>
+
+</ui:composition>

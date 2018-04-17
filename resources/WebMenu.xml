@@ -14,24 +14,25 @@
     </subMenu>
     <subMenu name="administracion" title="Administración" perfil="4" nivel="2"  icon="fa fa-fw fa-wrench" position="2">
         <menuEntry name="empresa" title="Empresa" url="/admin/administracionEmpresas.xhtml" icon="no" perfil="8" nivel="3" position="1" />
-        <menuEntry name="perfil" title="Perfiles" url="/admin/adminPerfiles.xhtml" perfil="16"  icon="no" nivel="3" position="2" />
-        <menuEntry name="usuarios" title="Usuarios" url="/admin/usuarios/adminUsuariosInterno.xhtml"  icon="no" perfil="32" nivel="3" position="3" />
-        <menuEntry name="cargar" title="Certificados" url="/admin/administracionCertificados.xhtml"  icon="no"	perfil="16384" nivel="3" position="4" />
-        <menuEntry name="plantillas" title="Plantillas" url="/admin/plantillas/adminPlantillas.xhtml" icon="no" perfil="64" nivel="3" position="5" />
-        <menuEntry name="Parametros" title="Parametros" url="/admin/parametros/adminParametros.xhtml"  icon="no"	perfil="65536" nivel="3" position="6" />
-        <menuEntry name="Pacemp" title="Pac-Empresa" url="/admin/pacemp/adminPacEmpresa.xhtml"  icon="no"	perfil="262144" nivel="3" position="7" />
-        <subMenu name="catalogos" title="Catalogos" perfil="128"  icon="no" nivel="3" position="8">
+        <menuEntry name="servicios" title="Servicios" url="/admin/servicios.xhtml" icon="no" nivel="3" position="2"/>
+        <menuEntry name="perfil" title="Perfiles" url="/admin/adminPerfiles.xhtml" perfil="16"  icon="no" nivel="3" position="3" />
+        <menuEntry name="usuarios" title="Usuarios" url="/admin/usuarios/adminUsuariosInterno.xhtml"  icon="no" perfil="32" nivel="3" position="4" />
+        <menuEntry name="cargar" title="Certificados" url="/admin/administracionCertificados.xhtml"  icon="no"	perfil="16384" nivel="3" position="5" />
+        <menuEntry name="plantillas" title="Plantillas" url="/admin/plantillas/adminPlantillas.xhtml" icon="no" perfil="64" nivel="3" position="6" />
+        <menuEntry name="Parametros" title="Parametros" url="/admin/parametros/adminParametros.xhtml"  icon="no"	perfil="65536" nivel="3" position="7" />
+        <menuEntry name="Pacemp" title="Pac-Empresa" url="/admin/pacemp/adminPacEmpresa.xhtml"  icon="no"	perfil="262144" nivel="3" position="8" />
+        <subMenu name="catalogos" title="Catalogos" perfil="128"  icon="no" nivel="3" position="9">
             <menuEntry name="receptores" title="Clientes" url="/admin/catalogos/catClientes.xhtml"  icon="no"	perfil="256" nivel="4" position="1" />
             <menuEntry name="folios" title="Folios" url="/admin/catalogos/catFolios.xhtml" perfil="512"  icon="no" nivel="4" position="2" />
             <menuEntry name="ConceptosFacturacion" title="Conceptos de Facturación" icon="no"	url="/admin/catalogos/catConceptos.xhtml" perfil="1024" nivel="4" position="3" />
             <menuEntry name="Pacs" title="Pac's" url="/admin/catalogos/catPacs.xhtml"  icon="no"	perfil="524288" nivel="4" position="4" />
             <menuEntry name="Agentes" title="Agentes" url="/admin/catalogos/catAgentes.xhtml"  icon="no"	perfil="67108864" nivel="4" position="5" />
         </subMenu>
-        <subMenu name="Logs" title="Logs" perfil="2048" icon="no" nivel="3" position="9">
+        <subMenu name="Logs" title="Logs" perfil="2048" icon="no" nivel="3" position="10">
             <menuEntry name="Logacceso" title="Log Acceso" url="/admin/logs/logAcceso.xhtml" icon="no"	perfil="4096" nivel="4" position="1" />
             <menuEntry name="log" title="Log de proceso de Facturas" url="/admin/logs/logProcFact.xhtml" perfil="131072"  icon="no" nivel="4" position="2" />
         </subMenu>
-        <subMenu name="myAcc" title="Mi cuenta" icon="fa fa-fw fa-user" nivel="3" position="10">
+        <subMenu name="myAcc" title="Mi cuenta" icon="fa fa-fw fa-user" nivel="3" position="11">
             <menuEntry name="modPass" title="Cambio de Contraseña" url="/admin/cuentas/cambioPass.xhtml" icon="no" nivel="4" position="1" />
         </subMenu>
     </subMenu>
