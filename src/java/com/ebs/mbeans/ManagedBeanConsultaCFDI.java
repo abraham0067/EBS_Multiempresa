@@ -283,7 +283,7 @@ public class ManagedBeanConsultaCFDI implements Serializable {
         } else//otro usuario
             if (validacionOtro()) {
                 System.out.println("Buscando cliente EBS");
-                System.out.println("UUID: " + UUID);
+                //System.out.println("UUID: " + UUID);
                 listMapMCA = new LazyCfdiDataModel(
                         esClienteEmpresa,
                         activeUser.getId(),
@@ -312,6 +312,7 @@ public class ManagedBeanConsultaCFDI implements Serializable {
         } else {
             selectedCFDSIds = new ArrayList();
         }
+        System.out.println("Elementos seleccionados: "+ listMapMCASelecteds.size());
         for (VistaCfdiOtro tmp : listMapMCASelecteds) {
             selectedCFDSIds.add(tmp.getId());
         }
