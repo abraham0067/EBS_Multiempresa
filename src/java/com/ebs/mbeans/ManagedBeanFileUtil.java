@@ -80,7 +80,7 @@ public class ManagedBeanFileUtil implements Serializable {
     private PlantillaDAO daoPlantilla;
     private MArchivosCfd archivoSelectCfd;
     private CharUnicode charUnicode;
-    private ClienteFEWS clienteFEWS;
+    //private ClienteFEWS clienteFEWS;
 
 
     /**
@@ -108,7 +108,7 @@ public class ManagedBeanFileUtil implements Serializable {
         daoProforma = new ProformaDao();
         daoPagos = new AutoPagosDao();
         charUnicode = new CharUnicode();
-        clienteFEWS = new ClienteFEWS();
+        //clienteFEWS = new ClienteFEWS();
 
     }
 
@@ -120,9 +120,9 @@ public class ManagedBeanFileUtil implements Serializable {
      * @return
      */
     public void downloadXmlCfdiFile(Integer idCfd, String nombreArchivo) {
-
         scFile = null;
         byte[] xmlDoc = new byte[0];
+        ClienteFEWS clienteFEWS = new ClienteFEWS();
         try {
             xmlDoc = clienteFEWS.clienteFEWS("XML", idCfd);
         } catch (Exception e) {
@@ -130,9 +130,11 @@ public class ManagedBeanFileUtil implements Serializable {
                     .println(" ***======= Error al llamar al metodo writeXmlBytes: " + e.getMessage());
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Xml Exception." + e.getMessage(), "Detail"));
             e.printStackTrace();
+        }finally{
+            clienteFEWS = null;
         }
         FacturaManejador facturaManejador = new FacturaManejador();
-        String name = "xml" + ".xml";
+        //String name = "xml" + ".xml";
         setScFile(null);//Clear data
         if (xmlDoc != null) {
            /* //String nombreFactura = request.getParameter("numeroFactura");
@@ -177,7 +179,7 @@ public class ManagedBeanFileUtil implements Serializable {
                 bytes = "".getBytes();
             }*/
 
-            name = nombreArchivo + "_" + ManejadorFechas.obtenIdEvent() + ".xml";
+            String name = nombreArchivo + "_" + ManejadorFechas.obtenIdEvent() + ".xml";
             scFile = new DefaultStreamedContent(new ByteArrayInputStream(xmlDoc), "application/xml", name);
         } else {
             PintarLog
@@ -243,6 +245,7 @@ public class ManagedBeanFileUtil implements Serializable {
         byte[] xmlDoc = "".getBytes();
         MCfdXmlPagos xmlCfdi = null;
         String name = "xml" + ".xml";
+        ClienteFEWS clienteFEWS = new ClienteFEWS();
         try {
             //String nombreFactura = request.getParameter("numeroFactura");
            /* if (nombreArchivo == null) {
@@ -270,13 +273,17 @@ public class ManagedBeanFileUtil implements Serializable {
                 name = nombreArchivo + "_" + ManejadorFechas.obtenIdEvent() + ".xml";
                 scFile = new DefaultStreamedContent(new ByteArrayInputStream(xmlDoc), "application/xml", name);
             }else{
-
+                PintarLog
+                        .println(" ***======= Error al llamar al metodo downloadXmlPagoFile: ");
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Xml Exception.", "downloadXmlPagoFile"));
             }
 
         } catch (Exception e) {
             PintarLog.println(" ***======= Error al llamar al metodo writeXMlPagos: " + e.getMessage());
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(
                     FacesMessage.SEVERITY_INFO, "Xml Exception." + e.getMessage(), "Detail"));
+        }finally{
+            clienteFEWS = null;
         }
     }
 
@@ -291,16 +298,18 @@ public class ManagedBeanFileUtil implements Serializable {
 
         byte[] pdfBytes = null;
         scFile = null;
-        String rutaPDF = null;
-        String name = "pdf.pdf";
+        //String rutaPDF = null;
+        ClienteFEWS clienteFEWS = new ClienteFEWS();
         try {
             pdfBytes = clienteFEWS.clienteFEWS("PDF", idCfd);
         } catch (Exception e) {
-            e.printStackTrace();
+            e.printStackTrace(System.out);
+        }finally{
+            clienteFEWS = null;
         }
 
         if (pdfBytes != null) {
-            name = nombreArchivo + "_" + ManejadorFechas.obtenIdEvent() + ".pdf";
+            String name = nombreArchivo + "_" + ManejadorFechas.obtenIdEvent() + ".pdf";
             scFile = new DefaultStreamedContent(new ByteArrayInputStream(pdfBytes), "application/pdf", name);
         } else {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
@@ -429,10 +438,14 @@ public class ManagedBeanFileUtil implements Serializable {
         byte[] xmlDoc = null;
         byte[] xmlXml = null;
         byte[] pdfBytes = null;
+
+        ClienteFEWS clienteFEWS = new ClienteFEWS();
         try {
             pdfBytes = clienteFEWS.clienteFEWS("PDF_PROFORMA", idCfd);
         } catch (Exception e) {
             e.printStackTrace();
+        }finally{
+            clienteFEWS = null;
         }
         if (pdfBytes != null) {
             name = nombreArchivo + "_" + ManejadorFechas.obtenIdEvent() + ".pdf";
@@ -521,6 +534,7 @@ public class ManagedBeanFileUtil implements Serializable {
         byte[] xmlXml = null;
         byte[] pdfBytes = null;
 
+        ClienteFEWS clienteFEWS = new ClienteFEWS();
         try {
             pdfBytes = clienteFEWS.clienteFEWS("PDF_PAGO_FILE", idCfd);
             if (pdfBytes != null) {
@@ -534,6 +548,8 @@ public class ManagedBeanFileUtil implements Serializable {
 
         } catch (Exception e) {
             e.printStackTrace();
+        }finally{
+            clienteFEWS = null;
         }
           /*  if (xmlPago != null && xmlPago.getXmlp() != null) {
                 ///RUN REPORTER
@@ -689,6 +705,7 @@ public class ManagedBeanFileUtil implements Serializable {
         byte[] xmlDoc = "".getBytes();
         CfdDAO cfdDAO = new CfdDAO();
         String name = "xml.xml";
+        ClienteFEWS clienteFEWS = new ClienteFEWS();
         try {
            /* if (numeroFactura == null) {
                 numeroFactura = "0";
@@ -726,6 +743,8 @@ public class ManagedBeanFileUtil implements Serializable {
                             + e.getMessage());
             // e.printStackTrace();
             throw e;
+        }finally{
+            clienteFEWS = null;
         }
     }
 
@@ -748,6 +767,7 @@ public class ManagedBeanFileUtil implements Serializable {
         java.net.URL path2 = AuxDomainAction.class.getProtectionDomain().getCodeSource().getLocation();
         String rutaAbsoluta = DAO.ObtenerRuta(path2.getPath());
         rutaAbsoluta = DAO.obtenerRutaDeDirectorioAnterior(rutaAbsoluta, "WEB-INF");// Ruta*/
+        ClienteFEWS clienteFEWS = new ClienteFEWS();
         try {
            /* if (numeroFactura == null) {
                 numeroFactura = "0";
@@ -838,6 +858,8 @@ public class ManagedBeanFileUtil implements Serializable {
         } catch (Exception e) {
             PintarLog.println(" ***======= Error al llamar al metodo descargarArchivoPDFCFD(): " + e.getMessage());
             throw e;
+        }finally {
+            clienteFEWS = null;
         }
     }
 
@@ -1025,6 +1047,7 @@ public class ManagedBeanFileUtil implements Serializable {
         final FacturaManejador facturaManejador = new FacturaManejador();
         //List<MCfdXmlRetencion> archivosFactura = new ArrayList<MCfdXmlRetencion>();
         //MOtroRetencion otro = null;
+        ClienteFEWS clienteFEWS = new ClienteFEWS();
         try {
 
            /* if ("".equalsIgnoreCase(idCFD)) {
@@ -1063,6 +1086,8 @@ public class ManagedBeanFileUtil implements Serializable {
         } catch (Exception e2) {
             PintarLog.println(" ***======= Error al llamar al metodo writeXmlBytes: " + e2.getMessage());
             throw e2;
+        }finally {
+            clienteFEWS = null;
         }
     }
 
@@ -1073,7 +1098,7 @@ public class ManagedBeanFileUtil implements Serializable {
         // List<MCfdXmlRetencion> listaFacturas = new ArrayList<MCfdXmlRetencion>();
         //MOtroRetencion otro = null;
         byte[] xmlDoc = "".getBytes();
-
+        ClienteFEWS clienteFEWS = new ClienteFEWS();
         try {
             xmlDoc = clienteFEWS.clientFiles("PDF_RETENCIONES", idCFD);
             if (xmlDoc != null) {
@@ -1085,6 +1110,8 @@ public class ManagedBeanFileUtil implements Serializable {
             }
         } catch (Exception e) {
             e.printStackTrace();
+        }finally {
+            clienteFEWS = null;
         }
 
         /*URL path2 = AuxDomainAction.class.getProtectionDomain().getCodeSource().getLocation();

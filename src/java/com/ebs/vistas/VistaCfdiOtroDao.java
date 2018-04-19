@@ -117,6 +117,9 @@ public class VistaCfdiOtroDao {
             //paginacion
             cr.setProjection(Projections.rowCount());
             rowCount = (Integer) cr.uniqueResult();
+            System.out.println("rowCount = " + rowCount);
+
+
             //Reset
             cr.setProjection(null);
             cr.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
@@ -131,10 +134,11 @@ public class VistaCfdiOtroDao {
             hibManagerRO.getTransaction().rollback();
             ex.printStackTrace();
         } finally {
+            System.out.println("Resultados en la lista: " + listacfd.size());
             hibManagerRO.closeSession();
         }
-        return listacfd;
 
+        return listacfd;
     }
 
 
@@ -238,13 +242,16 @@ public class VistaCfdiOtroDao {
             cr.setMaxResults(pageSize);
 
             listacfd = cr.list();
+            
             hibManagerRO.getTransaction().commit();
         } catch (HibernateException ex) {
             hibManagerRO.getTransaction().rollback();
             ex.printStackTrace();
         } finally {
+            System.out.println("Resultados en la lista: " + listacfd.size());
             hibManagerRO.closeSession();
         }
+
         return listacfd;
     }
 

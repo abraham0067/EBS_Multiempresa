@@ -12,35 +12,24 @@ import java.util.List;
 import fe.xml.ReadXMLProperties;
 
 public class ClienteFEWS {
-
     //private String ruta = "http://localhost:8453/FacturacionElectronicaWS";
     private String ruta = "";
     final String root = "/home/Fe_Multiempresa/config/ruta.xml";
 
-
     public ClienteFEWS() {
-
         ReadXMLProperties read = new ReadXMLProperties(root);
         ruta = read.getValue("ruta");
-
-        System.out.println(ruta);
-
+        //System.out.println(ruta);
     }
 
     public  byte[] clienteFEWS(String path, int param) throws Exception {
-
         Client rest = ClientBuilder.newClient();
-
         WebTarget wtar = rest.target(ruta)
                 .path("getFiles")
                 .path(path)
                 .queryParam("idCFdi", param);
 
-
-        byte[] bytes = (byte[]) wtar.request().get(byte[].class);
-
-
-        return bytes;
+        return (byte[]) wtar.request().get(byte[].class);
     }
 
     public byte[] zip(List<Integer> listIdCfdi, String path){
@@ -58,12 +47,7 @@ public class ClienteFEWS {
                 .path(path)
                 .queryParam("idCFdi", ids);
 
-
-        byte[] bytes = (byte[]) wtar.request().get(byte[].class);
-
-        System.out.println("bytes: " + bytes.length);
-
-        return bytes;
+        return (byte[]) wtar.request().get(byte[].class);
 
     }
 

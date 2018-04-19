@@ -18,8 +18,8 @@ import org.hibernate.HibernateException;
  * @author Eduardo C. Flores Ambrosio <EB&S>
  */
 public class AduanaDAO implements Serializable {
-     private HibernateUtilApl hibManagerRO;
-    private HibernateUtilEmi hibManagerSU;
+    private HibernateUtilApl hibManagerRO;
+    //private HibernateUtilEmi hibManagerSU;
 
     public AduanaDAO() {
         hibManagerRO = new HibernateUtilApl();//Read only interface
@@ -36,7 +36,7 @@ public class AduanaDAO implements Serializable {
             hibManagerRO.getTransaction().commit();
             e.printStackTrace();
         } finally {
-                hibManagerRO.closeSession();
+            hibManagerRO.closeSession();
         }
          return res;       
     }

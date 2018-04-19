@@ -241,9 +241,9 @@
         <h:form id="formContent">
             <p:growl id="messages" life="16000" showDetail="false" sticky="false" />
             <p:dataTable id="registrosCFDI" styleClass="customDataTable" resizableColumns="false"  
-                         liveResize="false"  scrollHeight="400" resizeMode="expand" rows="50" scrollRows="50"  scrollable="false"
+                         liveResize="false"  scrollHeight="400" resizeMode="expand" rows="25" scrollRows="25"  scrollable="false"
                          paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
-                         paginator="true" rowsPerPageTemplate="50,75,100" lazy="true"
+                         paginator="true" rowsPerPageTemplate="25,50,75,100" lazy="true"
                          liveScroll="false"  value="#{managedBeanConsultaCFDI.listMapMCA}" var="tmp" selection="#{managedBeanConsultaCFDI.listMapMCASelecteds}"
                          emptyMessage="..."  style="font-size: 11px;" disabledTextSelection="false">
                 <p:ajax event="rowSelectCheckbox"  process="@this" ></p:ajax>
