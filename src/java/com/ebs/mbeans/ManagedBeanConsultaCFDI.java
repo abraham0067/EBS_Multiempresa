@@ -336,11 +336,11 @@ public class ManagedBeanConsultaCFDI implements Serializable {
                     OutputStream output = ec.getResponseOutputStream();
                     //Now you can write the InputStream of the file to the above OutputStream the usual way.
                     //...
-                    //CrearZIPFacturas crear = new CrearZIPFacturas();
-                    //crear.ZipCfdis(listCFDSAux, output);
+                    CrearZIPFacturas crear = new CrearZIPFacturas();
+                    byte[] bytesZip = crear.ZipCfdis(listCFDSAux, output);
 
-                    ClienteFEWS clienteFEWS = new ClienteFEWS();
-                    byte[] bytesZip = clienteFEWS.zip(listCFDSAux, "Zip");
+                    //ClienteFEWS clienteFEWS = new ClienteFEWS();
+                    //byte[] bytesZip = clienteFEWS.zip(listCFDSAux, "Zip");
 
                     output.write(bytesZip);
 
