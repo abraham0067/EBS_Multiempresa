@@ -299,6 +299,26 @@
                 </p:dataTable>
 
                 <p:separator/>
+
+                <p:panelGrid id="consultaCFDI" columns="4" columnClasses="ui-grid-col-4, ui-grid-col-2, ui-grid-col-4, ui-grid-col-2">
+                    <p:outputLabel/>
+                    <p:outputLabel value="Buscar CFDI: "/>
+                    <p:inputText value="#{managedBeanComplementoPago.uuidCfdiBusqueda}"/>
+                    <p:commandButton id="buscarCFDI" value="Buscar" actionListener="#{managedBeanComplementoPago.cargaCfdi()}">
+                        <p:ajax process="@this, consultaCFDI" update="consultaCFDI,relCfdi"/>
+                    </p:commandButton>
+
+                    <p:outputLabel/>
+                    <p:outputLabel value="Resultados: "/>
+                    <p:selectOneMenu id="relCfdi" value="#{managedBeanComplementoPago.idCFDISelect}">
+                        <f:selectItem value="Seleciona un CFDI"/>
+                        <f:selectItems value="#{managedBeanComplementoPago.listaMCfdi}" var="tempMCFDI"
+                         itemValue="#{tempMCFDI.id}" itemLabel="#{tempMCFDI.folioErp}" />
+                    </p:selectOneMenu>
+                    <p:outputLabel/>
+                </p:panelGrid>
+
+
                 <h3>Información del pago seleccionado</h3>
                 <p:panelGrid id="pgDocRels" styleClass="ui-panelgrid-blank, ui-noborder" style="width: 100%;"
                              columns="6"

@@ -164,6 +164,17 @@ public class ManagedBeanComplementoPago implements Serializable {
     //-----------------------------------------------------------------------------------------------------------------
     //      PAGOS
     //-----------------------------------------------------------------------------------------------------------------
+
+    //Busqueda de CFDI por  UUID
+    @Getter
+    @Setter
+    private String uuidCfdiBusqueda;
+    @Getter
+    @Setter
+    private int idCFDISelect;
+    @Getter
+    @Setter
+    private List<MCfd> listaMCfdi;
     @Getter
     @Setter
     double saldoDisponibleEmisor = 0.0;///GUARDADO EN MXN Y CONVERTIDO A LA MONEDA DEL PAGO.
@@ -595,6 +606,21 @@ public class ManagedBeanComplementoPago implements Serializable {
         pagos = new ArrayList<>();
         pagosSelection = new ArrayList<>();
         initPago();
+    }
+
+
+    public void cargaCfdi(){
+
+        listaMCfdi = new ArrayList<>();
+        MCfd mcfd = null;
+
+        if(uuidCfdiBusqueda != null){
+           mcfd = daoCFD.findByUUID(uuidCfdiBusqueda, empresa.getId());
+           if(mcfd != null){
+
+           }
+        }
+
     }
 
     /**
@@ -1649,6 +1675,8 @@ public class ManagedBeanComplementoPago implements Serializable {
             docsRelPago = new ArrayList<>();
             initDocRelTempPago();
             buscarRegimenByRfc();
+
+            System.out.println("Tam pagos; " + pagosPendientes.size());
         } else {
             idCliente = -1;
         }
@@ -1747,6 +1775,7 @@ public class ManagedBeanComplementoPago implements Serializable {
 
 
     public String onFlowProcess(FlowEvent event) {
+        actualizaDatos();
         System.out.println("Old Step:" + event.getOldStep());
         System.out.println("New Step: " + event.getNewStep());
 
