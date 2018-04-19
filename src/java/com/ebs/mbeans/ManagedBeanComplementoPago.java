@@ -617,7 +617,7 @@ public class ManagedBeanComplementoPago implements Serializable {
         if(uuidCfdiBusqueda != null){
            mcfd = daoCFD.findByUUID(uuidCfdiBusqueda, empresa.getId());
            if(mcfd != null){
-
+                listaMCfdi.add(mcfd);
            }
         }
 
