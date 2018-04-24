@@ -66,7 +66,7 @@ public class DetallePagosDao implements Serializable {
         boolean val = false;
         try {
             hibManagerSU.initTransaction();
-            hibManagerSU.getSession().update(pago);
+            hibManagerSU.getSession().saveOrUpdate(pago);
             hibManagerSU.getTransaction().commit();
             val = true;
         } catch (HibernateException ex) {

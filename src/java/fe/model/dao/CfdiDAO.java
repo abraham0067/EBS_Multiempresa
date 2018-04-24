@@ -117,7 +117,7 @@ public class CfdiDAO implements Serializable {
                 cr.add(Restrictions.eq("noCliente", noCliente.trim()));
             }
             if (razonSocial != null && !razonSocial.isEmpty()) {
-                cr.add(Restrictions.like("razonSocial", "%"+razonSocial.trim()+"%",MatchMode.ANYWHERE));
+                cr.add(Restrictions.like("razonSocial", "%" + razonSocial.trim() + "%", MatchMode.ANYWHERE));
             }
 
 
@@ -215,7 +215,7 @@ public class CfdiDAO implements Serializable {
                     cr.add(Restrictions.eq("noCliente", noCliente.trim()));
                 }
                 if (razonSocial != null && !razonSocial.isEmpty()) {
-                    cr.add(Restrictions.like("razonSocial", razonSocial.trim(),MatchMode.ANYWHERE));
+                    cr.add(Restrictions.like("razonSocial", razonSocial.trim(), MatchMode.ANYWHERE));
                 }
 /*
                 if (numPolizaSeguro != null && !numPolizaSeguro.isEmpty()) {
@@ -335,7 +335,7 @@ public class CfdiDAO implements Serializable {
                 cr.add(Restrictions.eq("noCliente", noCliente.trim()));
             }
             if (razonSocial != null && !razonSocial.isEmpty()) {
-                cr.add(Restrictions.like("razonSocial", razonSocial.trim(),MatchMode.ANYWHERE));
+                cr.add(Restrictions.like("razonSocial", razonSocial.trim(), MatchMode.ANYWHERE));
             }
 
             if (fechaDesde != null) {
@@ -439,7 +439,7 @@ public class CfdiDAO implements Serializable {
                     Criteria cr = hibManagerRO.getSession().createCriteria(MOtro.class);
                     cr.add(Restrictions.eq("cfd.id", mcfdsContainer.getCfd().getId()));
                     otro = (MOtro) cr.setMaxResults(1).uniqueResult();
-                    if(otro != null){
+                    if (otro != null) {
                         mcfdsContainer.setNoPolizaSeguro(otro.getNoPolizaSeguro());
                     }
                 }
@@ -462,7 +462,10 @@ public class CfdiDAO implements Serializable {
             if (hibManagerRO.initTransaction()) {
                 final Criteria cr = this.hibManagerRO.getSession().createCriteria(MCfd.class);
                 cr.add(Restrictions.eq("uuid", uuid));
-                cr.add(Restrictions.eq("idEmpresa", empresa));
+                if (empresa.intValue() > 0) {
+                    System.out.println("id_empresa: " + empresa.intValue());
+                    cr.add(Restrictions.eq("idEmpresa", empresa));
+                }
                 cr.add(Restrictions.eq("edoDocumento", 1));
                 cfd = (MCfd) cr.uniqueResult();
                 this.hibManagerRO.getTransaction().commit();

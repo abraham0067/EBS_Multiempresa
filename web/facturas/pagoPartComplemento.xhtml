@@ -115,11 +115,8 @@
                         </p:column>
                         <p:column>
                             <p:inputText id="itRfcEmisorCtaOrd"
-                                         value="#{managedBeanComplementoPago.pagoTempContainer.rfcEmisorCtaOrd}"
-                                         disabled="#{managedBeanComplementoPago.requiredRfcEmiCor eq managedBeanComplementoPago.NO_REQUERIDO}"
-                                         required="#{managedBeanComplementoPago.requiredRfcEmiCor eq managedBeanComplementoPago.REQUERIDO}"
-                                         requiredMessage="El rfc del Emisor Cta. Ord. es requerido.">
-                                <f:validateLength minimum="12" maximum="13"/>
+                                         value="#{managedBeanComplementoPago.pagoTempContainer.rfcEmisorCtaOrd}">
+
                                 <p:ajax event="change" process="@this,itRfcEmisorCtaOrd" update="itRfcEmisorCtaOrd,msgs"
                                         listener="#{managedBeanComplementoPago.handleChangeRfcEmisorCtaOrdenante()}"/>
                             </p:inputText>
@@ -131,11 +128,8 @@
                         </p:column>
                         <p:column>
                             <p:inputText id="itNomBancoOrdExt"
-                                         value="#{managedBeanComplementoPago.pagoTempContainer.nomBancoOrdExt}"
-                                         disabled="#{managedBeanComplementoPago.requiredNomBancEmi eq managedBeanComplementoPago.NO_REQUERIDO}"
-                                         required="#{managedBeanComplementoPago.requiredNomBancEmi eq managedBeanComplementoPago.REQUERIDO}"
-                                         requiredMessage="El campo NomBancoOrdExt es requerido">
-                                <f:validateLength minimum="1" maximum="300"/>
+                                         value="#{managedBeanComplementoPago.pagoTempContainer.nomBancoOrdExt}">
+
                                 <p:ajax event="change" listener="#{managedBeanComplementoPago.handleChangeNomBancEmi()}"
                                         process="@this,itNomBancoOrdExt" update="itNomBancoOrdExt,msgs"/>
                             </p:inputText>
@@ -150,11 +144,8 @@
 
                         <p:column>
                             <p:inputText id="itCtaOrdenante"
-                                         value="#{managedBeanComplementoPago.pagoTempContainer.ctaOrdenante}"
-                                         disabled="#{managedBeanComplementoPago.requiredCtaOrd eq managedBeanComplementoPago.NO_REQUERIDO}"
-                                         required="#{managedBeanComplementoPago.requiredCtaOrd eq managedBeanComplementoPago.REQUERIDO}"
-                                         requiredMessage="El campo Cta. Ordenante es requerido">
-                                <f:validateLength minimum="10" maximum="50"/>
+                                         value="#{managedBeanComplementoPago.pagoTempContainer.ctaOrdenante}">
+
                                 <p:ajax event="change"
                                         listener="#{managedBeanComplementoPago.handleChangeCtaOrdenante()}"
                                         process="@this,itCtaOrdenante" update="itCtaOrdenante,msgs"/>
@@ -167,11 +158,8 @@
 
                         <p:column>
                             <p:inputText id="itRfcEmisorCtaBen"
-                                         value="#{managedBeanComplementoPago.pagoTempContainer.rfcEmisorCtaBen}"
-                                         disabled="#{managedBeanComplementoPago.requiredRfcEmiCtaBen eq managedBeanComplementoPago.NO_REQUERIDO}"
-                                         required="#{managedBeanComplementoPago.requiredRfcEmiCtaBen eq managedBeanComplementoPago.REQUERIDO}"
-                                         requiredMessage="El campo RFC. Emisor Cta. Ben.">
-                                <f:validateLength minimum="12" maximum="13"/>
+                                         value="#{managedBeanComplementoPago.pagoTempContainer.rfcEmisorCtaBen}">
+
                                 <p:ajax event="change" listener="#{managedBeanComplementoPago.handleChangeRfcEmisorBen}"
                                         process="@this,itRfcEmisorCtaBen" update="itRfcEmisorCtaBen,msgs"/>
                             </p:inputText>
@@ -186,11 +174,8 @@
 
                         <p:column>
                             <p:inputText id="itCtaBeneficiario"
-                                         value="#{managedBeanComplementoPago.pagoTempContainer.ctaBeneficiario}"
-                                         disabled="#{managedBeanComplementoPago.requiredCtaBen eq managedBeanComplementoPago.NO_REQUERIDO}"
-                                         required="#{managedBeanComplementoPago.requiredCtaBen eq managedBeanComplementoPago.REQUERIDO}"
-                                         requiredMessage="El campo Cta. Beneficiario es requerido.">
-                                <f:validateLength minimum="10" maximum="50"/>
+                                         value="#{managedBeanComplementoPago.pagoTempContainer.ctaBeneficiario}">
+
                                 <p:ajax event="change" listener="#{managedBeanComplementoPago.handleChangeCtaBen()}"
                                         process="@this,itCtaBeneficiario" update="itCtaBeneficiario,msgs"/>
                             </p:inputText>
@@ -215,8 +200,7 @@
                             <p:selectOneMenu id="somTipoCadPago"
                                              value="#{managedBeanComplementoPago.pagoTempContainer.tipoCadPago}"
                                              style="width: 80%;"
-                                             disabled="#{managedBeanComplementoPago.requiredTipoCadPago eq managedBeanComplementoPago.NO_REQUERIDO}"
-                                             required="#{managedBeanComplementoPago.requiredTipoCadPago eq managedBeanComplementoPago.REQUERIDO}"
+
                                              requiredMessage="El campo Tipo de Cadena Pago es requerido.">
                                 <f:selectItem itemLabel="Elige una opción" itemValue="" noSelectionOption="true"/>
                                 <f:selectItem itemLabel="01-SPEI" itemValue="01"/>
@@ -274,16 +258,13 @@
             </p:tab>
             <p:tab id="docsRel" title="Pagos Pendientes">
                 <!--  Documentos relacionados   -->
-                <p:dataTable id="dtPagoPendientes" value="#{managedBeanComplementoPago.pagosPendientes}" var="tmpPP" rows="30"
+              <!--  <p:dataTable id="dtPagoPendientes" value="#{managedBeanComplementoPago.pagosPendientes}" var="tmpPP" rows="30"
                              liveScroll="true"
                              scrollable="true" rowKey="#{tmpPP.id}"
                              selection="#{managedBeanComplementoPago.pagoPendienteSelection}"
                              emptyMessage="No hay pagos pendientes para esta empresa."
                              style="text-align: center; font-size: 9px;" disabledTextSelection="false">
-                    <p:ajax event="rowSelectRadio" process="@this,dtPagoPendientes" update="dtPagoPendientes,frmCompPago:pgDocRels,frmCompPago:msgs"
-                            listener="#{managedBeanComplementoPago.buscarDocumentoRelacionado()}"/>
-                    <p:column selectionMode="single" width="5%">
-                    </p:column>
+
                     <p:column headerText="Id Documento">
                         <h:outputText value="#{tmpPP.uuid}"/>
                     </p:column>
@@ -296,74 +277,105 @@
                     <p:column headerText="Moneda">
                         <h:outputText value="#{tmpPP.moneda}"/>
                     </p:column>
-                </p:dataTable>
+                </p:dataTable>-->
 
                 <p:separator/>
 
-                <p:panelGrid id="consultaCFDI" columns="4" columnClasses="ui-grid-col-4, ui-grid-col-2, ui-grid-col-4, ui-grid-col-2">
-                    <p:outputLabel/>
+                <p:panelGrid id="consultaCFDI" columns="4" columnClasses="ui-grid-col-2, ui-grid-col-4, ui-grid-col-2, ui-grid-col-4" styleClass="ui-panelgrid-blank, ui-noborder" style="width: 100%;">
+
                     <p:outputLabel value="Buscar CFDI: "/>
-                    <p:inputText value="#{managedBeanComplementoPago.uuidCfdiBusqueda}"/>
-                    <p:commandButton id="buscarCFDI" value="Buscar" actionListener="#{managedBeanComplementoPago.cargaCfdi()}">
-                        <p:ajax process="@this, consultaCFDI" update="consultaCFDI,relCfdi"/>
-                    </p:commandButton>
+                    <p:inputText id="uuid" value="#{managedBeanComplementoPago.uuidCfdiBusqueda}"/>
+                    <p:commandButton id="buscarCFDI" value="Buscar" actionListener="#{managedBeanComplementoPago.cargaCfdi()}" process="@this, consultaCFDI" update="consultaCFDI,frmCompPago:pgDocRels,frmCompPago:msgs"/>
 
                     <p:outputLabel/>
-                    <p:outputLabel value="Resultados: "/>
-                    <p:selectOneMenu id="relCfdi" value="#{managedBeanComplementoPago.idCFDISelect}">
-                        <f:selectItem value="Seleciona un CFDI"/>
-                        <f:selectItems value="#{managedBeanComplementoPago.listaMCfdi}" var="tempMCFDI"
-                         itemValue="#{tempMCFDI.id}" itemLabel="#{tempMCFDI.folioErp}" />
-                    </p:selectOneMenu>
-                    <p:outputLabel/>
                 </p:panelGrid>
+
+                  <!--  <p:dataTable id="dtCFDI" value="#{managedBeanComplementoPago.listaMCfdi}" var="tmpCFDI" rows="30"
+                                 liveScroll="true"
+                                 scrollable="true" rowKey="#{tmpCFDI.id}"
+                                 selection="#{managedBeanComplementoPago.mcfdi}"
+                                 emptyMessage="No hay pagos pendientes para esta empresa."
+                                 style="text-align: center; font-size: 9px;" disabledTextSelection="false">
+                        <p:ajax event="rowSelectRadio" process="@this,dtCFDI" update="dtCFDI,frmCompPago:pgDocRels,frmCompPago:msgs"
+                                listener="#{managedBeanComplementoPago.buscarDocumentoRelacionado()}"/>
+                        <p:column selectionMode="single" width="5%">
+                        </p:column>
+                        <p:column headerText="Id Documento">
+                            <h:outputText value="#{tmpCFDI.uuid}"/>
+                        </p:column>
+                        <p:column headerText="Serie">
+                            <h:outputText value="#{tmpCFDI.serie}"/>
+                        </p:column>
+                        <p:column headerText="Folio">
+                            <h:outputText value="#{tmpCFDI.folio}"/>
+                        </p:column>
+                        <p:column headerText="Moneda">
+                            <h:outputText value="#{tmpCFDI.moneda}"/>
+                        </p:column>
+                        <p:column headerText="Total">
+                            <h:outputText value="#{tmpCFDI.total}"/>
+                        </p:column>
+                    </p:dataTable>-->
 
 
                 <h3>Información del pago seleccionado</h3>
                 <p:panelGrid id="pgDocRels" styleClass="ui-panelgrid-blank, ui-noborder" style="width: 100%;"
                              columns="6"
                              columnClasses="ui-grid-col-1,ui-grid-col-2, ui-grid-col-3, ui-grid-col-2, ui-grid-col-3, ui-grid-col-1">
+
+                    <p:outputLabel/>
+                    <p:outputLabel>UUID</p:outputLabel>
+                    <p:inputText id="uuidPago" value="#{managedBeanComplementoPago.docRelTempPago.idDocumento}" />
+                    <p:outputLabel>Parcialidad</p:outputLabel>
+                    <p:inputText value="#{managedBeanComplementoPago.docRelTempPago.numParcialidad}"/>
+                    <p:outputLabel/>
+
                     <p:outputLabel/>
                     <p:outputLabel>Serie</p:outputLabel>
-                    <p:outputLabel id="olSerieDocRel"
+                    <p:inputText id="olSerieDocRel"
                                    value="#{managedBeanComplementoPago.docRelTempPago.serie}"/>
 
                     <p:outputLabel>Folio</p:outputLabel>
-                    <p:outputLabel id="olFolioDocRel"
+                    <p:inputText id="olFolioDocRel"
                                    value="#{managedBeanComplementoPago.docRelTempPago.folio}"/>
                     <p:outputLabel/>
 
 
                     <p:outputLabel/>
                     <p:outputLabel>Moneda DocRel</p:outputLabel>
-                    <p:outputLabel id="olMonedaDocRel"
+                    <p:inputText id="olMonedaDocRel"
                                    value="#{managedBeanComplementoPago.docRelTempPago.monedaDR.clave}"/>
                     <p:outputLabel for="itDoctoTiCamb" value="Tipo de cambioDR:"/>
                     <p:inputText id="itDoctoTiCamb"
                                  value="#{managedBeanComplementoPago.docRelTempPago.tipoCambioDR}"
                                  required="#{managedBeanComplementoPago.requiredTipoCambioDocRel}"
                                  binding="#{managedBeanComplementoPago.inputDocRelTipoCambio}"
-                                 style="width: 80%;"
+
                                  validatorMessage="El tipo de cambio no debe ser negativo">
-                        <f:validateDoubleRange minimum="0.000001"/>
-                        <p:ajax event="blur" process="itDoctoTiCamb,@this" update="msgs,itDoctoTiCamb,olSIDocRel,itImpPagado,olSaldoDispMR"
+                        <!--<f:validateDoubleRange minimum="0.000001"/>-->
+                        <p:ajax event="blur" process="itDoctoTiCamb,@this" update="msgs,itDoctoTiCamb,olSIDocRel,itImpPagado"
                                 listener="#{managedBeanComplementoPago.handleDoctoRelTipoCambioChange()}"/>
                     </p:inputText>
                     <p:outputLabel/>
 
                     <p:outputLabel/>
                     <p:outputLabel value="Saldo Disponible PAGO #{managedBeanComplementoPago.pagoTempContainer.monedaP.clave}:"/>
-                    <p:outputLabel id="olSaldoDisp" value="#{managedBeanComplementoPago.saldoDisponibleEmisor}"/>
+                    <p:inputText id="olSaldoDisp" value="#{managedBeanComplementoPago.saldoDisponibleEmisor}"/>
 
-                    <p:outputLabel value="Saldo Disponible DR #{managedBeanComplementoPago.docRelTempPago.monedaDR.clave}:"/>
-                    <p:outputLabel id="olSaldoDispMR" value="#{managedBeanComplementoPago.saldoDisponibleEmisorMonedaDR}"/>
                     <p:outputLabel/>
+                    <p:outputLabel/>
+                    <p:outputLabel/>
+
+                   <!-- <p:outputLabel value="Saldo Disponible DR #{managedBeanComplementoPago.docRelTempPago.monedaDR.clave}:"/>
+                    <p:inputText id="olSaldoDispMR" value="#{managedBeanComplementoPago.saldoDisponibleEmisorMonedaDR}"/>
+                    <p:outputLabel/>-->
 
                     <p:outputLabel/>
                     <p:outputLabel value="Imp. SaldoAnt en #{managedBeanComplementoPago.docRelTempPago.monedaDR.clave}:"/>
-                    <p:outputLabel id="olImpSaldoAnterior" value="#{managedBeanComplementoPago.docRelTempPago.impSaldoAnt}"/>
+                    <p:inputText id="olImpSaldoAnterior" value="#{managedBeanComplementoPago.docRelTempPago.impSaldoAnt}"/>
                     <p:outputLabel/>
                     <p:outputLabel/>
+
                     <p:outputLabel/>
 
 
@@ -371,7 +383,7 @@
                     <p:outputLabel/>
                     <p:outputLabel  value="ImpPagado-#{managedBeanComplementoPago.docRelTempPago.monedaDR.clave}:"/>
                     <p:inputText id="itImpPagado" value="#{managedBeanComplementoPago.docRelTempPago.impPagado}">
-                        <p:ajax event="change" process="itImpPagado" update="itImpPagado,msgs,olSIDocRel,olSaldoDispMR,itDoctoTiCamb"
+                        <p:ajax event="change" process="itImpPagado" update="itImpPagado,msgs,olSIDocRel,itDoctoTiCamb"
                                 listener="#{managedBeanComplementoPago.handleChangeImpPagado()}"/>
                         <f:validateDoubleRange minimum="0.000000" maximum="#{managedBeanComplementoPago.saldoDisponibleEmisorMonedaDR}"/>
                     </p:inputText>
@@ -381,7 +393,7 @@
 
                     <p:outputLabel/>
                     <p:outputLabel value="Saldo Insoluto-#{managedBeanComplementoPago.docRelTempPago.monedaDR.clave}"/>
-                    <p:outputLabel id="olSIDocRel"
+                    <p:inputText id="olSIDocRel"
                                    value="#{managedBeanComplementoPago.docRelTempPago.impSaldoInsoluto}"/>
                     <p:commandButton id="cbAddDoctoRel" value="Agregar DoctoRel"
                                      actionListener="#{managedBeanComplementoPago.agregarDocRelTempPago()}"

@@ -288,6 +288,9 @@
                 <p:column headerText="Número ERP" width="120" class="customCell">
                     <h:outputText value="#{tmp.serie}\.#{tmp.folioErp}"  />
                 </p:column>
+                <p:column headerText="No. Factura" width="120" class="customCell">
+                    <h:outputText value="#{tmp.numeroFactura}"  />
+                </p:column>
                 <p:column headerText="Fecha" width="65" class="customCell"> 
                     <p:outputLabel value="#{managedBeanUtils.parseString( tmp.fecha)}" >
                     </p:outputLabel>

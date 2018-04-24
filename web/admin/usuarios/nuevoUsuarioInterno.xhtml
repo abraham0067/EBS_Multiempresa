@@ -141,7 +141,7 @@ ESTA PAGINA SE MUESTRA PARA LA CREACION Y
                             <p:outputLabel value=""/>
                             <p:outputLabel value="Password(Opcional):" for="pwdClave2"/>
                             <p:password id="pwdClave2" value="#{managedBeanUsuarios.clave}" feedback="true" autocomplete="off">
-                                <f:validateLength minimum="8" maximum="25"/>
+                                <!--<f:validateLength minimum="8" maximum="25"/>-->
                                 <p:tooltip for="pwdClave2" showEvent="focus" value="Ingrese un nuevo password en caso de que desee modificar el actual."/>
                             </p:password>
                             <p:outputLabel value="Ej. (xD5Rt76=), debe ser mayor a 8 caracteres, ser alfanumerico y contener un simbolo(#$%=)."
