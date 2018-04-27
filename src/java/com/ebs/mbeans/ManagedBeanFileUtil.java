@@ -243,10 +243,10 @@ public class ManagedBeanFileUtil implements Serializable {
         byte[] xmlDoc = "".getBytes();
         MCfdXmlPagos xmlCfdi = null;
         String name = "xml" + ".xml";
-        ClienteFEWS clienteFEWS = new ClienteFEWS();
+        //ClienteFEWS clienteFEWS = new ClienteFEWS();
         try {
-            //String nombreFactura = request.getParameter("numeroFactura");
-           /* if (nombreArchivo == null) {
+         //   String nombreFactura = request.getParameter("numeroFactura");
+           if (nombreArchivo == null) {
                 nombreArchivo = "";
             }
             // ===========================================================
@@ -265,11 +265,11 @@ public class ManagedBeanFileUtil implements Serializable {
             byte[] bytes = str.getBytes();
             if (bytes == null) {
                 bytes = "".getBytes();
-            }*/
-            xmlDoc = clienteFEWS.clienteFEWS("XML_PAGO", idCfd);
+            }
+           // xmlDoc = clienteFEWS.clienteFEWS("XML_PAGO", idCfd);
             if(xmlDoc != null){
                 name = nombreArchivo + "_" + ManejadorFechas.obtenIdEvent() + ".xml";
-                scFile = new DefaultStreamedContent(new ByteArrayInputStream(xmlDoc), "application/xml", name);
+                scFile = new DefaultStreamedContent(new ByteArrayInputStream(bytes), "application/xml", name);
             }else{
                 PintarLog
                         .println(" ***======= Error al llamar al metodo downloadXmlPagoFile: ");
@@ -281,7 +281,7 @@ public class ManagedBeanFileUtil implements Serializable {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(
                     FacesMessage.SEVERITY_INFO, "Xml Exception." + e.getMessage(), "Detail"));
         }finally{
-            clienteFEWS = null;
+           // clienteFEWS = null;
         }
     }
 
@@ -511,12 +511,7 @@ public class ManagedBeanFileUtil implements Serializable {
         }
     }
 
-    /**
-     * Genera pdf de pagos
-     *
-     * @param idCfd
-     * @param nombreArchivo
-     */
+    /*
     public void downloadPdfPagoFile(int idCfd, String nombreArchivo) {
        /* MCfdPagos cfdi = daoPagos.BuscarId(idCfd);
         MOtroPagos otro = daoPagos.Otro(idCfd);
@@ -524,7 +519,7 @@ public class ManagedBeanFileUtil implements Serializable {
         if (cfdi != null && cfdi.getPlantillaId() != null) {
             plantilla = daoPlantilla.BuscarPlantilla(cfdi.getPlantillaId());
         }
-        MCfdXmlPagos xmlPago = daoPagos.findXmlByCfdiId(idCfd);*/
+        MCfdXmlPagos xmlPago = daoPagos.findXmlByCfdiId(idCfd);
         scFile = null;
         String rutaPDF = null;
         String name = "pdf.pdf";
@@ -605,9 +600,95 @@ public class ManagedBeanFileUtil implements Serializable {
             } else {
                 FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
                         "Lo sentimos, no pudimos encontrar el Xml.", "Detail"));
-            }*/
+            }
 
+    }*/
+
+    /**
+     * Genera pdf de pagos
+     *
+     * @param idCfd
+     * @param nombreArchivo
+     */
+    public void downloadPdfPagoFile(int idCfd, String nombreArchivo) {
+        MCfdPagos cfdi = daoPagos.BuscarId(idCfd);
+        MOtroPagos otro = daoPagos.Otro(idCfd);
+        MPlantilla plantilla = null;
+        if (cfdi != null && cfdi.getPlantillaId() != null) {
+            plantilla = daoPlantilla.BuscarPlantilla(cfdi.getPlantillaId());
+        }
+        MCfdXmlPagos xmlPago = daoPagos.findXmlByCfdiId(idCfd);
+        scFile = null;
+        String rutaPDF = null;
+        String name = "pdf.pdf";
+        byte[] xmlDoc = null;
+        byte[] xmlXml = null;
+        byte[] pdfBytes = null;
+        if (plantilla != null && plantilla.getPlantilla() != null) {
+            if (xmlPago != null && xmlPago.getXmlp() != null) {
+                ///RUN REPORTER
+                name = nombreArchivo + "_" + ManejadorFechas.obtenIdEvent() + ".pdf";
+                if (otro != null) {
+                    ///CARGA EL PDF DESDE DISCO
+                    if (otro.getParam2() != null && !otro.getParam2().trim().equals("")) {
+                        FileInputStream fi = null;
+                        rutaPDF = otro.getParam2().trim();
+                        File archivo = new File(otro.getParam2().trim());
+                        if (archivo.exists()) {
+                            xmlDoc = new byte[(int) archivo.length()];
+                            try {
+                                fi = new FileInputStream(archivo);
+                                fi.read(xmlDoc);
+                                fi.close();
+                            } catch (Exception e) {
+                                e.printStackTrace(System.out);
+                            }
+                        } else {
+                            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+                                    "Lo sentimos, no pudimos encontrar el PDF.", "Detail"));
+                        }
+                    } else {
+                        xmlDoc = xmlPago.getXmlp();
+                        xmlXml = xmlPago.getXml();
+                    }
+                } else {
+                    xmlDoc = xmlPago.getXmlp();
+                    xmlXml = xmlPago.getXml();
+                }
+                if (otro != null) {
+                    if (otro.getParam20() != null &&
+                            (otro.getParam20().equalsIgnoreCase("33") ||
+                                    otro.getParam20().equalsIgnoreCase("3.3"))) {
+                        try {
+                            pdfBytes = JasperGenCfdi33.genPdf(cfdi.getEstadoDocumento(),xmlXml, xmlDoc, plantilla);
+                            scFile = new DefaultStreamedContent(new ByteArrayInputStream(pdfBytes), "application/pdf", name);
+                        } catch (JRException e) {
+                            e.printStackTrace();
+                            genPdfError("JRExeption:" + e.getMessage());
+                            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(
+                                    FacesMessage.SEVERITY_ERROR,
+                                    "No se pudo generar el pdf.", "Detail"));
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            genPdfError("Exception:" + e.getMessage());
+                            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(
+                                    FacesMessage.SEVERITY_ERROR,
+                                    "No se pudo generar el pdf.", "Detail"));
+                        }
+                    }
+                }
+
+            } else {
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+                        "Lo sentimos, no pudimos encontrar el Xml.", "Detail"));
+            }
+        } else {
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+                    "Lo sentimos, al parecer el registor no tiene asociado una plantilla.", "Detail"));
+        }
     }
+
+
 
     public void genPdfError(String message) {
         try {

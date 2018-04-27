@@ -586,6 +586,7 @@ public class ManagedBeanComplementoPago implements Serializable {
         docRelTempPago.setTipoCambioDR(1.0);
         docRelTempPago.setMonedaDR(new CatalogoData("", ""));
         docRelTempPago.setMetodoDePagoDR(new CatalogoData("", ""));
+
     }
 
     /**
@@ -626,7 +627,7 @@ public class ManagedBeanComplementoPago implements Serializable {
         if (uuidCfdiBusqueda != null) {
             System.out.println("uuid: " + uuidCfdiBusqueda);
 
-            mcfdi = daoCFD.findByUUID(uuidCfdiBusqueda, -1);
+            mcfdi = daoCFD.findByUUID(uuidCfdiBusqueda, idEmpresa);
             if (mcfdi != null) {
                 listaMCfdi.add(mcfdi);
             }
@@ -653,7 +654,7 @@ public class ManagedBeanComplementoPago implements Serializable {
             docRelTempPago = new DoctoRelacionadoData();
             MCfdXml xml = null;
             MCfd cfdi = null;
-
+            double auxSaldoAnterior = 0.00;
             docRelTempPago.setIdDocumento(uuidCfdiBusqueda);//No modificables
 
 
@@ -730,13 +731,14 @@ public class ManagedBeanComplementoPago implements Serializable {
                         docRelTempPago.setSerie((cfdi.getSerie() == null ? "" : cfdi.getSerie()));//No modificable
                         docRelTempPago.setFolio(String.valueOf(((int) cfdi.getFolio())));//No modificable
 
-
+                        System.out.println("moneda cfdi: " + mcfdi.getMoneda());
                         //MONEDA DEL DOCUMENTO RELACIONADO ES MXN
                         if (mcfdi.getMoneda() == null
                                 || mcfdi.getMoneda().isEmpty()
                                 || mcfdi.getMoneda().contains("MXN")
                                 || mcfdi.getMoneda().contains("mxn")) {
-                            docRelTempPago.setMonedaDR(CAT_PESO_MEXICANO);
+                            docRelTempPago.setMonedaDR(new CatalogoData(cfdi.getMoneda(), "Peso Mexicano"));
+                            System.out.println("monedaDrw: " + docRelTempPago.getMonedaDR());
                         } else {//MONEDA DEL DOCUMENTO RELACIONADO ES XXX -> SE CONVIERTE EN MXN
                             if (cfdi.getMoneda().equalsIgnoreCase("XXX")) {
                                 FacesContext.getCurrentInstance().addMessage(
@@ -770,6 +772,8 @@ public class ManagedBeanComplementoPago implements Serializable {
                         }
 
                         ///Son monedas diferentes
+                        System.out.println("moneda dr: " + docRelTempPago.getMonedaDR().getClave());
+                        System.out.println("mpneda p: " + pagoTempContainer.getMonedaP().getClave());
                         if (!docRelTempPago.getMonedaDR().getClave().equalsIgnoreCase(pagoTempContainer.getMonedaP().getClave())) {
                             if (docRelTempPago.getMonedaDR().getClave().equalsIgnoreCase("MXN")) {
                                 docRelTempPago.setTipoCambioDR(1.0);
@@ -786,7 +790,9 @@ public class ManagedBeanComplementoPago implements Serializable {
                             }
                         } else {
                             ///Son monedas iguales entre el pago y el doc rel
-                            docRelTempPago.setTipoCambioDR(1.0);
+                            System.out.println("son  monedas iguales");
+                            docRelTempPago.setTipoCambioDR(null);
+                            requiredTipoCambioDocRel = false;
                         }
 
                         if (metodoP.contains("PPD")) {
@@ -798,23 +804,29 @@ public class ManagedBeanComplementoPago implements Serializable {
                             // TODO: 02/10/2017 CHECAR SI HAY QUE VALIDAR LAS MONEDAS
                             if (pagoPendienteSelection != null) {
                                 docRelTempPago.setNumParcialidad(pagoPendienteSelection.getNumParcialidad() + 1);//La parcialidad que se esta creando es la nueva
-                                docRelTempPago.setImpSaldoAnt(docRelTempPago.getImpSaldoAnt());
+                                auxSaldoAnterior = docRelTempPago.getImpSaldoAnt();
+                                docRelTempPago.setImpSaldoAnt(auxSaldoAnterior);
 
                             } else {
                                 docRelTempPago.setNumParcialidad(1);//La parcialidad que se esta creando es la nueva
-                                docRelTempPago.setImpSaldoAnt(cfdi.getTotal());
+                                auxSaldoAnterior = cfdi.getTotal();
+                                docRelTempPago.setImpSaldoAnt(auxSaldoAnterior);
 
                             }
 
-                            double b = saldoDisponibleEmisor / docRelTempPago.getTipoCambioDR();//Para convertirlo al tipo del doc relacionado
+                           /* double b = saldoDisponibleEmisor / docRelTempPago.getTipoCambioDR();//Para convertirlo al tipo del doc relacionado
+                            System.out.println("tipo cambio: " + docRelTempPago.getTipoCambioDR());
                             if (b < (docRelTempPago.getImpSaldoAnt())) {
                                 docRelTempPago.setImpPagado(FloatsNumbersUtil.round6Places(b));//PONEMOS EL EN IMPORTE PAGADO toda EL SALDO DISPONIBLE YA QUE NO ALCAZNA
                             } else {
                                 //MAYOR O IGUAL ponemos el total
                                 docRelTempPago.setImpPagado(docRelTempPago.getImpSaldoAnt());//PAGO TOTAL
-                            }
-                            docRelTempPago.setImpSaldoInsoluto(docRelTempPago.getImpSaldoAnt() - docRelTempPago.getImpPagado());
+                            }*/
+
+                            //
                         }
+                        docRelTempPago.setImpPagado(pagoTempContainer.getMonto());
+                        docRelTempPago.setImpSaldoInsoluto(auxSaldoAnterior - pagoTempContainer.getMonto());
                         disabledBttnAgregarDoctoRel = false;
                     } else {
                         FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN,
@@ -833,18 +845,20 @@ public class ManagedBeanComplementoPago implements Serializable {
      * Cambio del input de impuesto pagado
      */
     public void handleChangeImpPagado() {
-        if (!pagoTempContainer.getMonedaP().getClave().equalsIgnoreCase(
-                docRelTempPago.getMonedaDR().getClave()
-        )) {
+        if (!pagoTempContainer.getMonedaP().getClave().equalsIgnoreCase(docRelTempPago.getMonedaDR().getClave())) {
             ///Monedas diferentes
-            double tipoCambio = saldoDisponibleEmisor / docRelTempPago.getImpPagado();
-            docRelTempPago.setTipoCambioDR(tipoCambio);
+           // double tipoCambio = saldoDisponibleEmisor / docRelTempPago.getImpPagado();
+            if(!pagoTempContainer.getMonedaP().getClave().equalsIgnoreCase("MXN") &&
+                    docRelTempPago.getMonedaDR().getClave().equalsIgnoreCase("MXN")){
+                docRelTempPago.setTipoCambioDR(1.0);
+            }
+
         } else {
             ///Monedas iguales
-            docRelTempPago.setTipoCambioDR(1.0);
+            docRelTempPago.setTipoCambioDR(null);
         }
 
-        saldoDisponibleEmisorMonedaDR = saldoDisponibleEmisor / docRelTempPago.getTipoCambioDR();
+        //saldoDisponibleEmisorMonedaDR = saldoDisponibleEmisor / docRelTempPago.getTipoCambioDR();
         docRelTempPago.setImpSaldoInsoluto(docRelTempPago.getImpSaldoAnt() - docRelTempPago.getImpPagado());
     }
 
@@ -870,10 +884,11 @@ public class ManagedBeanComplementoPago implements Serializable {
                                 "Indique en el campo tipo de cambio el número de unidades de la moneda señalada en el documento relacionado\n" +
                                         "que equivalen a una unidad de la moneda del pago.", ""));
                     } else {
+                        System.out.println("no requiere tipo de cambio");
                         docsRelPago.add(docRelTempPago);
-                        saldoDisponibleEmisor -= (docRelTempPago.getImpPagado() * docRelTempPago.getTipoCambioDR());
-                        double b = saldoDisponibleEmisor / docRelTempPago.getTipoCambioDR();//Para convertirlo al tipo del doc relacionado
-                        saldoDisponibleEmisorMonedaDR = FloatsNumbersUtil.round6Places(b);
+                       // saldoDisponibleEmisor -= (docRelTempPago.getImpPagado() * docRelTempPago.getTipoCambioDR());
+                       // double b = saldoDisponibleEmisor / docRelTempPago.getTipoCambioDR();//Para convertirlo al tipo del doc relacionado
+                       // saldoDisponibleEmisorMonedaDR = FloatsNumbersUtil.round6Places(b);
 
                         pagosPendientesAgregados.add(pagoPendienteSelection);
                         disabledBttnAgregarDoctoRel = true;
@@ -883,20 +898,20 @@ public class ManagedBeanComplementoPago implements Serializable {
                     docsRelPago.add(docRelTempPago);
                     disabledBttnAgregarDoctoRel = true;
 
-                    saldoDisponibleEmisor -= (docRelTempPago.getImpPagado() * docRelTempPago.getTipoCambioDR());
+/*                    saldoDisponibleEmisor -= (docRelTempPago.getImpPagado() * docRelTempPago.getTipoCambioDR());
                     double b = saldoDisponibleEmisor / docRelTempPago.getTipoCambioDR();//Para convertirlo al tipo del doc relacionado
-                    saldoDisponibleEmisorMonedaDR = FloatsNumbersUtil.round6Places(b);
+                    saldoDisponibleEmisorMonedaDR = FloatsNumbersUtil.round6Places(b);*/
                     pagosPendientesAgregados.add(pagoPendienteSelection);
                     initDocRelTempPago();
                 }
 
                 // TODO: 03/10/2017 REDONDEAR A UN MAXIMO DE 6 CIFRAS Y CONVERSION A MONEDA DEL DOCRELACIONADO
-                double a = saldoDisponibleEmisor / docRelTempPago.getTipoCambioDR();
-                a = a - docRelTempPago.getImpPagado();//Restamos el saldo en la moneda del DR
-                saldoDisponibleEmisorMonedaDR = FloatsNumbersUtil.round6Places(a);
+              //  double a = saldoDisponibleEmisor / docRelTempPago.getTipoCambioDR();
+                //a = a - docRelTempPago.getImpPagado();//Restamos el saldo en la moneda del DR
+                //saldoDisponibleEmisorMonedaDR = FloatsNumbersUtil.round6Places(a);
                 ///CONVERTIMOS A MONEDA DEL PAGO
-                a = a * docRelTempPago.getTipoCambioDR();
-                saldoDisponibleEmisor = FloatsNumbersUtil.round6Places(a);
+                //a = a * docRelTempPago.getTipoCambioDR();
+                //saldoDisponibleEmisor = FloatsNumbersUtil.round6Places(a);
 
                 requiredTipoCambioDocRel = false;
 
@@ -1187,12 +1202,15 @@ public class ManagedBeanComplementoPago implements Serializable {
             //----------------------------------------------------------------------------------------
             this.comprobanteData = agregarPagosAlComprobante(pagos, this.comprobanteData);
 
+            System.out.println("cuenta 1: " + pagoTempContainer.getCtaBeneficiario());
+            System.out.println("cuenta 2: " + pagoTempContainer.getCtaOrdenante());
             //----------------------------------------------------------------------------------------
             // PAREMETROS ADICIONALES
             //----------------------------------------------------------------------------------------
             this.comprobanteData = agregarParamsComprobante(comprobanteData, new ArrayList<String>() {{
                 add("0");
             }});
+
 
 
             PintarLog.println("Apunto de llamar al servicio de factura manual desde MBeanComplementoPago");
@@ -1203,7 +1221,6 @@ public class ManagedBeanComplementoPago implements Serializable {
 
 
                     respuestaServicio = new ClienteFacturaManual().exeGenFactura(comprobanteData, m.getClaveWS(), ambiente, DEBUG);
-
 
                     PintarLog.println("respuestaServicio:" + respuestaServicio);
                     if (checkRespuestaServicio(respuestaServicio)) {
@@ -1223,6 +1240,7 @@ public class ManagedBeanComplementoPago implements Serializable {
                                     daoPagos.savePago(pago);
 
                                 } else {
+                                    System.out.println("Guardando pagos");
                                     pago = new MPagos();
                                     if (mcfdi != null) {
                                         pago.setCfdiId(mcfdi.getId());
@@ -1239,6 +1257,7 @@ public class ManagedBeanComplementoPago implements Serializable {
                                     pago.setMoneda(dr.getMonedaDR().getClave());
 
                                     pago.setFecha(pg.getFechaPago());
+                                    System.out.println("save pago: " + pago.getImpSaldoAnterior());
                                     daoPagos.savePago(pago);
 
                                 }
@@ -1404,10 +1423,12 @@ public class ManagedBeanComplementoPago implements Serializable {
 
     public void handleMonedaChange() {
         inputTipoCambio.setValid(true);
+        //docRelTempPago.setTipoCambioDR(pagoTempContainer.getTipoCambioP());
         // TODO: 09/10/2017 POR EL MOMENTO SOLO SE PERMITEN PAGOS EN MXN
-        pagoTempContainer.setMonedaP(CAT_PESO_MEXICANO);
-        FacesContext.getCurrentInstance().addMessage("frmCompPago", new FacesMessage(FacesMessage.SEVERITY_WARN,
-                "Por el momento solo se permite MXN como moneda de pago", "Info"));
+       // pagoTempContainer.setMonedaP(CAT_PESO_MEXICANO);
+        pagoTempContainer.setMonedaP(new CatalogoData(pagoTempContainer.getMonedaP().getClave(), ""));
+       /* FacesContext.getCurrentInstance().addMessage("frmCompPago", new FacesMessage(FacesMessage.SEVERITY_WARN,
+                "Por el momento solo se permite MXN como moneda de pago", "Info"));*/
         cambiarDecimalesRequeridos();
         if (!pagoTempContainer.getMonedaP().getClave().contains(XXX_STR)) {
             if (!pagoTempContainer.getMonedaP().getClave().contains(MXN_STR)) {
@@ -1549,7 +1570,7 @@ public class ManagedBeanComplementoPago implements Serializable {
      * Buscamos la moneda con la que se realizo el pago para obtener sus datos.
      */
     public void cambiarDecimalesRequeridos() {
-        String moneda = this.pagoTempContainer.getMonedaP().getClave();
+       /* String moneda = this.pagoTempContainer.getMonedaP().getClave();
         MCmoneda tmp = LambdasHelper.findMonedaByClave(monedas, moneda);
         if (tmp != null) {
             decimalesRequeridos = tmp.getDecimales();
@@ -1560,7 +1581,11 @@ public class ManagedBeanComplementoPago implements Serializable {
             decimalesRequeridos = 0;
             porcentajeVariacion = 0.01;
             pagoTempContainer.setTipoCambioP(1.0);
-        }
+        }*/
+        inputTipoCambio.setValid(true);
+        decimalesRequeridos = 0;
+        porcentajeVariacion = 0.01;
+        pagoTempContainer.setTipoCambioP(1.0);
         validarMontoComplemento();
     }
 
@@ -1610,9 +1635,9 @@ public class ManagedBeanComplementoPago implements Serializable {
             validarMontoComplemento();
             if (pagoTempContainer.getTipoCambioP() != 0) {
                 //Monto en la moneda del pago, por el momento solo sera en MXN
-                saldoDisponibleEmisor = (emisor.getImpSaldoDisponible() / pagoTempContainer.getTipoCambioP()) + pagoTempContainer.getMonto();
+                saldoDisponibleEmisor = pagoTempContainer.getMonto();
                 //Lo convertimos a la moneda del DOCRELACIONADOS
-                saldoDisponibleEmisorMonedaDR = saldoDisponibleEmisor / docRelTempPago.getTipoCambioDR();
+               // saldoDisponibleEmisorMonedaDR = saldoDisponibleEmisor / docRelTempPago.getTipoCambioDR();
             }
 
 
@@ -1732,6 +1757,7 @@ public class ManagedBeanComplementoPago implements Serializable {
     }
 
     public void actualizaDatos() {
+        System.out.println("actualiza: " + idEmpresa);
         if (idEmpresa != -1) {
             emisor = daoEmp.BuscarEmpresaId(this.idEmpresa);
             this.receptores = daoRec.ListaReceptoresporIdemp(this.idEmpresa);
@@ -1875,10 +1901,12 @@ public class ManagedBeanComplementoPago implements Serializable {
             } else {
                 //Otra moneda
                 // TODO: 09/10/2017 CONSIDERAR LA VARIACION DE LOS DECIMALES
-                sumaMax += dr.getImpPagado() * dr.getTipoCambioDR();
+                //sumaMax += dr.getImpPagado() * dr.getTipoCambioDR();
+
+                sumaMax += dr.getImpPagado();
             }
         }
-        if (sumaMax <= pagoTempContainer.getMonto()) {
+      //  if (sumaMax <= pagoTempContainer.getMonto()) {
             pagoTempContainer = agregarDocumentosRelacionadosPago(docsRelPago, pagoTempContainer);
             MCmoneda moneda = LambdasHelper.findMonedaByClave(monedas, pagoTempContainer.getMonedaP().getClave());
             MCformapago fP = LambdasHelper.findFormaPagoByClave(cfs, pagoTempContainer.getFormaDePagoP().getClave());
@@ -1896,11 +1924,11 @@ public class ManagedBeanComplementoPago implements Serializable {
             pagos.add(pagoTempContainer);
             this.initPago();
             flgDisabledBttonEliminarPago = false;
-        } else {
+        /*} else {
             FacesMessage msg = new FacesMessage("Error de validación: La suma de los valores registrados en el campo ImpPagado " +
                     "de los apartados DoctoRelacionado no es menor o igual que el valor del campo Monto.", "");
             FacesContext.getCurrentInstance().addMessage(null, msg);
-        }
+        }*/
 
     }
 
@@ -1913,6 +1941,7 @@ public class ManagedBeanComplementoPago implements Serializable {
         }
         System.out.println("modificando pago");
     }
+
 
     public void handleFechaPagoChange() {
         System.out.println(pagoTempContainer.getFechaPago().toString());
@@ -1935,18 +1964,20 @@ public class ManagedBeanComplementoPago implements Serializable {
 
 
         //El saldo es editable en la interfaz de usuario
-        /*
+        double a  = saldoDisponibleEmisor * docRelTempPago.getTipoCambioDR();//Monto disponible en la moneda del docrelacionado
 
-        if (a < (pagoPendienteSelection.getImpSaldoAnterior())) {
-            docRelTempPago.setImpPagado(FloatsNumbersUtil.round6Places(a));//PONEMOS EL EN IMPORTE PAGADO toda EL SALDO DISPONIBLE YA QUE NO ALCAZNA
-        } else {
+        //if (a < (pagoPendienteSelection.getImpSaldoAnterior())) {
+          //  docRelTempPago.setImpPagado(FloatsNumbersUtil.round6Places(a));//PONEMOS EL EN IMPORTE PAGADO toda EL SALDO DISPONIBLE YA QUE NO ALCAZNA
+        //} else {
             //MAYOR O IGUAL ponemos el total
-            docRelTempPago.setImpPagado(pagoPendienteSelection.getImpSaldoAnterior());//PAGO TOTAL
-        }
-                docRelTempPago.setImpSaldoInsoluto(docRelTempPago.getImpSaldoAnt() - docRelTempPago.getImpPagado());
-        */
+        System.out.println("importe pagado: " + a);
+        docRelTempPago.setImpPagado(a);//PAGO TOTAL
 
-        docRelTempPago.setImpSaldoInsoluto(docRelTempPago.getImpSaldoAnt() - docRelTempPago.getImpPagado());
+       // }
+                docRelTempPago.setImpSaldoInsoluto(docRelTempPago.getImpSaldoAnt() - docRelTempPago.getImpPagado());
+
+        docRelTempPago.setImpSaldoInsoluto(docRelTempPago.getImpSaldoAnt() - a);
+       // docRelTempPago.setImpSaldoInsoluto(docRelTempPago.getImpSaldoAnt() - docRelTempPago.getImpPagado());
         System.out.println(docRelTempPago.getImpSaldoAnt() - docRelTempPago.getImpPagado());
     }
 
@@ -1978,5 +2009,28 @@ public class ManagedBeanComplementoPago implements Serializable {
     public void actualizaDatosReceptor() {
 
     }
+
+//    public void testGuaradPago(){
+//
+//        System.out.println("Guardando pagos");
+//        MPagos pago = new MPagos();
+//        if (mcfdi != null) {
+//            pago.setCfdiId(mcfdi.getId());
+//        } else {
+//            pago.setCfdiId(0);
+//        }
+//        pago.setUuid("522485222455");
+//        pago.setNumParcialidad(1);
+//        pago.setImpSaldoAnterior(200.00);
+//        if (dr.getImpSaldoInsoluto() == 0.0) {
+//            pago.setPagado(true);
+//        }
+//        pago.setEmpId(idEmpresa);
+//        pago.setMoneda(dr.getMonedaDR().getClave());
+//
+//        pago.setFecha(pg.getFechaPago());
+//        System.out.println("save pago: " + pago.getImpSaldoAnterior());
+//        daoPagos.savePago(pago);
+//    }
 
 }

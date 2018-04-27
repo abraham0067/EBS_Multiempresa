@@ -54,7 +54,7 @@
                                              value="#{managedBeanComplementoPago.pagoTempContainer.monedaP.clave}"
                                              style="width: 80%;"
                                              required="true" requiredMessage="Debe seleccionar una moneda."
-                                             filter="true" filterMatchMode="contains" disabled="true">
+                                            >
                                 <f:selectItem itemLabel="Elige una opción" itemValue="" noSelectionOption="true"/>
                                 <f:selectItems value="#{managedBeanComplementoPago.monedas}" var="mon"
                                                itemLabel="#{mon.clave}-#{mon.descripcion}"
@@ -68,13 +68,12 @@
                         </p:column>
                         <p:column>
                             <p:inputText id="itTiCamb"
-                                         disabled="true"
+
                                          value="#{managedBeanComplementoPago.pagoTempContainer.tipoCambioP}"
                                          binding="#{managedBeanComplementoPago.inputTipoCambio}" style="width: 80%;"
                                          validatorMessage="El tipo de cambio debe ser positivo">
                                 <f:validateDoubleRange minimum="0.000001"/>
-                                <p:ajax event="blur" process="itTiCamb,@this" update="msgs"
-                                        listener="#{managedBeanComplementoPago.validaMontoTipoCambioPago()}"/>
+                                <p:ajax event="blur" process="itTiCamb,@this" update="msgs"     />
                             </p:inputText>
                         </p:column>
                     </p:row>
@@ -88,7 +87,7 @@
                             <p:inputText id="itImportePago"
                                          value="#{managedBeanComplementoPago.pagoTempContainer.monto}">
                                 <f:validateDoubleRange minimum="0.000001"/>
-                                <p:ajax event="change" listener="#{managedBeanComplementoPago.handleMontoChange}"
+                                <p:ajax event="change" listener="#{managedBeanComplementoPago.handleMontoChange()}"
                                         update="msgs,itCodConf"/>
                             </p:inputText>
                         </p:column>
@@ -285,7 +284,8 @@
 
                     <p:outputLabel value="Buscar CFDI: "/>
                     <p:inputText id="uuid" value="#{managedBeanComplementoPago.uuidCfdiBusqueda}"/>
-                    <p:commandButton id="buscarCFDI" value="Buscar" actionListener="#{managedBeanComplementoPago.cargaCfdi()}" process="@this, consultaCFDI" update="consultaCFDI,frmCompPago:pgDocRels,frmCompPago:msgs"/>
+                    <p:commandButton id="buscarCFDI" value="Buscar" actionListener="#{managedBeanComplementoPago.cargaCfdi()}"
+                                     process="@this, consultaCFDI" update="consultaCFDI,frmCompPago:pgDocRels,frmCompPago:msgs"/>
 
                     <p:outputLabel/>
                 </p:panelGrid>
@@ -385,7 +385,7 @@
                     <p:inputText id="itImpPagado" value="#{managedBeanComplementoPago.docRelTempPago.impPagado}">
                         <p:ajax event="change" process="itImpPagado" update="itImpPagado,msgs,olSIDocRel,itDoctoTiCamb"
                                 listener="#{managedBeanComplementoPago.handleChangeImpPagado()}"/>
-                        <f:validateDoubleRange minimum="0.000000" maximum="#{managedBeanComplementoPago.saldoDisponibleEmisorMonedaDR}"/>
+                        <f:validateDoubleRange minimum="0.000000"/>
                     </p:inputText>
                     <p:outputLabel/>
                     <p:outputLabel/>
