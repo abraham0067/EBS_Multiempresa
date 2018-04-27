@@ -3,6 +3,7 @@ package fe.net;
 import com.ebs.fe.wsgi.prd.ClientePrd;
 import com.ebs.fe.wsgi.test.ClienteTest;
 import com.ebs.fe.wsgi.util.Zipper;
+//import com.ebs.util.Zipper;
 import fe.sat.v33.CFDIFactory33;
 import fe.sat.v33.ComprobanteData;
 import fe.sat.ComprobanteException;
@@ -101,6 +102,8 @@ public class ClienteFacturaManual {
                     ambiente.equalsIgnoreCase("PRODUCCION") ||
                     ambiente.equalsIgnoreCase("PROD"))) {
                 System.out.println("GENERANDO FACTURA - PRODUCTIVO");
+
+                //cdires = new wsGenInvoice().wsGenInvoice_Manual(both, clave);
                 cdires = ClientePrd.genInvoiceManual(both, clave);
                 des = Zipper.uncompress(cdires);
                 resp = new String(des);
@@ -110,12 +113,16 @@ public class ClienteFacturaManual {
                     || ambiente.equalsIgnoreCase("TEST")
                     || ambiente.equalsIgnoreCase("DESARROLLO")) {
                     System.out.println("GENERANDO FACTURA - QA");
+
+                    //cdires = new wsGenInvoice().wsGenInvoice_Manual_Test(both, clave);
                     cdires = ClienteTest.genInvoiceManual(both, clave);
                 des = Zipper.uncompress(cdires);
                 resp = new String(des);
             } else {
                 resp ="<DEVELOPMENT STAGE>";
             }
+
+
         } catch (ComprobanteException ce) {
             ce.printStackTrace();
             resp = "Error---" + ce.getMessage();

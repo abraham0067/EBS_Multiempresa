@@ -59,7 +59,7 @@ import sun.util.resources.cldr.mg.LocaleNames_mg;
 public class ManagedBeanConsultaCFDI implements Serializable {
 
     // TODO: 31/10/2017 cambiar por un parametro de configuracion
-    private int DATES_LIMITS_CANCEL = 30;
+    //private int DATES_LIMITS_CANCEL = 30;
 
     private Integer[] idsEmpresasAsignadas;///Separados por comas
     //Parametros
@@ -584,7 +584,7 @@ public class ManagedBeanConsultaCFDI implements Serializable {
         //CancelarCFDI_ServiceLocator serviceLocator;
         //CancelarCFDI_PortType port;
         MConfig config;
-        MConfig diasConfig = DAOCong.BuscarConfigDatoClasificacion("DIAS_LIMITE", "CANCELACIONES");
+/*        MConfig diasConfig = DAOCong.BuscarConfigDatoClasificacion("DIAS_LIMITE", "CANCELACIONES");
         if (diasConfig != null) {
             if (!diasConfig.getValor().isEmpty()) {
                 try {
@@ -593,11 +593,11 @@ public class ManagedBeanConsultaCFDI implements Serializable {
                     e.printStackTrace();
                 }
             }
-        }
+        }*/
         for (Integer tmpId : selectedCFDSIds) {
             MCfd tmp = daoCFDI.BuscarId(tmpId);
             canCancel = true;
-            MOtro otroTemp = daoCFDI.Otro(tmp.getId());
+   /*         MOtro otroTemp = daoCFDI.Otro(tmp.getId());
             if (otroTemp != null) {
                 if (otroTemp.getParam20() != null && otroTemp.getParam20().contains("3.3")) {
                     //do dates validation
@@ -616,7 +616,7 @@ public class ManagedBeanConsultaCFDI implements Serializable {
                                         "No podemos cancelar ese documento ya que ya han pasado mas de " + DATES_LIMITS_CANCEL + " desde la fecha de timbrado.", "Error"));
                     }
                 }
-            }
+            }*/
             if (canCancel) {
                 if (tmp.getId() > 0) {
 //                cfd = getDaoCFDI().BuscarId(tmp.getId());
