@@ -158,9 +158,9 @@
 
                         <p:inputText id="itUuidRel" value="#{managedBeanComplementoPago.uuidCfdiRelacionado}"
                                      validatorMessage="Ingrese un UUID valido" autocomplete="off">
-                            <f:validateRegex
-                                    pattern="[a-f0-9A-F]{8}-[a-f0-9A-F]{4}-[a-f0-9A-F]{4}-[a-f0-9A-F]{4}-[a-f0-9A-F]{12}"/>
-                            <f:validateLength minimum="36" maximum="36" for="itUuidRel"/>
+                            <!--<f:validateRegex-->
+                                    <!--pattern="[a-f0-9A-F]{8}-[a-f0-9A-F]{4}-[a-f0-9A-F]{4}-[a-f0-9A-F]{4}-[a-f0-9A-F]{12}"/>-->
+                            <!--<f:validateLength minimum="36" maximum="36" for="itUuidRel"/>-->
                             <p:tooltip value="UUID cfdi relacionado para el reemplazo de cfdis previos que contengan errores"
                                          for="itUuidRel"/>
                         </p:inputText>

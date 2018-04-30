@@ -52,9 +52,8 @@
                         <p:column>
                             <p:selectOneMenu id="somMoneda"
                                              value="#{managedBeanComplementoPago.pagoTempContainer.monedaP.clave}"
-                                             style="width: 80%;"
-                                             required="true" requiredMessage="Debe seleccionar una moneda."
-                                            >
+
+                                             required="true" requiredMessage="Debe seleccionar una moneda.">
                                 <f:selectItem itemLabel="Elige una opción" itemValue="" noSelectionOption="true"/>
                                 <f:selectItems value="#{managedBeanComplementoPago.monedas}" var="mon"
                                                itemLabel="#{mon.clave}-#{mon.descripcion}"

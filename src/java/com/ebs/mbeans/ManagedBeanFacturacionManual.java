@@ -1060,6 +1060,7 @@ public class ManagedBeanFacturacionManual implements Serializable {
                 } else if (!ivaTrasladado.getTipoFactor().equalsIgnoreCase(IMP_EXENTO)
                         && (ivaTrasladado.getTasaOcuota() != null
                         && !ivaTrasladado.getTasaOcuota().isEmpty())) {
+
                     tmp.agregarImpTraslado(ivaTrasladado);
                 } else {
                     resOperationApplyChanges = false;
@@ -2057,17 +2058,20 @@ public class ManagedBeanFacturacionManual implements Serializable {
             tcd.setImporte(Double.parseDouble(i.getImporte()));
             CatalogoData ci = new CatalogoData(i.getImpuesto(), i.getDescripcionImpuesto());
             tcd.setImpuesto(ci);
+            tcd.setTipoFactor(i.getTipoFactor());
             if (i.getTipoFactor().equalsIgnoreCase(IMP_EXENTO)) {
                 tcd.setImporte(null);
                 tcd.setTasaOCuota(null);
             } else {
                 tcd.setTasaOCuota(Double.parseDouble(i.getTasaOcuota()));
+                listTrasladosComp.add(tcd);
             }
-            tcd.setTipoFactor(i.getTipoFactor());
-            listTrasladosComp.add(tcd);
+
+
         }
 
         if (listTrasladosComp.size() > 0) {
+
             impComp.setTraslados(listTrasladosComp);
             impComp.setTotalTraslados(this.totalTranfer);
         }
