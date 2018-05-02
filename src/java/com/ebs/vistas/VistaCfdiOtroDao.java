@@ -63,7 +63,12 @@ public class VistaCfdiOtroDao {
             }
 
             if (numeroFactura != null && !numeroFactura.isEmpty()) {
-                cr.add(Restrictions.eq("numeroFactura", numeroFactura.trim()));
+
+                String[] numeroFact = numeroFactura.trim().split(",");
+                //cr.add(Restrictions.eq("numeroFactura", numeroFactura.trim()));
+
+                cr.add(Restrictions.in("numeroFactura", numeroFact));
+                //cr.add(Restrictions.eq("numeroFactura", numeroFactura.trim()));
             }
 
             if (numPolizaSeguro != null && !numPolizaSeguro.isEmpty()) {
@@ -82,13 +87,15 @@ public class VistaCfdiOtroDao {
             }
             if (noCliente != null && !noCliente.isEmpty()) {
                 //System.out.println("noCliente1 = " + noCliente);
-                cr.add(Restrictions.ilike("noCliente", "%" + noCliente.trim() + "%", MatchMode.ANYWHERE));
+                //cr.add(Restrictions.ilike("noCliente", "%" + noCliente.trim() + "%", MatchMode.ANYWHERE));
+                String[] noClientes = noCliente.trim().split(",");
+                cr.add(Restrictions.in("noCliente",noClientes));
             }
             if (razonSocial != null && !razonSocial.isEmpty()) {
                 cr.add(Restrictions.like("razonSocial", "%" + razonSocial.trim() + "%", MatchMode.ANYWHERE));
             }
             if (UUID != null && !UUID.isEmpty()) {
-                System.out.println(UUID.trim());
+                //System.out.println(UUID.trim());
                 cr.add(Restrictions.like("uuid", "%" + UUID.trim() + "%", MatchMode.ANYWHERE));
             }
 
@@ -177,7 +184,10 @@ public class VistaCfdiOtroDao {
             }
 
             if (numeroFactura != null && !numeroFactura.isEmpty()) {
-                cr.add(Restrictions.eq("numeroFactura", numeroFactura.trim()));
+                String[] numeroFact = numeroFactura.trim().split(",");
+                //cr.add(Restrictions.eq("numeroFactura", numeroFactura.trim()));
+
+                cr.add(Restrictions.in("numeroFactura", numeroFact));
             }
             if (folioErp != null && !folioErp.isEmpty()) {
                 String[] folios = folioErp.trim().split(",");
@@ -192,8 +202,10 @@ public class VistaCfdiOtroDao {
             }
 
             if (noCliente != null && !noCliente.isEmpty()) {
-                //System.out.println("noCliente = " + noCliente);
-                cr.add(Restrictions.like("noCliente", "%" + noCliente.trim() + "%", MatchMode.ANYWHERE));
+                System.out.println("noCliente = " + noCliente);
+                //cr.add(Restrictions.like("noCliente", "%" + noCliente.trim() + "%", MatchMode.ANYWHERE));
+                String[] noClientes = noCliente.trim().split(",");
+                cr.add(Restrictions.in("noCliente",noClientes));
             }
             if (razonSocial != null && !razonSocial.isEmpty()) {
                 cr.add(Restrictions.like("razonSocial", razonSocial.trim(), MatchMode.ANYWHERE));
