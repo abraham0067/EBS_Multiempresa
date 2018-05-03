@@ -188,7 +188,6 @@
                         </p:column>
 
                     </p:row>
-
                     <p:row>
                         <p:column>
                             <p:outputLabel for="somTipoCadPago" value="Tipo Cad. Pago.:"/>
@@ -196,19 +195,29 @@
 
                         <p:column>
                             <p:selectOneMenu id="somTipoCadPago"
-                                             value="#{managedBeanComplementoPago.pagoTempContainer.tipoCadPago}"
-                                             style="width: 80%;"
+                                             value="#{managedBeanComplementoPago.pagoTempContainer.tipoCadPago.clave}"
+                                             style="width: 100%;">
 
-                                             requiredMessage="El campo Tipo de Cadena Pago es requerido.">
                                 <f:selectItem itemLabel="Elige una opción" itemValue="" noSelectionOption="true"/>
                                 <f:selectItem itemLabel="01-SPEI" itemValue="01"/>
                                 <p:ajax event="change" process="@this,somTipoCadPago"
-                                        update="itCertPago,itCadPago,itCSelloPago,somTipoCadPago,msgs"
+                                        update="itCertPago,itCadPago,itCSelloPago,somTipoCadPago,msgs,cargaXML"
                                         listener="#{managedBeanComplementoPago.handleTipoCadPagoChange}"/>
                             </p:selectOneMenu>
                         </p:column>
-                        <p:column></p:column>
-                        <p:column></p:column>
+                        <p:column>
+                            <p:fileUpload id="cargaXML" value="#{managedBeanComplementoPago.xmlSpei}" mode="advanced"
+                                          auto="true"
+                                          disabled="#{managedBeanComplementoPago.cargaSpei}"
+                                          allowTypes="/(\.|\/)(xml)$/" skinSimple="true" required="true"
+                                          label="Carga XML"
+                                          fileUploadListener="#{managedBeanComplementoPago.cargarXmlSpei}" update="msgs, itCertPago,itCadPago,itCSelloPago"
+                                          style="width: 80%">
+
+                            </p:fileUpload>
+
+                        </p:column>
+
                     </p:row>
                     <p:row>
                         <p:column>
@@ -223,7 +232,8 @@
                                 <p:ajax event="change" process="@this,itCertPago"/>
                             </p:inputText>
                         </p:column>
-
+                    </p:row>
+                    <p:row>
                         <p:column>
                             <p:outputLabel for="itCadPago" value="Cadena Pago:"/>
                         </p:column>

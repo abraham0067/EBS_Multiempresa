@@ -38,7 +38,9 @@ import org.jdom.Document;
 import org.jdom.JDOMException;
 import org.jdom.Namespace;
 import org.jdom.input.SAXBuilder;
+import org.primefaces.event.FileUploadEvent;
 import org.primefaces.event.FlowEvent;
+import org.primefaces.model.UploadedFile;
 
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
@@ -453,6 +455,12 @@ public class ManagedBeanComplementoPago implements Serializable {
     @Getter
     @Setter
     private UIInput inputDocRelTipoCambio;
+    @Getter
+    @Setter
+    private boolean cargaSpei;
+    @Getter
+    @Setter
+    UploadedFile xmlSpei;
 
 
     final NumberFormat formatter2 = new DecimalFormat("#0.00");
@@ -555,6 +563,8 @@ public class ManagedBeanComplementoPago implements Serializable {
         pagos = new ArrayList<>();
         pagosSelection = new ArrayList<>();
         initPago();
+
+        cargaSpei = true;
     }
 
     private void initPago() {
@@ -1379,7 +1389,7 @@ public class ManagedBeanComplementoPago implements Serializable {
                         }
                     } else {///son monedas diferentes
                         if (dr.getMonedaDR().getClave().equalsIgnoreCase("MXN")) {
-                            ((DoctoRelacionadoData) dr).setTipoCambioDR(1d);
+                            ((DoctoRelacionadoData) dr).setTipoCambioDR(1.0);
                         } else {
                             ///DEJAR EL TIPO DE CAMBIO CALCULADO
                         }
@@ -1582,7 +1592,7 @@ public class ManagedBeanComplementoPago implements Serializable {
         decimalesRequeridos = 0;
         porcentajeVariacion = 0.01;
         pagoTempContainer.setTipoCambioP(1.0);
-        validarMontoComplemento();
+        //validarMontoComplemento();
     }
 
     public void validarMontoComplemento() {
@@ -1602,7 +1612,7 @@ public class ManagedBeanComplementoPago implements Serializable {
             codConfRequerido = false;
             if (pagoTempContainer.getMonedaP().getClave() != null && !pagoTempContainer.getMonedaP().getClave().isEmpty()) {
                 if (porcentajeVariacion != null && porcentajeVariacion > 0 && pagoTempContainer.getTipoCambioP() > 0) {
-                    limiteSuperior = pagoTempContainer.getTipoCambioP() * (1 + porcentajeVariacion);
+               /*     limiteSuperior = pagoTempContainer.getTipoCambioP() * (1 + porcentajeVariacion);
                     limiteInferior = pagoTempContainer.getTipoCambioP() * (1 - porcentajeVariacion);
                     if (pagoTempContainer.getTipoCambioP() < 0 || pagoTempContainer.getTipoCambioP() < limiteInferior
                             || pagoTempContainer.getTipoCambioP() > limiteSuperior) {
@@ -1614,7 +1624,7 @@ public class ManagedBeanComplementoPago implements Serializable {
                         if (((String) (inputCodigoConfirmacion.getValue())).length() != LENGTH_COD_CONF) {
                             inputCodigoConfirmacion.setValid(false);
                         }
-                    }
+                    }*/
                 } else {
                     FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,
                             "El tipo de cambio debe ser mayor a 0.", "Info"));
@@ -1637,7 +1647,7 @@ public class ManagedBeanComplementoPago implements Serializable {
             }
 
 
-            inputCodigoConfirmacion.setValid(true);
+            //inputCodigoConfirmacion.setValid(true);
             // TODO: 22/09/2017 VALIDAR EL MONTO DEL PAGO VS EL MONTO DE LOS DOCS RELACIONADOS
 
 
@@ -1654,12 +1664,13 @@ public class ManagedBeanComplementoPago implements Serializable {
     }
 
     public void handleTipoCadPagoChange() {
-        if (pagoTempContainer.getTipoCadPago() != null && pagoTempContainer.getTipoCadPago().getClave().contains("01")) {
+        if (pagoTempContainer.getTipoCadPago().getClave() != null && pagoTempContainer.getTipoCadPago().getClave().contains("01")) {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
                     "Por favor ingrese los valores para los campos Certificado Pago,Cadena Pago y Sello Pago", "Info"));
             inputActivoCertPago = true;
             inputActivoCadPago = true;
             inputActivoSelloPago = true;
+            cargaSpei = false;
         } else {
             pagoTempContainer.setCertPago("");
             pagoTempContainer.setCadPago("");
@@ -1667,7 +1678,59 @@ public class ManagedBeanComplementoPago implements Serializable {
             inputActivoCertPago = false;
             inputActivoCadPago = false;
             inputActivoSelloPago = false;
+            cargaSpei = true;
         }
+    }
+    /**
+     * Cargamos el xml donde extraeremos los datos necesarios para SPEI
+     */
+
+    public void cargarXmlSpei(FileUploadEvent e) {
+
+        xmlSpei = e.getFile();
+
+        if (xmlSpei.getContents() != null && xmlSpei.getSize() > 0) {
+            byte[] xmlSpeiContent = xmlSpei.getContents();
+            String str = new String(xmlSpeiContent);
+
+            try {
+                if (contieneSpei("SPEI_Tercero", xmlSpeiContent)) {
+
+                    pagoTempContainer.setCertPago(this.getDataSpei("numeroCertificado", xmlSpeiContent));
+                    pagoTempContainer.setSelloPago(this.getDataSpei("sello", xmlSpeiContent));
+                    String auxCadena = this.getDataSpei("cadenaCDA", xmlSpeiContent);
+                    String cad = "";
+
+                    for (int i = 0; i < auxCadena.length(); i++) {
+                        cad += auxCadena.charAt(i);
+
+                        if (i > 2 && auxCadena.charAt(i) == '|' && auxCadena.charAt(i - 1) == '|') {
+                            i = auxCadena.length();
+                        }
+                    }
+
+                    pagoTempContainer.setCadPago(cad);
+
+                } else {
+                    FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+                            "Por favor eliga un xml valido", "Info"));
+                    pagoTempContainer.setCadPago("");
+                    pagoTempContainer.setCertPago("");
+                    pagoTempContainer.setSelloPago("");
+                }
+
+
+            } catch (Exception ex) {
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+                        ex.getMessage(), "Info"));
+            }
+
+        } else {
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+                    "Por favor eliga un xml valido", "Info"));
+        }
+
+
     }
 
     /**
@@ -1911,10 +1974,10 @@ public class ManagedBeanComplementoPago implements Serializable {
         pagoTempContainer.setFormaDePagoP(new CatalogoData(fP.getCodigo(), fP.getDescripcion()));
 
         // TODO: 27/09/2017 USAR LOS CATALOGOS EN BD
-           /* if (pagoTempContainer.getTipoCadPago().getClave() != null &&
+           if (pagoTempContainer.getTipoCadPago().getClave() != null &&
                     !pagoTempContainer.getTipoCadPago().getClave().isEmpty()) {
                 pagoTempContainer.setTipoCadPago(new CatalogoData("01", "SPEI"));
-            }*/
+            }
         FacesMessage msg = new FacesMessage("Pago agregado a la factura.", "");
         FacesContext.getCurrentInstance().addMessage(null, msg);
         pagos.add(pagoTempContainer);
@@ -2000,6 +2063,41 @@ public class ManagedBeanComplementoPago implements Serializable {
             resultado = "";
         }
         return resultado;
+
+    }
+
+    public String getDataSpei(String atributo, byte[] xml) throws Exception {
+
+        String resultado = "";
+
+        try {
+            SAXBuilder sax = new SAXBuilder();
+            Document doc = sax.build(new ByteArrayInputStream(xml));
+            resultado = doc.getRootElement().getAttributeValue(atributo);
+
+        } catch (JDOMException ex) {
+            resultado = "";
+        }
+
+        return resultado;
+    }
+
+    public boolean contieneSpei(String name, byte[] xml) throws Exception {
+        boolean flag = false;
+
+        try {
+            SAXBuilder sax = new SAXBuilder();
+            Document doc = sax.build(new ByteArrayInputStream(xml));
+
+            if (doc.getRootElement().getName().equalsIgnoreCase(name)) {
+                flag = true;
+            }
+
+        } catch (JDOMException ex) {
+            flag = false;
+        }
+
+        return flag;
 
     }
 
