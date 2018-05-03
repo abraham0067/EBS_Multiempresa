@@ -32,4 +32,25 @@ public class EmpresaTimbreDAO implements Serializable {
         }
         return emptimbre;
     }
+
+    public String ObtenerClaveWSEmpresaTimbre(String rfcEmpresa) {
+        String claveWs = null;
+        try {
+            hibManagerRO.initTransaction();
+            Criteria cr = hibManagerRO.getSession().createCriteria(MEmpresaMTimbre.class);
+            cr.add(Restrictions.eq("rfc", rfcEmpresa));
+
+            MEmpresaMTimbre empresaTimbre = (MEmpresaMTimbre) cr.uniqueResult();
+            if(empresaTimbre != null)
+                claveWs = empresaTimbre.getClaveWS();
+
+            hibManagerRO.getTransaction().commit();
+        } catch (HibernateException ex) {
+            hibManagerRO.getTransaction().rollback();
+            ex.printStackTrace();
+        } finally {
+            hibManagerRO.closeSession();
+        }
+        return claveWs;
+    }
 }

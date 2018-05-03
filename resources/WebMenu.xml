@@ -11,6 +11,8 @@
         <menuEntry name="consultaFP" title="Facturas Proforma" url="/facturas/proforma/consulta.xhtml" perfil="4194304" icon="no" nivel="3" position="7" />
         <menuEntry name="consultaFPg" title="CFDI Pagos" url="/facturas/pagos/consulta.xhtml" perfil="8388608" icon="no" nivel="3" position="8" />
         <menuEntry name="Cancelacion" title="Cancelacion" url=""  icon="no"	perfil="134217728" nivel="3" position="9" />
+        <!--Menu para la generacion automatica de facturas excel-->
+        <menuEntry name="Excel" title="Facturacion Excel" url="/facturas/facturaExcel.xhtml"  icon="fa fa-fw fa-file-excel-o" perfil="268435456" nivel="3" position="10" />
     </subMenu>
     <subMenu name="administracion" title="Administración" perfil="4" nivel="2"  icon="fa fa-fw fa-wrench" position="2">
         <menuEntry name="empresa" title="Empresa" url="/admin/administracionEmpresas.xhtml" icon="no" perfil="8" nivel="3" position="1" />

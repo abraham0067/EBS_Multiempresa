@@ -124,10 +124,8 @@ public class ManagedBeanDynamicMenu implements Serializable {
         for (com.ebs.menu.MenuItem item : subm.getItems()) {
             //System.out.println("item.getTitle() = " + item.getTitle());
             //SI ES CANCELACION OMITE PEGAR EL MENU YA QUE ES UN BOTON
-            if(item.getTitle().equals("Cancelacion")){
+            if(item.getTitle().equals("Cancelacion"))
                 continue;
-            }
-
 
             DefaultMenuItem it = new DefaultMenuItem(item.getTitle());
             it.setUrl(item.getUrl());

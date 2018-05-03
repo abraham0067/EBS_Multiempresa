@@ -52,6 +52,44 @@ public class ClienteFacturaManual {
         }
     }
 
+    public String exeGenFactura(byte[] bxml, byte[] bxmlp, String clave, String ambiente, boolean debug) {
+        String resp = "---";
+        try {
+            CharUnicode charUnicode = new CharUnicode();
+
+            String xmlPrint = new String(bxmlp);
+            xmlPrint = xmlPrint.replaceAll("ISO-8859-1", "UTF-8");
+            xmlPrint = charUnicode.getTextEncoded2(xmlPrint);
+
+            String xml = new String(bxml);
+            xml = xml.replaceAll("ISO-8859-1", "UTF-8");
+            xml = charUnicode.getTextEncoded2(xml);
+            if(debug) {
+                System.out.println(">>>>>>>>>> FACTURACION MANUAL XML_SAT :  <<< \n" + xml + "\n >>>");
+                System.out.println(">>>>>>>>>> FACTURACION MANUAL XML_PRINT :  <<< \n" + xmlPrint + "\n >>>");
+            }
+
+            byte[] both = getZipBytes(xml, xmlPrint);//Empaquetamos xml y xmlp en un solo zip
+            resp = generaTimbrado(both, clave, ambiente);
+
+        } catch (ComprobanteException ce) {
+            ce.printStackTrace();
+            resp = "Error---" + ce.getMessage();
+        } catch (ComplementoException e) {
+            e.printStackTrace();
+            resp = "Error--" + e.getMessage();
+        } catch (IOException e) {
+            e.printStackTrace();
+            resp = "Error-" + e.getMessage();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            resp = "Error-:...." + e.getMessage();
+        }
+        return resp;
+    }
+
+
     public String exeGenFactura(ComprobanteData cmp, String clave, String ambiente, boolean debug) {
         String resp = "---";
         try {
@@ -98,30 +136,7 @@ public class ClienteFacturaManual {
             //Xml de impresion
             //byte[] xmlp = Zipper.compress("xml_p", xml.getBytes());
             byte[] both = getZipBytes(xml, xmlPrint);//Empaquetamos xml y xmlp en un solo zip
-            if ((ambiente.equalsIgnoreCase("PRODUCTIVO") ||
-                    ambiente.equalsIgnoreCase("PRODUCCION") ||
-                    ambiente.equalsIgnoreCase("PROD"))) {
-                System.out.println("GENERANDO FACTURA - PRODUCTIVO");
-
-                //cdires = new wsGenInvoice().wsGenInvoice_Manual(both, clave);
-                cdires = ClientePrd.genInvoiceManual(both, clave);
-                des = Zipper.uncompress(cdires);
-                resp = new String(des);
-            } else if( ambiente.equalsIgnoreCase("PRUEBAS")
-                    || ambiente.equalsIgnoreCase("QA")
-                    || ambiente.equalsIgnoreCase("DES")
-                    || ambiente.equalsIgnoreCase("TEST")
-                    || ambiente.equalsIgnoreCase("DESARROLLO")) {
-                    System.out.println("GENERANDO FACTURA - QA");
-
-                    //cdires = new wsGenInvoice().wsGenInvoice_Manual_Test(both, clave);
-                    cdires = ClienteTest.genInvoiceManual(both, clave);
-                des = Zipper.uncompress(cdires);
-                resp = new String(des);
-            } else {
-                resp ="<DEVELOPMENT STAGE>";
-            }
-
+            resp = generaTimbrado(both, clave, ambiente);
 
         } catch (ComprobanteException ce) {
             ce.printStackTrace();
@@ -140,6 +155,38 @@ public class ClienteFacturaManual {
         return resp;
     }
 
+    private String generaTimbrado(byte[] zip, String clave, String ambiente) throws Exception{
+        String resp;
+        byte[] cdires = null;
+        byte[] des = null;
+
+        if ((ambiente.equalsIgnoreCase("PRODUCTIVO") ||
+                ambiente.equalsIgnoreCase("PRODUCCION") ||
+                ambiente.equalsIgnoreCase("PROD"))) {
+
+            System.out.println("GENERANDO FACTURA - PRODUCTIVO");
+
+            //cdires = new wsGenInvoice().wsGenInvoice_Manual(both, clave);
+            cdires = ClientePrd.genInvoiceManual(zip, clave);
+            des = Zipper.uncompress(cdires);
+            resp = new String(des);
+        } else if( ambiente.equalsIgnoreCase("PRUEBAS")
+                || ambiente.equalsIgnoreCase("QA")
+                || ambiente.equalsIgnoreCase("DES")
+                || ambiente.equalsIgnoreCase("TEST")
+                || ambiente.equalsIgnoreCase("DESARROLLO")) {
+            System.out.println("GENERANDO FACTURA - QA");
+
+            //cdires = new wsGenInvoice().wsGenInvoice_Manual_Test(both, clave);
+            cdires = ClienteTest.genInvoiceManual(zip, clave);
+            des = Zipper.uncompress(cdires);
+            resp = new String(des);
+        } else {
+            resp ="<DEVELOPMENT STAGE>";
+        }
+
+        return resp;
+    }
 
     public byte[] getZipBytes(String xml, String xmlp)
             throws Exception {

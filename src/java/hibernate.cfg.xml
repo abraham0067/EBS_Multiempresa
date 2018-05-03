@@ -2,11 +2,10 @@
 <!DOCTYPE hibernate-configuration PUBLIC "-//Hibernate/Hibernate Configuration DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">
 <hibernate-configuration>
     <session-factory>
-        <!--Pool de conexiones usado para accctualizaciones y modificaciones 
+        <!--Pool de conexiones usado para actualizaciones y modificaciones
         en la base de datos-->
         <!--JNDI-->
         <property name="connection.datasource">java:comp/env/jdbc/Emision</property>
-
 
         <!-- TEST USING CONFIGURATION PARAMETERS OF THIS FILE-->
         <property name="connection.driver_class">com.mysql.jdbc.Driver</property>

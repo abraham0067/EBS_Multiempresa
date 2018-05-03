@@ -31,6 +31,11 @@
         <managed-bean-scope>session</managed-bean-scope>
     </managed-bean>
     <managed-bean>
+        <managed-bean-name>managedBeanFacturacionPorArchivo</managed-bean-name>
+        <managed-bean-class>com.ebs.mbeans.ManagedBeanFacturacionPorArchivo</managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
+    </managed-bean>
+    <managed-bean>
         <managed-bean-name>managedBeanFacturacionManual</managed-bean-name>
         <managed-bean-class>com.ebs.mbeans.ManagedBeanFacturacionManual</managed-bean-class>
         <managed-bean-scope>view</managed-bean-scope>
@@ -169,7 +174,6 @@
         <description>Catalogo de Agentes</description>
         <managed-bean-name>managedBeanAgentes</managed-bean-name>
         <managed-bean-class>com.ebs.mbeans.ManagedBeanAgentes</managed-bean-class>
-
         <managed-bean-scope>session</managed-bean-scope>
     </managed-bean>
     <managed-bean>
