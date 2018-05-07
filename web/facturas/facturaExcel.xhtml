@@ -30,22 +30,22 @@
                     <p:outputLabel value=""/>
                     <p:outputLabel value=""/>
                     <p:outputLabel value=""/>
-                    <p:outputLabel value=""/>
-                    <p:outputLabel value=""/>
 
                     <p:outputLabel value="Archivo Excel:"/>
-                    <!--
-                    <p:fileUpload id="fuArchivo"  value="#{managedBeanFacturacionPorArchivo.fuArchivo}" mode="simple" auto="true"
-                                  allowTypes="/(\.|\/)(zip)$/"  skinSimple="true" required="true" label="Elegir archivo excel" />
-                    -->
-                    <p:fileUpload id="fuArchivo" fileUploadListener="#{managedBeanFacturacionPorArchivo.generarFactura}" multiple="false" mode="advanced"
-                                  update="messages" sizeLimit="100000" allowTypes="/(\.|\/)(xls|xlsx)$/"  skinSimple="true" required="true" label="Elegir archivo excel" />
+                    <p:fileUpload id="fuArchivo" fileUploadListener="#{managedBeanFacturacionPorArchivo.cargaArchivo}" multiple="false" mode="advanced" dragDropSupport="true"
+                                  update="messages,msgs,lbNombre,btgenera" fileLimit="1" allowTypes="/(\.|\/)(xls|xlsx)$/"  skinSimple="true" required="true" label="Elegir archivo excel">
+                    </p:fileUpload>
                     <p:growl id="messages" showDetail="true" />
 
+                    <!--
+                    <c:if test="#{managedBeanFacturacionPorArchivo.nombreArchivo != null}">
+                    </c:if>
+                    -->
+                    <p:outputLabel id="lbNombre" value="#{managedBeanFacturacionPorArchivo.nombreArchivo}"/>
                     <p:outputLabel value=""/>
-                    <p:outputLabel value=""/>
-                    <p:outputLabel value=""/>
-                    <p:outputLabel value=""/>
+
+
+
                     <p:outputLabel value=""/>
                     <p:outputLabel value=""/>
 
@@ -56,20 +56,19 @@
 
 
 
-            <!--
-
-            <p:commandButton styleClass="customButtonTwo" value="Generar documento"
-                             actionListener="#{managedBeanFacturacionPorArchivo.generarFactura()}"
-                             ajax="false" update="msgs"
+            <p:commandButton id="btgenera" styleClass="customButtonTwo" value="Generar documento"
+                             actionListener="#{managedBeanFacturacionPorArchivo.generarFactura}"
+                             ajax="false" update="msgs,frmPlantilla"
+                             disabled="#{managedBeanFacturacionPorArchivo.deshabilitaBotonGeneraFActura}"
 
             />
-
+   <!--
             <p:commandButton value="Guardar" icon="fa fa-fw fa-save"
                              actionListener="#{managedBeanPlantillas.guardarPlantilla()}"
                              ajax="false" update="msgs"
                              process="@this, itNombre, fuPlantilla, fuImgPlan, itRootPath, isActivarP"/>
 
-                             -->
+                   -->
             <!--
             <p:commandButton value="Generar documento"
                              styleClass="customButtonTwo"

@@ -49,6 +49,15 @@ public class ManagedBeanFacturacionPorArchivo implements Serializable {
     private String ambiente = "DESARROLLO";
     private static final String UUIDREGEXPATT = "[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}";
     private static boolean DEBUG = false;
+    private UploadedFile uploadedFile;
+
+    @Setter
+    @Getter
+    private String nombreArchivo;
+
+    @Setter
+    @Getter
+    private boolean deshabilitaBotonGeneraFActura;
 
     private ArrayList<String> respuestas;
     /**
@@ -91,31 +100,49 @@ public class ManagedBeanFacturacionPorArchivo implements Serializable {
         }
 
         respuestas = new ArrayList<>();
-
+        uploadedFile = null;
+        deshabilitaBotonGeneraFActura = true;
 
     }
 
-    public void generarFactura(FileUploadEvent event) {
+    public void cargaArchivo(FileUploadEvent event) {
         generaMensajes("Exito", event.getFile().getFileName() + " is uploaded.");
-
-        System.out.println("COMIENZA LA GENERACION:  " + event.getFile().getFileName());
-        PintarLog.println("Apunto de llamar al servicio de factura automatica desde el servidor");
-
-
-        String respuestaServicio = respuestaServicioTimbrado(xml.getBytes() , xmlp.getBytes());
-        if (respuestaServicio != null) {
-            if (checkRespuestaServicio(respuestaServicio)) {
-                FacesContext.getCurrentInstance().addMessage("frmManual", new FacesMessage(FacesMessage.SEVERITY_INFO, "La factura se genero correctamente.", "Error"));
-            } else {
-                //Show all to user
-                for (String mssg : respuestas) {
-                    FacesContext.getCurrentInstance().addMessage("frmManual", new FacesMessage(FacesMessage.SEVERITY_ERROR, mssg, "Error"));
-                }
-            }
-        }
-
-        //generaMensajes("","Comienza la facturacion electronica");
+        uploadedFile = event.getFile();
+        nombreArchivo = "ARCHIVO CARGADO: "+uploadedFile.getFileName();
+        deshabilitaBotonGeneraFActura = false;
     }
+
+    public void generarFactura() {
+        try {
+            if (uploadedFile != null) {
+                FacesContext.getCurrentInstance().addMessage("frmManual", new FacesMessage(FacesMessage.SEVERITY_INFO, "Generando facturacion por archivo excel", ""));
+
+                System.out.println("COMIENZA LA GENERACION:  " + uploadedFile.getFileName());
+                PintarLog.println("Apunto de llamar al servicio de factura automatica desde el servidor");
+
+                String respuestaServicio = respuestaServicioTimbrado(xml.getBytes(), xmlp.getBytes());
+                if (respuestaServicio != null) {
+                    if (checkRespuestaServicio(respuestaServicio)) {
+                        FacesContext.getCurrentInstance().addMessage("frmManual", new FacesMessage(FacesMessage.SEVERITY_INFO, "La factura se genero correctamente.", ""));
+                    } else {
+                        //Show all to user
+                        for (String mssg : respuestas) {
+                            FacesContext.getCurrentInstance().addMessage("frmManual", new FacesMessage(FacesMessage.SEVERITY_ERROR, mssg, ""));
+                        }
+                    }
+                }
+            } else
+                FacesContext.getCurrentInstance().addMessage("frmManual", new FacesMessage(FacesMessage.SEVERITY_ERROR, "", "Se debe agregar un archivo antes de generar las facturas"));
+
+        }catch(Exception e){
+            e.printStackTrace(System.out);
+        }finally{
+            uploadedFile = null;
+            nombreArchivo = null;
+            deshabilitaBotonGeneraFActura = true;
+        }
+    }
+
 
     private String respuestaServicioTimbrado(byte[] xml, byte[] xmlp){
         String respuesta = null;
