@@ -15,7 +15,7 @@
         <p:breadCrumb class="breadcrumbStyle" style="padding: 1px 1px 1px 1px;">
             <p:menuitem value="Inicio" url="#"/>
             <p:menuitem value="Facturas" url="#"/>
-            <p:menuitem value="Servicios" url="#"/>
+            <p:menuitem value="Facturacion por archivo" url="#"/>
         </p:breadCrumb>
     </ui:define>
 
@@ -25,6 +25,17 @@
             <p:panel header="Facturacion por archivo" style="margin-bottom:10px;">
                 <p:panelGrid id="pnDocumento" columns="2" columnClasses="ui-grid-col-2,ui-grid-col-4,ui-grid-col-2,ui-grid-col-4"
                              layout="grid">
+
+                    <p:outputLabel for="somEmisor" value="Emisor: "/>
+                    <p:selectOneMenu id="somEmisor" value="#{managedBeanFacturacionPorArchivo.idEmpresa}"
+                                     style="width:98%; max-width: 100%" required="true"
+                                     requiredMessage="Debe seleccionar una empresa emisora."
+                                     filter="true" filterMatchMode="contains" panelStyle="width:550px;">
+                        <f:selectItem itemLabel="Seleccionar empresa emisora" itemValue="" noSelectionOption="true"/>
+                        <f:selectItems value="#{managedBeanEmpresasAsignadas.empresasAsignadas}" var="em"
+                                       itemLabel="#{em.RFC_Empresa()}" itemValue="#{em.id}"/>
+
+                    </p:selectOneMenu>
 
                     <p:outputLabel value=""/>
                     <p:outputLabel value=""/>
