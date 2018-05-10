@@ -35,6 +35,8 @@ import javax.servlet.http.HttpSession;
 @ManagedBean
 @SessionScoped
 public class ManagedBeanFacturacionPorArchivo implements Serializable {
+    @Setter
+    @Getter
     private int idEmpresaUsuario;
     //Contexto
     private HttpServletRequest httpServletRequest;
