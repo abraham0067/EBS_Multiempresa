@@ -1,5 +1,6 @@
 package com.ebs.mbeans;
 
+import com.ebs.LeerExcel.LeerDatosExcel;
 import fe.db.MAcceso;
 import fe.db.MConfig;
 import fe.db.MEmpresaMTimbre;
@@ -8,6 +9,7 @@ import fe.model.dao.EmpresaDAO;
 import fe.model.dao.EmpresaTimbreDAO;
 import fe.model.dao.LogAccesoDAO;
 import fe.net.ClienteFacturaManual;
+import fe.sat.v33.ComprobanteData;
 import lombok.Getter;
 import lombok.Setter;
 import mx.com.ebs.emision.factura.utilierias.PintarLog;
@@ -119,8 +121,10 @@ public class ManagedBeanFacturacionPorArchivo implements Serializable {
 
                 System.out.println("COMIENZA LA GENERACION:  " + uploadedFile.getFileName());
                 PintarLog.println("Apunto de llamar al servicio de factura automatica desde el servidor");
-
-                String respuestaServicio = respuestaServicioTimbrado(xml.getBytes(), xmlp.getBytes());
+                MEmpresaMTimbre m = daoEmpTimp.ObtenerClaveWSEmpresaTimbre(idEmpresaUsuario);
+                LeerDatosExcel genComprobanteData = new LeerDatosExcel(uploadedFile.getInputstream());
+                ComprobanteData comprobanteData = genComprobanteData.getComprobanteData();
+                String respuestaServicio = new ClienteFacturaManual().exeGenFactura(comprobanteData, m.getClaveWS(), ambiente, DEBUG);
                 if (respuestaServicio != null) {
                     if (checkRespuestaServicio(respuestaServicio)) {
                         FacesContext.getCurrentInstance().addMessage("frmManual", new FacesMessage(FacesMessage.SEVERITY_INFO, "La factura se genero correctamente.", ""));
