@@ -3,6 +3,7 @@ package com.ebs.mbeans;
 import com.ebs.LeerExcel.LeerDatosExcel;
 import fe.db.MAcceso;
 import fe.db.MConfig;
+import fe.db.MEmpresa;
 import fe.db.MEmpresaMTimbre;
 import fe.model.dao.ConfigDAO;
 import fe.model.dao.EmpresaDAO;
@@ -35,8 +36,6 @@ import javax.servlet.http.HttpSession;
 @ManagedBean
 @SessionScoped
 public class ManagedBeanFacturacionPorArchivo implements Serializable {
-    @Setter
-    @Getter
     private int idEmpresaUsuario;
     //Contexto
     private HttpServletRequest httpServletRequest;
@@ -58,12 +57,17 @@ public class ManagedBeanFacturacionPorArchivo implements Serializable {
     @Setter
     @Getter
     private String nombreArchivo;
+    @Setter
+    @Getter
+    private int idEmpresa;//ID de la empresa emisora
 
     @Setter
     @Getter
     private boolean deshabilitaBotonGeneraFActura;
-
     private ArrayList<String> respuestas;
+    @Setter
+    @Getter
+    private MEmpresa empresaEmisora;
     /**
      * Creates a new instance of ManagedBeanPlantillas
      */
@@ -103,14 +107,14 @@ public class ManagedBeanFacturacionPorArchivo implements Serializable {
             }
         }
 
+        idEmpresa = -1;
         respuestas = new ArrayList<>();
         uploadedFile = null;
         deshabilitaBotonGeneraFActura = true;
-
     }
 
     public void cargaArchivo(FileUploadEvent event) {
-        generaMensajes("Exito", event.getFile().getFileName() + " is uploaded.");
+        generaMensajes("", event.getFile().getFileName() + " ha sido cargado.");
         uploadedFile = event.getFile();
         nombreArchivo = "ARCHIVO CARGADO: "+uploadedFile.getFileName();
         deshabilitaBotonGeneraFActura = false;
@@ -123,29 +127,32 @@ public class ManagedBeanFacturacionPorArchivo implements Serializable {
 
                 System.out.println("COMIENZA LA GENERACION:  " + uploadedFile.getFileName());
                 PintarLog.println("Apunto de llamar al servicio de factura automatica desde el servidor");
+
+                empresaEmisora = daoEmpresas.BuscarEmpresaId(this.idEmpresa);
+                System.out.println("empresaEmisora = " + empresaEmisora.getRfcOrigen());
+
                 MEmpresaMTimbre m = daoEmpTimp.ObtenerClaveWSEmpresaTimbre(idEmpresaUsuario);
                 LeerDatosExcel genComprobanteData = new LeerDatosExcel(uploadedFile.getInputstream());
                 ComprobanteData comprobanteData = genComprobanteData.getComprobanteData();
                 String respuestaServicio = new ClienteFacturaManual().exeGenFactura(comprobanteData, m.getClaveWS(), ambiente, DEBUG);
+
                 if (respuestaServicio != null) {
                     if (checkRespuestaServicio(respuestaServicio)) {
-                        FacesContext.getCurrentInstance().addMessage("frmManual", new FacesMessage(FacesMessage.SEVERITY_INFO, "La factura se genero correctamente.", ""));
+                        FacesContext.getCurrentInstance().addMessage("", new FacesMessage(FacesMessage.SEVERITY_INFO, "La factura se genero correctamente.", ""));
                     } else {
                         //Show all to user
-                        for (String mssg : respuestas) {
-                            FacesContext.getCurrentInstance().addMessage("frmManual", new FacesMessage(FacesMessage.SEVERITY_ERROR, mssg, ""));
-                        }
+                        for (String mssg : respuestas)
+                            FacesContext.getCurrentInstance().addMessage("", new FacesMessage(FacesMessage.SEVERITY_ERROR, mssg, ""));
                     }
                 }
             } else
-                FacesContext.getCurrentInstance().addMessage("frmManual", new FacesMessage(FacesMessage.SEVERITY_ERROR, "", "Se debe agregar un archivo antes de generar las facturas"));
+                FacesContext.getCurrentInstance().addMessage("", new FacesMessage(FacesMessage.SEVERITY_ERROR, "", "Se debe agregar un archivo antes de generar las facturas"));
 
         }catch(Exception e){
             e.printStackTrace(System.out);
+            FacesContext.getCurrentInstance().addMessage("ERROR", new FacesMessage(FacesMessage.SEVERITY_ERROR, "", e.getMessage()));
         }finally{
-            uploadedFile = null;
-            nombreArchivo = null;
-            deshabilitaBotonGeneraFActura = true;
+            reset();
         }
     }
 
@@ -153,7 +160,7 @@ public class ManagedBeanFacturacionPorArchivo implements Serializable {
     private String respuestaServicioTimbrado(byte[] xml, byte[] xmlp){
         String respuesta = null;
         String claveWs = null;
-         try {
+        try {
             Document doc = new SAXBuilder().build(new ByteArrayInputStream(xml));
             Namespace ns = doc.getRootElement().getNamespace();
             String rfc = doc.getRootElement().getChild("Emisor",ns ).getAttributeValue("Rfc");
@@ -166,14 +173,21 @@ public class ManagedBeanFacturacionPorArchivo implements Serializable {
         if(claveWs != null )
             respuesta = new ClienteFacturaManual().exeGenFactura(xml, xmlp, claveWs, ambiente, DEBUG);
         else
-            FacesContext.getCurrentInstance().addMessage("frmManual", new FacesMessage(FacesMessage.SEVERITY_ERROR, "No se pudo obtener las claves de acceso para el timbrado del emisor.", "Error"));
+            FacesContext.getCurrentInstance().addMessage("", new FacesMessage(FacesMessage.SEVERITY_ERROR, "No se pudo obtener las claves de acceso para el timbrado del emisor.", "Error"));
 
         return respuesta;
     }
 
+    private void reset(){
+        idEmpresa = -1;
+        uploadedFile = null;
+        nombreArchivo = null;
+        deshabilitaBotonGeneraFActura = true;
+    }
+
     private void generaMensajes(String resultado, String mensaje){
         FacesMessage message = new FacesMessage(resultado, mensaje);
-        FacesContext.getCurrentInstance().addMessage(null, message);
+        FacesContext.getCurrentInstance().addMessage("", message);
     }
 
     private boolean checkRespuestaServicio(String arg) {
