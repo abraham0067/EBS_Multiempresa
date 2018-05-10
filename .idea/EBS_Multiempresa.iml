@@ -49,5 +49,10 @@
     <orderEntry type="library" name="eclipselink" level="project" />
     <orderEntry type="library" name="feProcess.3.4.047" level="project" />
     <orderEntry type="library" name="primefaces-6.0" level="project" />
+    <orderEntry type="library" name="poi-ooxml-3.9_1" level="project" />
+    <orderEntry type="library" name="poi-3.9" level="project" />
+    <orderEntry type="library" name="xmlbeans" level="project" />
+    <orderEntry type="library" name="poi-ooxml-schemas-3.9" level="project" />
+    <orderEntry type="library" name="jxl" level="project" />
   </component>
 </module>

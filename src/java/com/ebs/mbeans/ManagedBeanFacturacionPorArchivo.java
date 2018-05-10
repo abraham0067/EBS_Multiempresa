@@ -2,7 +2,6 @@ package com.ebs.mbeans;
 
 import fe.db.MAcceso;
 import fe.db.MConfig;
-import fe.db.MEmpresa;
 import fe.db.MEmpresaMTimbre;
 import fe.model.dao.ConfigDAO;
 import fe.model.dao.EmpresaDAO;
@@ -55,17 +54,12 @@ public class ManagedBeanFacturacionPorArchivo implements Serializable {
     @Setter
     @Getter
     private String nombreArchivo;
-    @Setter
-    @Getter
-    private int idEmpresa;//ID de la empresa emisora
 
     @Setter
     @Getter
     private boolean deshabilitaBotonGeneraFActura;
+
     private ArrayList<String> respuestas;
-    @Setter
-    @Getter
-    private MEmpresa empresaEmisora;
     /**
      * Creates a new instance of ManagedBeanPlantillas
      */
@@ -105,14 +99,14 @@ public class ManagedBeanFacturacionPorArchivo implements Serializable {
             }
         }
 
-        idEmpresa = -1;
         respuestas = new ArrayList<>();
         uploadedFile = null;
         deshabilitaBotonGeneraFActura = true;
+
     }
 
     public void cargaArchivo(FileUploadEvent event) {
-        generaMensajes("", event.getFile().getFileName() + " ha sido cargado.");
+        generaMensajes("Exito", event.getFile().getFileName() + " is uploaded.");
         uploadedFile = event.getFile();
         nombreArchivo = "ARCHIVO CARGADO: "+uploadedFile.getFileName();
         deshabilitaBotonGeneraFActura = false;
@@ -126,26 +120,26 @@ public class ManagedBeanFacturacionPorArchivo implements Serializable {
                 System.out.println("COMIENZA LA GENERACION:  " + uploadedFile.getFileName());
                 PintarLog.println("Apunto de llamar al servicio de factura automatica desde el servidor");
 
-                empresaEmisora = daoEmpresas.BuscarEmpresaId(this.idEmpresa);
-                System.out.println("empresaEmisora = " + empresaEmisora.getRfcOrigen());
-
                 String respuestaServicio = respuestaServicioTimbrado(xml.getBytes(), xmlp.getBytes());
                 if (respuestaServicio != null) {
                     if (checkRespuestaServicio(respuestaServicio)) {
-                        FacesContext.getCurrentInstance().addMessage("", new FacesMessage(FacesMessage.SEVERITY_INFO, "La factura se genero correctamente.", ""));
+                        FacesContext.getCurrentInstance().addMessage("frmManual", new FacesMessage(FacesMessage.SEVERITY_INFO, "La factura se genero correctamente.", ""));
                     } else {
                         //Show all to user
-                        for (String mssg : respuestas)
-                            FacesContext.getCurrentInstance().addMessage("", new FacesMessage(FacesMessage.SEVERITY_ERROR, mssg, ""));
+                        for (String mssg : respuestas) {
+                            FacesContext.getCurrentInstance().addMessage("frmManual", new FacesMessage(FacesMessage.SEVERITY_ERROR, mssg, ""));
+                        }
                     }
                 }
             } else
-                FacesContext.getCurrentInstance().addMessage("", new FacesMessage(FacesMessage.SEVERITY_ERROR, "", "Se debe agregar un archivo antes de generar las facturas"));
+                FacesContext.getCurrentInstance().addMessage("frmManual", new FacesMessage(FacesMessage.SEVERITY_ERROR, "", "Se debe agregar un archivo antes de generar las facturas"));
 
         }catch(Exception e){
             e.printStackTrace(System.out);
         }finally{
-            reset();
+            uploadedFile = null;
+            nombreArchivo = null;
+            deshabilitaBotonGeneraFActura = true;
         }
     }
 
@@ -166,21 +160,14 @@ public class ManagedBeanFacturacionPorArchivo implements Serializable {
         if(claveWs != null )
             respuesta = new ClienteFacturaManual().exeGenFactura(xml, xmlp, claveWs, ambiente, DEBUG);
         else
-            FacesContext.getCurrentInstance().addMessage("", new FacesMessage(FacesMessage.SEVERITY_ERROR, "No se pudo obtener las claves de acceso para el timbrado del emisor.", "Error"));
+            FacesContext.getCurrentInstance().addMessage("frmManual", new FacesMessage(FacesMessage.SEVERITY_ERROR, "No se pudo obtener las claves de acceso para el timbrado del emisor.", "Error"));
 
         return respuesta;
     }
 
-    private void reset(){
-        idEmpresa = -1;
-        uploadedFile = null;
-        nombreArchivo = null;
-        deshabilitaBotonGeneraFActura = true;
-    }
-
     private void generaMensajes(String resultado, String mensaje){
         FacesMessage message = new FacesMessage(resultado, mensaje);
-        FacesContext.getCurrentInstance().addMessage("", message);
+        FacesContext.getCurrentInstance().addMessage(null, message);
     }
 
     private boolean checkRespuestaServicio(String arg) {
