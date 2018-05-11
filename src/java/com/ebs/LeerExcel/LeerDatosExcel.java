@@ -2,14 +2,6 @@ package com.ebs.LeerExcel;
 
 import com.ebs.complementoextdata.CustomComplementoComercioExteriorMetadata;
 import com.ebs.util.TimeZoneCP;
-import fe.db.ConceptoFactura;
-import fe.db.MEmpresa;
-import fe.db.MFolios;
-import fe.db.MReceptor;
-import fe.model.dao.EmpresaDAO;
-import fe.model.dao.FoliosDAO;
-import fe.model.dao.ReceptorDAO;
-import fe.model.util.CapturaManualModelo;
 import fe.sat.CommentFE;
 import fe.sat.CommentFEData;
 import fe.sat.complementos.comercioexterior.*;
@@ -32,6 +24,7 @@ public class LeerDatosExcel {
 
     private ComprobanteData comprobanteData;
     private static final String PLANTILLAGRAL = "CFDIV33";//INGRESO Y EGRESO
+    private String rfc;
     //--------------------------------EMISOR-------------------------------//
     private EmisorData emisorDataFactura;
     //--------------------------------RECEPTOR----------------------------//
@@ -65,6 +58,7 @@ public class LeerDatosExcel {
 
     public LeerDatosExcel(InputStream excelFile) throws IOException {
 
+        rfc = "";
         comprobanteData = new ComprobanteData();
         comprobanteData.setDatosComprobante(new DatosComprobanteData());
         disponibleComercioExterior = false;
@@ -136,6 +130,7 @@ public class LeerDatosExcel {
                         case 20: //Datos comercio exterior
                             System.out.println("Uso comercio exterior");
                             disponibleComercioExterior = true;
+                            datosComercioExterior(cell,cells);
                             break;
                         case 30: //DIRECCION EMISOR COMERCIO EXTERIOR
                             direccionComercioExterior(cell, cells, 1);
@@ -171,7 +166,7 @@ public class LeerDatosExcel {
                             totalImpuestosTraslados(cell, cells);
                             break;
                         case 140: //TOTAL IMPUESTOS RETENCIONES
-                            totalImpuestosRetenciones(cell,cells);
+                            totalImpuestosRetenciones(cell, cells);
                             break;
                         default:
                             break;
@@ -259,28 +254,28 @@ public class LeerDatosExcel {
                     System.out.println("calle: " + cell.getStringCellValue());
                     break;
                 case 2://NUMERO INTERIOR
-                    domicilioComercioData.setNumeroInterior(readValue(cell));
+                    domicilioComercioData.setNumeroInterior(readValueInt(cell));
                     break;
                 case 3://NUMERO EXTERIOR
-                    domicilioComercioData.setNumeroExterior(readValue(cell));
+                    domicilioComercioData.setNumeroExterior(readValueInt(cell));
                     break;
                 case 4://COLONIA
-                    domicilioComercioData.setColonia(readValue(cell));
+                    domicilioComercioData.setColonia(readValueInt(cell));
                     break;
                 case 5://MUNICIPIO
-                    domicilioComercioData.setMunicipio(readValue(cell));
+                    domicilioComercioData.setMunicipio(readValueInt(cell));
                     break;
                 case 6://ESTADO
-                    domicilioComercioData.setEstado(readValue(cell));
+                    domicilioComercioData.setEstado(readValueInt(cell));
                     break;
                 case 7://PAIS
-                    domicilioComercioData.setPais(readValue(cell));
+                    domicilioComercioData.setPais(readValueInt(cell));
                     break;
                 case 8://CP
-                    domicilioComercioData.setCodigoPostal(readValue(cell));
+                    domicilioComercioData.setCodigoPostal(readValueInt(cell));
                     break;
                 case 9://num reg trib solo DESTINATARIO CE
-                    regIdTrib = readValue(cell);
+                    regIdTrib = readValueInt(cell);
                     break;
                 case 10://nombre solo destinatario CE
                     nombre = cell.getStringCellValue();
@@ -375,9 +370,9 @@ public class LeerDatosExcel {
                     ((DatosComprobanteData) comprobanteData.getDatosComprobante()).setFormaDePago(new CatalogoData(readValue(cell), ""));
                     break;
                 case 7://LUGAR EXPEDICION
-                    int lugar = (int)cell.getNumericCellValue();
+                    int lugar = (int) cell.getNumericCellValue();
                     System.out.println("expedicion: " + lugar);
-                    ((DatosComprobanteData) comprobanteData.getDatosComprobante()).setLugarExpedicion(new CatalogoData(""+lugar, ""));
+                    ((DatosComprobanteData) comprobanteData.getDatosComprobante()).setLugarExpedicion(new CatalogoData("" + lugar, ""));
                     break;
                 case 8://SUBTOTAL
                     ((DatosComprobanteData) comprobanteData.getDatosComprobante()).setSubTotal(cell.getNumericCellValue());
@@ -511,13 +506,13 @@ public class LeerDatosExcel {
             cell = (XSSFCell) cells.next();
             switch (cell.getColumnIndex()) {
                 case 1://NoIdentificacion
-                    temp.setIdentificacion(cell.getStringCellValue());
+                    temp.setIdentificacion(readValueInt(cell));
                     break;
                 case 2://Cantidad Aduana
                     temp.setCantidadAduana(cell.getNumericCellValue());
                     break;
                 case 3://FraccionArancelaria
-                    temp.setFraccionArancelaria(readValue(cell));
+                    temp.setFraccionArancelaria(readValueInt(cell));
                     break;
                 case 4://Unidad Aduana
                     temp.setUnidadAduana(cell.getStringCellValue());
@@ -725,8 +720,12 @@ public class LeerDatosExcel {
 
     }
 
-    public ComprobanteData getComprobanteData(){
+    public ComprobanteData getComprobanteData() {
         return comprobanteData;
+    }
+
+    public String getRFC() {
+        return emisorDataFactura.getRfc();
     }
 
 }

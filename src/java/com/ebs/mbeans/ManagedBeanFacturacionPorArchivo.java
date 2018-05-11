@@ -131,10 +131,20 @@ public class ManagedBeanFacturacionPorArchivo implements Serializable {
                 empresaEmisora = daoEmpresas.BuscarEmpresaId(this.idEmpresa);
                 System.out.println("empresaEmisora = " + empresaEmisora.getRfcOrigen());
 
-                MEmpresaMTimbre m = daoEmpTimp.ObtenerClaveWSEmpresaTimbre(idEmpresaUsuario);
+                MEmpresaMTimbre m = daoEmpTimp.ObtenerClaveWSEmpresaTimbre(idEmpresa);
+
+                System.out.println("Clave ws: " + m.getClaveWS());
+                String respuestaServicio = null;
                 LeerDatosExcel genComprobanteData = new LeerDatosExcel(uploadedFile.getInputstream());
                 ComprobanteData comprobanteData = genComprobanteData.getComprobanteData();
-                String respuestaServicio = new ClienteFacturaManual().exeGenFactura(comprobanteData, m.getClaveWS(), ambiente, DEBUG);
+
+                if(genComprobanteData.getRFC().equalsIgnoreCase(empresaEmisora.getRfcOrigen())){
+                    respuestaServicio = new ClienteFacturaManual().exeGenFactura(comprobanteData, m.getClaveWS(), ambiente, DEBUG);
+                }else{
+                    respuestaServicio = null;
+                    FacesContext.getCurrentInstance().addMessage("", new FacesMessage(FacesMessage.SEVERITY_ERROR, "El RFC del emisor no es un RFC valido.", ""));
+                }
+
 
                 if (respuestaServicio != null) {
                     if (checkRespuestaServicio(respuestaServicio)) {
@@ -145,9 +155,9 @@ public class ManagedBeanFacturacionPorArchivo implements Serializable {
                             FacesContext.getCurrentInstance().addMessage("", new FacesMessage(FacesMessage.SEVERITY_ERROR, mssg, ""));
                     }
                 }
-            } else
-                FacesContext.getCurrentInstance().addMessage("", new FacesMessage(FacesMessage.SEVERITY_ERROR, "", "Se debe agregar un archivo antes de generar las facturas"));
-
+            } else {
+                FacesContext.getCurrentInstance().addMessage("", new FacesMessage(FacesMessage.SEVERITY_ERROR, "", "Se debe agregar un archivo antes de generar la factura"));
+            }
         }catch(Exception e){
             e.printStackTrace(System.out);
             FacesContext.getCurrentInstance().addMessage("ERROR", new FacesMessage(FacesMessage.SEVERITY_ERROR, "", e.getMessage()));
