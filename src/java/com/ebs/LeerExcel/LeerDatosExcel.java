@@ -1,6 +1,7 @@
 package com.ebs.LeerExcel;
 
 import com.ebs.complementoextdata.CustomComplementoComercioExteriorMetadata;
+import com.ebs.util.TimeZoneCP;
 import fe.db.ConceptoFactura;
 import fe.db.MEmpresa;
 import fe.db.MFolios;
@@ -9,6 +10,8 @@ import fe.model.dao.EmpresaDAO;
 import fe.model.dao.FoliosDAO;
 import fe.model.dao.ReceptorDAO;
 import fe.model.util.CapturaManualModelo;
+import fe.sat.CommentFE;
+import fe.sat.CommentFEData;
 import fe.sat.complementos.comercioexterior.*;
 import fe.sat.complementos.v33.ComplementoFe;
 import fe.sat.v33.*;
@@ -28,6 +31,7 @@ import java.util.List;
 public class LeerDatosExcel {
 
     private ComprobanteData comprobanteData;
+    private static final String PLANTILLAGRAL = "CFDIV33";//INGRESO Y EGRESO
     //--------------------------------EMISOR-------------------------------//
     private EmisorData emisorDataFactura;
     //--------------------------------RECEPTOR----------------------------//
@@ -83,6 +87,21 @@ public class LeerDatosExcel {
 
         if (cell.getCellType() == 0) {
             value = "" + BigDecimal.valueOf(cell.getNumericCellValue());
+        } else if (cell.getCellType() == 1) {
+            value = cell.getStringCellValue();
+        }
+
+        return value;
+
+    }
+
+
+    public String readValueInt(XSSFCell cell) {
+
+        String value = "";
+
+        if (cell.getCellType() == 0) {
+            value = "" + (int) cell.getNumericCellValue();
         } else if (cell.getCellType() == 1) {
             value = cell.getStringCellValue();
         }
@@ -177,7 +196,8 @@ public class LeerDatosExcel {
                     emisorDataFactura.setNombre(cell.getStringCellValue());
                     break;
                 case 3:
-                    emisorDataFactura.setRegimenFiscal(new CatalogoData(readValue(cell), ""));
+                    int regimenFiscal = (int) cell.getNumericCellValue();
+                    emisorDataFactura.setRegimenFiscal(new CatalogoData("" + regimenFiscal, ""));
                     break;
             }
         }
@@ -355,7 +375,9 @@ public class LeerDatosExcel {
                     ((DatosComprobanteData) comprobanteData.getDatosComprobante()).setFormaDePago(new CatalogoData(readValue(cell), ""));
                     break;
                 case 7://LUGAR EXPEDICION
-                    ((DatosComprobanteData) comprobanteData.getDatosComprobante()).setLugarExpedicion(new CatalogoData(readValue(cell), ""));
+                    int lugar = (int)cell.getNumericCellValue();
+                    System.out.println("expedicion: " + lugar);
+                    ((DatosComprobanteData) comprobanteData.getDatosComprobante()).setLugarExpedicion(new CatalogoData(""+lugar, ""));
                     break;
                 case 8://SUBTOTAL
                     ((DatosComprobanteData) comprobanteData.getDatosComprobante()).setSubTotal(cell.getNumericCellValue());
@@ -390,7 +412,7 @@ public class LeerDatosExcel {
                     cptoData.setUnidad(cell.getStringCellValue());
                     break;
                 case 5://ClaveProdServ
-                    cptoData.setClaveProdServ(new CatalogoData(readValue(cell), ""));
+                    cptoData.setClaveProdServ(new CatalogoData(readValueInt(cell), ""));
                     break;
                 case 6://Descripcion
                     cptoData.setDescripcion(cell.getStringCellValue());
@@ -606,6 +628,26 @@ public class LeerDatosExcel {
 
 
     public void generarComprobanteData() {
+        comprobanteData.setEmisor(emisorDataFactura);
+        comprobanteData.setReceptor(receptorData);
+        String comentarios = "";
+        List<CommentFE> arrComentarios = new ArrayList<CommentFE>();
+        CommentFEData comentario = new CommentFEData();
+        comentario.setComment(comentarios);
+        comentario.setPosition("9999");
+        arrComentarios.add(comentario);
+        comprobanteData.setComments9999(arrComentarios);
+        // =========================================== Datos dummy para que las validaciones iniciales del proceso de captura manual, no genere errores de datos==========================
+        ((DatosComprobanteData) comprobanteData.getDatosComprobante()).setFolio("1");
+        ((DatosComprobanteData) comprobanteData.getDatosComprobante()).setFecha(
+                (new TimeZoneCP().getUTC(
+                        comprobanteData.getDatosComprobante().getLugarExpedicion().getClave())
+                ));
+        ((DatosComprobanteData) comprobanteData.getDatosComprobante()).setSello("qQSvHZPzRB7eT6f9dJs3GepVl82eq4aOiI4b2hK+YSTcaJXgrDm8GfmZyUMnJ5XLs/TZDtAeafF5W1oyEygqva5fA3Ga5agq9HKHMEZx2qCOgOB+97C26StVKUdGD3jcPCh64AEgXLdCftIPwiRXP6eAr0IeeaujjVdEobvuxyo=");
+        ((DatosComprobanteData) comprobanteData.getDatosComprobante()).setNoCertificado("00001000000103168809");//Mas de 20 caracteres
+        // ================================================================================================================================================================================
+
+
         System.out.println("-----------------Conceptos----------------");
 
         List<Concepto> listaConceptoData = new ArrayList<>();
@@ -676,6 +718,10 @@ public class LeerDatosExcel {
         System.out.println(totalTranfer);
         System.out.println("--------------------TOTAL RETENCIONES------------------");
         System.out.println(totalReten);
+        ///------------------------ADDITIONAL DATA
+        comprobanteData.setAdditional(new AdditionalData());
+
+        ((AdditionalData) getComprobanteData().getAdditional()).setPlantilla(PLANTILLAGRAL);//PLANTILLA CFDIV33
 
     }
 
