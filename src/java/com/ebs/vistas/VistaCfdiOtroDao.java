@@ -86,10 +86,15 @@ public class VistaCfdiOtroDao {
                 cr.add(Restrictions.in("serie", series));
             }
             if (noCliente != null && !noCliente.isEmpty()) {
-                //System.out.println("noCliente1 = " + noCliente);
-                //cr.add(Restrictions.ilike("noCliente", "%" + noCliente.trim() + "%", MatchMode.ANYWHERE));
+
                 String[] noClientes = noCliente.trim().split(",");
-                cr.add(Restrictions.in("noCliente",noClientes));
+
+                if(noClientes.length >= 2){
+                    cr.add(Restrictions.in("noCliente",noClientes));
+                }else{
+                    cr.add(Restrictions.like("noCliente", "%" + noCliente.trim() + "%", MatchMode.ANYWHERE));
+                }
+
             }
             if (razonSocial != null && !razonSocial.isEmpty()) {
                 cr.add(Restrictions.like("razonSocial", "%" + razonSocial.trim() + "%", MatchMode.ANYWHERE));
@@ -202,10 +207,15 @@ public class VistaCfdiOtroDao {
             }
 
             if (noCliente != null && !noCliente.isEmpty()) {
-                System.out.println("noCliente = " + noCliente);
-                //cr.add(Restrictions.like("noCliente", "%" + noCliente.trim() + "%", MatchMode.ANYWHERE));
+
                 String[] noClientes = noCliente.trim().split(",");
-                cr.add(Restrictions.in("noCliente",noClientes));
+
+                if(noClientes.length >= 2){
+                    cr.add(Restrictions.in("noCliente",noClientes));
+                }else{
+                    cr.add(Restrictions.like("noCliente", "%" + noCliente.trim() + "%", MatchMode.ANYWHERE));
+                }
+
             }
             if (razonSocial != null && !razonSocial.isEmpty()) {
                 cr.add(Restrictions.like("razonSocial", razonSocial.trim(), MatchMode.ANYWHERE));

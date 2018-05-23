@@ -4,6 +4,7 @@ import com.ebs.complementoextdata.CustomComplementoComercioExteriorMetadata;
 import com.ebs.util.TimeZoneCP;
 import fe.sat.CommentFE;
 import fe.sat.CommentFEData;
+import fe.sat.Direccion12Data;
 import fe.sat.complementos.comercioexterior.*;
 import fe.sat.complementos.v33.ComplementoFe;
 import fe.sat.v33.*;
@@ -12,7 +13,6 @@ import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
-import javax.wsdl.Input;
 import java.io.*;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -27,6 +27,7 @@ public class LeerDatosExcel {
     private String rfc;
     //--------------------------------EMISOR-------------------------------//
     private EmisorData emisorDataFactura;
+    private Direccion12Data direccionFiscal12;
     //--------------------------------RECEPTOR----------------------------//
     private ReceptorData receptorData;
     //-------------------------------Conceptos----------------------------//
@@ -127,45 +128,51 @@ public class LeerDatosExcel {
                         case 10: //Emisor
                             datosEmisor(cell, cells);
                             break;
-                        case 20: //Datos comercio exterior
+                        case 20://DIRECCION EMISOR
+                            datosDireccion(cell,cells,1);
+                            break;
+                        case 30: //Datos comercio exterior
                             System.out.println("Uso comercio exterior");
                             disponibleComercioExterior = true;
-                            datosComercioExterior(cell,cells);
+                            datosComercioExterior(cell, cells);
                             break;
-                        case 30: //DIRECCION EMISOR COMERCIO EXTERIOR
-                            direccionComercioExterior(cell, cells, 1);
+                        case 40: //DIRECCION EMISOR COMERCIO EXTERIOR
+                            datosDireccionCC(cell, cells, 1);
                             break;
-                        case 40: //PROIETARIO COMERCIO EXTERIOR
+                        case 50: //PROIETARIO COMERCIO EXTERIOR
                             propietarioComercioExterior(cell, cells);
                             break;
-                        case 50: //RECEPTOR
+                        case 60: //RECEPTOR
                             datosReceptor(cell, cells);
                             break;
-                        case 60: //DIRECCION RECEPTOR COMERCIO EXTERIOR
-                            direccionComercioExterior(cell, cells, 2);
+                        case 70: //DIRECCION RECEPTOR
+                            datosDireccion(cell, cells, 2);
                             break;
-                        case 70: //DIRECCION DESTINATARIO COMERCIO EXTERIOR
-                            direccionComercioExterior(cell, cells, 3);
+                        case 80://DIRECCION RECEPTOR COMERCIO EXTERIOR
+                            datosDireccionCC(cell,cells,2);
                             break;
-                        case 80: //DATOS FACTURA
+                        case 90: //DIRECCION DESTINATARIO COMERCIO EXTERIOR
+                            datosDireccionCC(cell, cells, 3);
+                            break;
+                        case 100: //DATOS FACTURA
                             datosFactura(cell, cells);
                             break;
-                        case 90: //CONCEPTO
+                        case 110: //CONCEPTO
                             concepto(cell, cells);
                             break;
-                        case 100: //TRASLADOS
+                        case 120: //TRASLADOS
                             impuestosTraslados(cell, cells);
                             break;
-                        case 110: //RETENCIONES
+                        case 130: //RETENCIONES
                             impuestosRetenciones(cell, cells);
                             break;
-                        case 120: //MERCANCIAS COMERCIO EXTERIOR
+                        case 140: //MERCANCIAS COMERCIO EXTERIOR
                             mercanciasComercioExterior(cell, cells);
                             break;
-                        case 130: //TOTAL IMPUESTOS TRASLADOS
+                        case 150: //TOTAL IMPUESTOS TRASLADOS
                             totalImpuestosTraslados(cell, cells);
                             break;
-                        case 140: //TOTAL IMPUESTOS RETENCIONES
+                        case 160: //TOTAL IMPUESTOS RETENCIONES
                             totalImpuestosRetenciones(cell, cells);
                             break;
                         default:
@@ -180,7 +187,7 @@ public class LeerDatosExcel {
     public void datosEmisor(XSSFCell cell, Iterator cells) {
 
         emisorDataFactura = new EmisorData();
-
+        CatalogoData catalogoData = new CatalogoData();
         while (cells.hasNext()) {
             cell = (XSSFCell) cells.next();
             switch (cell.getColumnIndex()) {
@@ -192,10 +199,16 @@ public class LeerDatosExcel {
                     break;
                 case 3:
                     int regimenFiscal = (int) cell.getNumericCellValue();
-                    emisorDataFactura.setRegimenFiscal(new CatalogoData("" + regimenFiscal, ""));
+                    catalogoData.setClave("" + regimenFiscal);
+                    //emisorDataFactura.setRegimenFiscal(new CatalogoData("" + regimenFiscal, ""));
+                    break;
+                case 4:
+                    catalogoData.setDescripcion(cell.getStringCellValue());
                     break;
             }
         }
+
+        emisorDataFactura.setRegimenFiscal(catalogoData);
     }
 
     public void datosComercioExterior(XSSFCell cell, Iterator cells) {
@@ -240,9 +253,56 @@ public class LeerDatosExcel {
         }
     }
 
-    public void direccionComercioExterior(XSSFCell cell, Iterator cells, int direccion) {
+    public void datosDireccion(XSSFCell cell, Iterator cells, int direccion) {
+
+        direccionFiscal12 = new Direccion12Data();
+
+        while (cells.hasNext()) {
+            cell = (XSSFCell) cells.next();
+            switch (cell.getColumnIndex()) {
+                case 1://Calle
+                    direccionFiscal12.setCalle(cell.getStringCellValue());
+                    break;
+                case 2://NUMERO INTERIOR
+                    direccionFiscal12.setNoInterior(readValueInt(cell));
+                    break;
+                case 3://NUMERO EXTERIOR
+                    direccionFiscal12.setNoExterior(readValueInt(cell));
+                    break;
+                case 4://COLONIA
+                    direccionFiscal12.setColonia(readValueInt(cell));
+                    break;
+                case 5://MUNICIPIO
+                    direccionFiscal12.setMunicipio(readValueInt(cell));
+                    break;
+                case 6://ESTADO
+                    direccionFiscal12.setEstado(readValueInt(cell));
+                    break;
+                case 7://PAIS
+                    direccionFiscal12.setPais(readValueInt(cell));
+                    break;
+                case 8://CP
+                    direccionFiscal12.setCP(readValueInt(cell));
+                    break;
+            }
+        }
+
+        direccionFiscal12.setReferencia("Ninguna");
+
+        switch (direccion) {
+            case 1:
+                emisorDataFactura.setDireccionFiscalEmisor(direccionFiscal12);
+                break;
+            case 2:
+                receptorData.setDireccionReceptor(direccionFiscal12);
+                break;
+        }
+    }
+
+    public void datosDireccionCC(XSSFCell cell, Iterator cells, int direccion) {
 
         domicilioComercioData = new DomicilioComercioData();
+        direccionFiscal12 = new Direccion12Data();
         String regIdTrib = "";
         String nombre = "";
 
@@ -251,28 +311,35 @@ public class LeerDatosExcel {
             switch (cell.getColumnIndex()) {
                 case 1://Calle
                     domicilioComercioData.setCalle(cell.getStringCellValue());
-                    System.out.println("calle: " + cell.getStringCellValue());
+                    direccionFiscal12.setCalle(cell.getStringCellValue());
                     break;
                 case 2://NUMERO INTERIOR
                     domicilioComercioData.setNumeroInterior(readValueInt(cell));
+                    direccionFiscal12.setNoInterior(readValueInt(cell));
                     break;
                 case 3://NUMERO EXTERIOR
                     domicilioComercioData.setNumeroExterior(readValueInt(cell));
+                    direccionFiscal12.setNoExterior(readValueInt(cell));
                     break;
                 case 4://COLONIA
                     domicilioComercioData.setColonia(readValueInt(cell));
+                    direccionFiscal12.setColonia(readValueInt(cell));
                     break;
                 case 5://MUNICIPIO
                     domicilioComercioData.setMunicipio(readValueInt(cell));
+                    direccionFiscal12.setMunicipio(readValueInt(cell));
                     break;
                 case 6://ESTADO
                     domicilioComercioData.setEstado(readValueInt(cell));
+                    direccionFiscal12.setEstado(readValueInt(cell));
                     break;
                 case 7://PAIS
                     domicilioComercioData.setPais(readValueInt(cell));
+                    direccionFiscal12.setPais(readValueInt(cell));
                     break;
                 case 8://CP
                     domicilioComercioData.setCodigoPostal(readValueInt(cell));
+                    direccionFiscal12.setCP(readValueInt(cell));
                     break;
                 case 9://num reg trib solo DESTINATARIO CE
                     regIdTrib = readValueInt(cell);
@@ -283,19 +350,22 @@ public class LeerDatosExcel {
             }
         }
 
+        direccionFiscal12.setReferencia("Ninguna");
+
         switch (direccion) {
             case 1:
                 emisorData = new EmisorComercioData();
                 emisorData.setDomicilioComercio(domicilioComercioData);
+                emisorDataFactura.setDireccionFiscalEmisor(direccionFiscal12);
                 break;
             case 2:
                 receptorComercio = new ReceptorComercioData();
                 receptorComercio.setDomicilioComercio(domicilioComercioData);
+                receptorData.setDireccionReceptor(direccionFiscal12);
                 break;
             case 3:
                 List<DomicilioComercio> domicilios = new ArrayList<>();
                 domicilios.add(domicilioComercioData);
-
                 destinatarioComercioData = new DestinatarioComercioData();
                 destinatarioComercioData.setDomicilio(domicilios);
                 destinatarioComercioData.setNombre(nombre);
@@ -323,6 +393,8 @@ public class LeerDatosExcel {
     public void datosReceptor(XSSFCell cell, Iterator cells) {
 
         receptorData = new ReceptorData();
+        CatalogoData catUso = new CatalogoData();
+        CatalogoData catResidencia = new CatalogoData();
         while (cells.hasNext()) {
             cell = (XSSFCell) cells.next();
             switch (cell.getColumnIndex()) {
@@ -332,59 +404,92 @@ public class LeerDatosExcel {
                 case 2://Nombre
                     receptorData.setNombre(cell.getStringCellValue());
                     break;
-                case 3://USO CFDI
-                    receptorData.setUsoCFDI(new CatalogoData(cell.getStringCellValue(), ""));
+                case 3://CLAVE USO CFDI
+                    catUso.setClave(cell.getStringCellValue());
                     break;
-                case 4://RESIDENCIA FISCAL
-                    receptorData.setResidenciaFiscal(new CatalogoData(cell.getStringCellValue(), ""));
+                case 4://DESCRIPCIÓN USO CFDI
+                    catUso.setDescripcion(cell.getStringCellValue());
                     break;
-                case 5://NUM REG ID TRIB
+                case 5://CLAVE RESIDENCIA FISCAL
+                    catResidencia.setClave(cell.getStringCellValue());
+                    break;
+                case 6://DESCRIPCION RESIDENCIA FISCAL
+                    catResidencia.setDescripcion(cell.getStringCellValue());
+                    break;
+                case 7://NUM REG ID TRIB
                     receptorData.setNumRegIdTrib(readValue(cell));
                     break;
             }
         }
+        receptorData.setUsoCFDI(catUso);
+        receptorData.setResidenciaFiscal(catResidencia);
     }
 
     public void datosFactura(XSSFCell cell, Iterator cells) {
 
+        CatalogoData catTipo = new CatalogoData();
+        CatalogoData catMoneda = new CatalogoData();
+        CatalogoData catMetodo = new CatalogoData();
+        CatalogoData catForma = new CatalogoData();
+        CatalogoData catExpedicion = new CatalogoData();
+
         while (cells.hasNext()) {
             cell = (XSSFCell) cells.next();
             switch (cell.getColumnIndex()) {
-                case 1://TIPO DE COMPROBANTE
-                    ((DatosComprobanteData) comprobanteData.getDatosComprobante()).setTipoDeComprobante(
-                            new CatalogoData(cell.getStringCellValue(), ""));
+                case 1://CLAVE TIPO DE COMPROBANTE
+                    catTipo.setClave(cell.getStringCellValue());
                     break;
-                case 2://SERIE
+                case 2://DESCRIPCIÓN TIPO COMPROBANTE
+                    catTipo.setDescripcion(cell.getStringCellValue());
+                    break;
+                case 3://SERIE
                     ((DatosComprobanteData) comprobanteData.getDatosComprobante()).setSerie(cell.getStringCellValue());
                     break;
-                case 3://MONEDA
-                    ((DatosComprobanteData) comprobanteData.getDatosComprobante()).setMoneda(new CatalogoData(cell.getStringCellValue(), ""));
+                case 4://CLAVE MONEDA
+                    catMoneda.setClave(cell.getStringCellValue());
                     break;
-                case 4://TIPO CAMBIO
+                case 5://DESCRIPCIÓN MONEDA
+                    catMoneda.setDescripcion(cell.getStringCellValue());
+                    break;
+                case 6://TIPO CAMBIO
                     ((DatosComprobanteData) comprobanteData.getDatosComprobante()).setTipoDeCambio(cell.getNumericCellValue());
                     break;
-                case 5://METODO PAGO
-                    ((DatosComprobanteData) comprobanteData.getDatosComprobante()).setMetodoDePago(new CatalogoData(cell.getStringCellValue(), ""));
+                case 7://CLAVE METODO PAGO
+                    catMetodo.setClave(cell.getStringCellValue());
                     break;
-                case 6://FORMA PAGO
-                    ((DatosComprobanteData) comprobanteData.getDatosComprobante()).setFormaDePago(new CatalogoData(readValue(cell), ""));
+                case 8://DESCRIPCION METODO PAGO
+                    catMetodo.setDescripcion(cell.getStringCellValue());
                     break;
-                case 7://LUGAR EXPEDICION
+                case 9://CLAVE FORMA PAGO
+                    catForma.setClave(cell.getStringCellValue());
+                    break;
+                case 10:
+                    catForma.setDescripcion(cell.getStringCellValue());
+                    break;
+                case 11://LUGAR EXPEDICION
                     int lugar = (int) cell.getNumericCellValue();
-                    System.out.println("expedicion: " + lugar);
-                    ((DatosComprobanteData) comprobanteData.getDatosComprobante()).setLugarExpedicion(new CatalogoData("" + lugar, ""));
+                    catExpedicion.setClave("" + lugar);
                     break;
-                case 8://SUBTOTAL
+                case 12:
+                    catExpedicion.setDescripcion(cell.getStringCellValue());
+                    break;
+                case 13://SUBTOTAL
                     ((DatosComprobanteData) comprobanteData.getDatosComprobante()).setSubTotal(cell.getNumericCellValue());
                     break;
-                case 9://DESCUENTO
+                case 14://DESCUENTO
                     ((DatosComprobanteData) comprobanteData.getDatosComprobante()).setDescuento(cell.getNumericCellValue());
                     break;
-                case 10://TOTAL
+                case 15://TOTAL
                     ((DatosComprobanteData) comprobanteData.getDatosComprobante()).setTotal(cell.getNumericCellValue());
                     break;
             }
         }
+
+        ((DatosComprobanteData) comprobanteData.getDatosComprobante()).setTipoDeComprobante(catTipo);
+        ((DatosComprobanteData) comprobanteData.getDatosComprobante()).setMoneda(catMoneda);
+        ((DatosComprobanteData) comprobanteData.getDatosComprobante()).setMetodoDePago(catMetodo);
+        ((DatosComprobanteData) comprobanteData.getDatosComprobante()).setFormaDePago(catForma);
+        ((DatosComprobanteData) comprobanteData.getDatosComprobante()).setLugarExpedicion(catExpedicion);
     }
 
     public void concepto(XSSFCell cell, Iterator cells) {
@@ -442,27 +547,32 @@ public class LeerDatosExcel {
     public void impuestosTraslados(XSSFCell cell, Iterator cells) {
 
         TrasladoConceptoData tcd = new TrasladoConceptoData();
-
+        CatalogoData catImpuesto = new CatalogoData();
         while (cells.hasNext()) {
             cell = (XSSFCell) cells.next();
             switch (cell.getColumnIndex()) {
                 case 1://Base
                     tcd.setBase(cell.getNumericCellValue());
                     break;
-                case 2://Impuesto
-                    tcd.setImpuesto(new CatalogoData(cell.getStringCellValue(), ""));
+                case 2://Clave Impuesto
+                    catImpuesto.setClave(cell.getStringCellValue());
                     break;
-                case 3://TasaOCuota
+                case 3://Descripción impuesto
+                    catImpuesto.setDescripcion(cell.getStringCellValue());
+                    break;
+                case 4://TasaOCuota
                     tcd.setTasaOCuota(cell.getNumericCellValue());
                     break;
-                case 4://TipoFactor
+                case 5://TipoFactor
                     tcd.setTipoFactor(cell.getStringCellValue());
                     break;
-                case 5://Importe
+                case 6://Importe
                     tcd.setImporte(cell.getNumericCellValue());
                     break;
             }
         }
+
+        tcd.setImpuesto(catImpuesto);
 
         listTrasladodsCpto.remove(cont);
         listTrasladodsCpto.add(cont, tcd);
@@ -471,6 +581,7 @@ public class LeerDatosExcel {
     public void impuestosRetenciones(XSSFCell cell, Iterator cells) {
 
         RetencionConceptoData rcd = new RetencionConceptoData();
+        CatalogoData catImpuestoRetencion = new CatalogoData();
 
         while (cells.hasNext()) {
             cell = (XSSFCell) cells.next();
@@ -478,20 +589,25 @@ public class LeerDatosExcel {
                 case 1://Base
                     rcd.setBase(cell.getNumericCellValue());
                     break;
-                case 2://Impuesto
-                    rcd.setImpuesto(new CatalogoData(cell.getStringCellValue(), ""));
+                case 2://Clave Impuesto
+                    catImpuestoRetencion.setClave(cell.getStringCellValue());
                     break;
-                case 3://TasaOCuota
+                case 3://Descripción Impuesto
+                    catImpuestoRetencion.setDescripcion(cell.getStringCellValue());
+                    break;
+                case 4://TasaOCuota
                     rcd.setTasaOCuota(cell.getNumericCellValue());
                     break;
-                case 4://TipoFactor
+                case 5://TipoFactor
                     rcd.setTipoFactor(cell.getStringCellValue());
                     break;
-                case 5://Importe
+                case 6://Importe
                     rcd.setImporte(cell.getNumericCellValue());
                     break;
             }
         }
+
+        rcd.setImpuesto(catImpuestoRetencion);
 
         listRetencionesCpto.remove(cont);
         listRetencionesCpto.add(cont, rcd);
@@ -603,14 +719,14 @@ public class LeerDatosExcel {
         comercioExteriorData.setTotalUSD(singleComplementoComercioExteriorData.getTotalUSD());
 
         comercioExteriorData.setMercanciaComercio(mercanciasFe);
-        System.out.println("---------------------------------Mercancias----------------------");
-        for (int i = 0; i < mercanciasFe.size(); i++) {
+
+       /* for (int i = 0; i < mercanciasFe.size(); i++) {
             System.out.println(mercanciasFe.get(i).getNoIdentificacion());
             System.out.println(mercanciasFe.get(i).getFraccionArancelaria());
             for (int j = 0; j < mercanciasFe.get(i).getDescripcionesEspecificas().size(); j++) {
                 System.out.println(mercanciasFe.get(i).getDescripcionesEspecificas().get(j).getMarca());
             }
-        }
+        }*/
 
         List<ComplementoFe> complementos = comprobanteData.getComplementosFe();
         if (complementos == null) {
@@ -620,7 +736,6 @@ public class LeerDatosExcel {
         comprobanteData.setComplemementosFe(complementos);
 
     }
-
 
     public void generarComprobanteData() {
         comprobanteData.setEmisor(emisorDataFactura);
@@ -642,15 +757,11 @@ public class LeerDatosExcel {
         ((DatosComprobanteData) comprobanteData.getDatosComprobante()).setNoCertificado("00001000000103168809");//Mas de 20 caracteres
         // ================================================================================================================================================================================
 
-
-        System.out.println("-----------------Conceptos----------------");
-
         List<Concepto> listaConceptoData = new ArrayList<>();
 
         for (int i = 0; i < listAuxCptData.size(); i++) {
             List<TrasladoConcepto> auxTraslado = new ArrayList<>();
             List<RetencionConcepto> auxRetencion = new ArrayList<>();
-            System.out.println(listAuxCptData.get(i).getImporte());
 
             ImpuestosConceptoData imp = new ImpuestosConceptoData();
 
@@ -671,22 +782,9 @@ public class LeerDatosExcel {
         }
         comprobanteData.setConceptos(listaConceptoData);
 
-
-        for (int n = 0; n < listaConceptoData.size(); n++) {
-            if (listaConceptoData.get(n).getImpuestosConcepto().getTraslados() != null) {
-                System.out.println("------------------------TRASLADOS-----------------------");
-                System.out.println("Tipo factor: " + listaConceptoData.get(n).getImpuestosConcepto().getTraslados().get(0).getTipoFactor());
-            }
-            if (listaConceptoData.get(n).getImpuestosConcepto().getRetenciones() != null) {
-                System.out.println("------------------------RETENCIONES-----------------------");
-                System.out.println("Tipo factor: " + listaConceptoData.get(n).getImpuestosConcepto().getRetenciones().get(0).getTipoFactor());
-            }
-        }
-
-
         if (disponibleComercioExterior) {
-            ((DatosComprobanteData) comprobanteData.getDatosComprobante()).setTotal(0.00);
-            ((DatosComprobanteData) comprobanteData.getDatosComprobante()).setSubTotal(0.00);
+           // ((DatosComprobanteData) comprobanteData.getDatosComprobante()).setTotal(0.00);
+            //((DatosComprobanteData) comprobanteData.getDatosComprobante()).setSubTotal(0.00);
             addComercioExterior();
         }
 
@@ -709,10 +807,6 @@ public class LeerDatosExcel {
         }
         comprobanteData.setImpuestos(impComp);
 
-        System.out.println("--------------------TOTAL TRASLADOS------------------");
-        System.out.println(totalTranfer);
-        System.out.println("--------------------TOTAL RETENCIONES------------------");
-        System.out.println(totalReten);
         ///------------------------ADDITIONAL DATA
         comprobanteData.setAdditional(new AdditionalData());
 

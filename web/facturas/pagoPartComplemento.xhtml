@@ -96,9 +96,8 @@
                         <p:column>
                             <p:inputText id="itNumOperacion"
                                          value="#{managedBeanComplementoPago.pagoTempContainer.numOperacion}"
-                                         disabled="#{managedBeanComplementoPago.requiredNumOper eq managedBeanComplementoPago.NO_REQUERIDO}"
                                          autocomplete="off">
-                                <f:validateLength minimum="1" maximum="100"/>
+                                
                                 <p:ajax event="change" process="@this,itNumOperacion"
                                         update="msgs,itNumOperacion"
                                         listener="#{managedBeanComplementoPago.handleChangeNumOper()}"/>

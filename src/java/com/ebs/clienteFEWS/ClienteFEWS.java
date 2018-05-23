@@ -12,7 +12,7 @@ import java.util.List;
 import fe.xml.ReadXMLProperties;
 
 public class ClienteFEWS {
-    //private String ruta = "http://localhost:8453/FacturacionElectronicaWS";
+    //private String ruta = "http://localhost:8082/FacturacionElectronicaWS";
     private String ruta = "";
     final String root = "/home/Fe_Multiempresa/config/ruta.xml";
 

@@ -5,6 +5,7 @@
  */
 package com.ebs.mbeans;
 
+import com.ebs.clienteFEWS.ClienteFEWS;
 import com.ebs.model.LazyProformaDataModel;
 import fe.db.MAcceso;
 import fe.db.MCfdProforma;
@@ -82,6 +83,7 @@ public class ManagedBeanConsultaProforma implements Serializable {
     @Getter
     @Setter
     private List<MCfdProforma> listMapMCASelecteds;
+    private List<Integer> listAuxSelected;
     private SimpleDateFormat sdfDateFormatter;
     private FileUpload archivo;//Cambiar a multiples archivos
 
@@ -105,11 +107,13 @@ public class ManagedBeanConsultaProforma implements Serializable {
         paramBusq = "";
         appContext = httpServletRequest.getContextPath();
 
+
     }
 
     @PostConstruct
     public void init() {
         listMapMCASelecteds = new ArrayList();
+        listAuxSelected = new ArrayList<>();
         DAOCong = new ConfigDAO();
         daoCFDI = new ProformaDao();
         sdfDateFormatter = new SimpleDateFormat("yyyy-MM-dd HHmmss");
@@ -185,6 +189,9 @@ public class ManagedBeanConsultaProforma implements Serializable {
         SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HHmmss");
         if (listMapMCASelecteds.size() > 0) {
             try {
+                for (MCfdProforma temp : listMapMCASelecteds) {
+                    listAuxSelected.add(temp.getId());
+                }
                 ec.responseReset(); // Some JSF component library or some Filter might have set some headers in the buffer beforehand. We want to get rid of them, else it may collide.
                 ec.setResponseContentType(contentType); // Check http://www.iana.org/assignments/media-types for all types. Use if necessary ExternalContext#getMimeType() for auto-detection based on filename.
                 ec.setResponseHeader("Content-Disposition", "attachment; filename=\"CFDIS_" + sf.format(new Date()) + ".zip\"");
@@ -194,8 +201,11 @@ public class ManagedBeanConsultaProforma implements Serializable {
                 // TODO: 24/10/2017 HACER COMPLATIBLE EL ZIPEO CON LAS FACTURAS DE PROFORMA
                 //CrearZIPFacturas crear = new CrearZIPFacturas();
                 //crear.ZipCfdis(listCFDSAux, output);
-                fc.responseComplete(); // Important! Otherwise JSF will attempt to render the response which obviously will fail since it's already written with a file and closed.
+                ClienteFEWS clienteFEWS =new ClienteFEWS();
+                byte[] zipProforma = clienteFEWS.zip(listAuxSelected,"ZIP_PROFORMA");
                 //FacesContext.getCurrentInstance().responseComplete(); //Equal
+                output.write(zipProforma);
+                fc.responseComplete();
             } catch (Exception e) {
                 e.printStackTrace(System.out);
             }

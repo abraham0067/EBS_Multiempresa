@@ -28,6 +28,7 @@ import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import lombok.Getter;
 import org.primefaces.context.RequestContext;
 
 /**
@@ -37,8 +38,8 @@ import org.primefaces.context.RequestContext;
 @ManagedBean(name = "managedBeanLogin")
 @RequestScoped
 public class ManagedBeanLogin implements Serializable {
-
-    private static int  numberOfActiveUsers =  0;
+    @Getter
+    private int  numberOfActiveUsers =  0;
 
     //Datos del usuario
     private String userNick;

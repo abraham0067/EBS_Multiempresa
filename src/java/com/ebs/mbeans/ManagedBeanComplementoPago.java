@@ -1228,7 +1228,7 @@ public class ManagedBeanComplementoPago implements Serializable {
 
                     respuestaServicio = new ClienteFacturaManual().exeGenFactura(comprobanteData, m.getClaveWS(), ambiente, DEBUG);
 
-                    PintarLog.println("respuestaServicio:" + respuestaServicio);
+                    //PintarLog.println("respuestaServicio:" + respuestaServicio);
                     if (checkRespuestaServicio(respuestaServicio)) {
                         // TODO: 09/10/2017  UPDATE data on BD
                         MEmpresa emisor = daoEmp.BuscarEmpresaId(idEmpresa);

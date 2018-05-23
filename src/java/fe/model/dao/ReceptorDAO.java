@@ -211,4 +211,22 @@ public class ReceptorDAO implements Serializable {
         return receptor;
     }
 
+    public MReceptor BuscarReceptorRfc(String rfc) {
+        MReceptor receptor = null;
+        try {
+            hibManagerRO.initTransaction();
+            Criteria cr = hibManagerRO.getSession().createCriteria(MReceptor.class);
+            cr.add(Restrictions.eq("rfcOrigen", rfc.trim().toUpperCase()));
+            receptor = (MReceptor) cr.uniqueResult();
+            hibManagerRO.getTransaction().commit();
+        } catch (HibernateException ex) {
+            hibManagerRO.getTransaction().rollback();
+            ex.printStackTrace(System.err);
+        } finally {
+            hibManagerRO.closeSession();
+        }
+
+        return receptor;
+    }
+
 }
