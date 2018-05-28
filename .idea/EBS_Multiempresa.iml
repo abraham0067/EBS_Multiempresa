@@ -4,8 +4,8 @@
     <facet type="hibernate" name="Hibernate">
       <configuration>
         <datasource-map>
-          <unit-entry name="hibernate.apl.cfg.xml" />
-          <unit-entry name="hibernate.cfg.xml" />
+          <unit-entry name="hibernate.apl.cfg.xml" value="9fa6f963-006b-4721-bc38-33c519d5ddcb" />
+          <unit-entry name="hibernate.cfg.xml" value="7daf372a-8336-4124-926b-ab0045ea1cc2" />
         </datasource-map>
         <naming-strategy-map />
         <deploymentDescriptor name="hibernate.cfg.xml" url="file://$MODULE_DIR$/src/java/hibernate.apl.cfg.xml" />
@@ -54,5 +54,6 @@
     <orderEntry type="library" name="xmlbeans" level="project" />
     <orderEntry type="library" name="poi-ooxml-schemas-3.9" level="project" />
     <orderEntry type="library" name="jxl" level="project" />
+    <orderEntry type="library" name="lombok" level="application" />
   </component>
 </module>

@@ -86,8 +86,11 @@
         <mapping class="fe.db.MCfdProforma"/>
         <mapping class="fe.db.MCfdXmlProforma"/>
         <mapping class="fe.db.MOtroProforma"/>
+        <mapping class="fe.db.MArchivosCfdProforma"/>
         <mapping class="com.ebs.vistas.VistaCfdiOtro"/>
         <mapping class="fe.db.CServiciosFacturacion"/>
         <mapping class="fe.db.MServiciosFacturacion"/>
+        <mapping class="fe.db.MServicios"/>
+        <mapping class="fe.db.MAgenteCliente"/>
     </session-factory>
 </hibernate-configuration>

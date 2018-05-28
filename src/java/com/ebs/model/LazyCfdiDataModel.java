@@ -27,6 +27,7 @@ public class LazyCfdiDataModel extends LazyDataModel<VistaCfdiOtro> {
 
     private List<VistaCfdiOtro> dataSource;
     private boolean isCliente;
+    private boolean isAgente;
     private int idAcceso;
     private Integer[] idsEmpresas;
     private String numeroFactura;
@@ -34,6 +35,7 @@ public class LazyCfdiDataModel extends LazyDataModel<VistaCfdiOtro> {
     private String rfc;
     private String serie;
     private String noCliente;
+    private List<Integer> clientesAgente;
     private String razonSocial;
     private Date datDesde;//Fecha Inicial
     private Date datHasta;//Fecha Final
@@ -42,12 +44,15 @@ public class LazyCfdiDataModel extends LazyDataModel<VistaCfdiOtro> {
     private String numPolizaSeguro;
     private String UUID;
 
+
+
     public LazyCfdiDataModel() {
         this.setRowCount(0);
     }
 
     ///Constructor clientes de los clientes
     public LazyCfdiDataModel(boolean isCliente,
+                             boolean isAgente,
                              int idAcceso,
                              Integer[] idsEmpresas,
                              String numeroFactura,
@@ -55,6 +60,7 @@ public class LazyCfdiDataModel extends LazyDataModel<VistaCfdiOtro> {
                              String rfc,
                              String serie,
                              String noCliente,
+                             List<Integer> clientesAgente,
                              String razonSocial,
                              Date datDesde,
                              Date datHasta,
@@ -63,6 +69,7 @@ public class LazyCfdiDataModel extends LazyDataModel<VistaCfdiOtro> {
                              String UUID
     ) {
         this.isCliente = isCliente;
+        this.isAgente = isAgente;
         this.idAcceso = idAcceso;
         this.idsEmpresas = idsEmpresas;
         this.numeroFactura = numeroFactura;
@@ -70,6 +77,7 @@ public class LazyCfdiDataModel extends LazyDataModel<VistaCfdiOtro> {
         this.rfc = rfc;
         this.serie = serie;
         this.noCliente = noCliente;
+        this.clientesAgente = clientesAgente;
         this.razonSocial = razonSocial;
         this.datDesde = datDesde;
         this.datHasta = datHasta;
@@ -81,6 +89,7 @@ public class LazyCfdiDataModel extends LazyDataModel<VistaCfdiOtro> {
 
     ///Constructor clientes de EBS
     public LazyCfdiDataModel(boolean isCliente,
+                             boolean isAgente,
                              int idAcceso,
                              Integer[] idsEmpresas,
                              String numeroFactura,
@@ -88,6 +97,7 @@ public class LazyCfdiDataModel extends LazyDataModel<VistaCfdiOtro> {
                              String rfc,
                              String serie,
                              String noCliente,
+                             List<Integer> clientesAgente,
                              String razonSocial,
                              Date datDesde,
                              Date datHasta,
@@ -97,6 +107,7 @@ public class LazyCfdiDataModel extends LazyDataModel<VistaCfdiOtro> {
                              String UUID
     ) {
         this.isCliente = isCliente;
+        this.isAgente = isAgente;
         this.idAcceso = idAcceso;
         this.idsEmpresas = idsEmpresas;
         this.numeroFactura = numeroFactura;
@@ -104,6 +115,7 @@ public class LazyCfdiDataModel extends LazyDataModel<VistaCfdiOtro> {
         this.rfc = rfc;
         this.serie = serie;
         this.noCliente = noCliente;
+        this.clientesAgente = clientesAgente;
         this.razonSocial = razonSocial;
         this.datDesde = datDesde;
         this.datHasta = datHasta;
@@ -115,9 +127,13 @@ public class LazyCfdiDataModel extends LazyDataModel<VistaCfdiOtro> {
     }
 
 
+
     public LazyCfdiDataModel(List<VistaCfdiOtro> dataSource) {
         this.dataSource = dataSource;
     }
+
+
+
 
     @Override
     public VistaCfdiOtro getRowData(String rowKey) {
@@ -141,15 +157,19 @@ public class LazyCfdiDataModel extends LazyDataModel<VistaCfdiOtro> {
         if (sortField != null) {
             Collections.sort(dataSource, new LazySorterCfdi(sortField, sortOrder));
         }
+
+
         if (isCliente) {
             dataSource = daoCfdi.ListaParametrosClientes(
                     idAcceso,
+                    isAgente,
                     idsEmpresas,
                     numeroFactura,
                     folioErp,
                     rfc,
                     serie,
                     noCliente,
+                    clientesAgente,
                     razonSocial,
                     datDesde,
                     datHasta,
@@ -161,12 +181,14 @@ public class LazyCfdiDataModel extends LazyDataModel<VistaCfdiOtro> {
             ///Usuarios ebs o de clientes que puedan ver todas las facturas
             dataSource = daoCfdi.ListaParametros(
                     idAcceso,
+                    isAgente,
                     idsEmpresas,
                     numeroFactura,
                     folioErp,
                     rfc,
                     serie,
                     noCliente,
+                    clientesAgente,
                     razonSocial,
                     datDesde,
                     datHasta,
@@ -175,6 +197,8 @@ public class LazyCfdiDataModel extends LazyDataModel<VistaCfdiOtro> {
                     UUID,
                     first, pageSize);
         }
+
+
         ///rowCount
         int dataSourceSize = daoCfdi.rowCount;
         this.setRowCount(dataSourceSize);

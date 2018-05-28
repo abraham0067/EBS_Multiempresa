@@ -260,11 +260,37 @@ public class ManagedBeanConsultaCFDI implements Serializable {
             idsBusqueda = idsEmpresasAsignadas;
         }
 
+        System.out.println("EMPRESA: " + activeUser.getEmpresa().getId());
+        Integer[] servicio = new ServiciosDAO().BuscarServicio(activeUser.getEmpresa().getId());
+
+        if(servicio != null) {
+            for (Integer id : servicio){
+                System.out.println("TIPO SERVICIO = " + id);
+                switch (id){
+                    case 1:
+                        //BUSCAR SI EL CLIENTE TIENE OTRO CLIENTE
+                        AgenteClienteDAO cliente = new AgenteClienteDAO();
+                        Integer idAgente = cliente.BuscarAgente(activeUser.getId());
+                        if(idAgente != null && idAgente > 0 ){
+                            List<Integer> clientesAgente = cliente.BuscarClientesDeAgente(activeUser.getId());
+                            //GENERA LA BUSQUEDA CON PARAMETROS ADICIONALES
+                            iniciaBusqueda(idsBusqueda, true, clientesAgente);
+                        }
+                        break;
+                }
+            }
+        }else
+            //INICIA LA BUSQUEDA NORMAL
+            iniciaBusqueda(idsBusqueda, false, null);
+    }
+
+    private void iniciaBusqueda(Integer[] idsBusqueda, boolean agente, List<Integer> clientesAgente){
         if (esClienteEmpresa) {//Si el Usuario es un cliente
             System.out.println("Buscando cliente cliente");
             if (validacionCliente()) {
                 listMapMCA = new LazyCfdiDataModel(
                         esClienteEmpresa,
+                        agente,
                         activeUser.getId(),
                         idsBusqueda,
                         numeroFactura,
@@ -272,6 +298,7 @@ public class ManagedBeanConsultaCFDI implements Serializable {
                         rfc,
                         serie,
                         noCliente,
+                        clientesAgente,
                         razonSocial,
                         datDesde,
                         datHasta,
@@ -286,6 +313,7 @@ public class ManagedBeanConsultaCFDI implements Serializable {
                 //System.out.println("UUID: " + UUID);
                 listMapMCA = new LazyCfdiDataModel(
                         esClienteEmpresa,
+                        agente,
                         activeUser.getId(),
                         idsBusqueda,
                         numeroFactura,
@@ -293,6 +321,7 @@ public class ManagedBeanConsultaCFDI implements Serializable {
                         rfc,
                         serie,
                         noCliente,
+                        clientesAgente,
                         razonSocial,
                         datDesde,
                         datHasta,
@@ -301,7 +330,10 @@ public class ManagedBeanConsultaCFDI implements Serializable {
                         numPolizaSeguro,
                         UUID);
             }
+
     }
+
+
 
     /**
      * Extrae unicamente los MCFD del listmap de archivos con cada MCFD

@@ -27,12 +27,13 @@ public class VistaCfdiOtroDao {
     }
 
 
-    public List<VistaCfdiOtro> ListaParametros(int idUser, Integer[] idsEmpresas,
+    public List<VistaCfdiOtro> ListaParametros(int idUser, boolean agente, Integer[] idsEmpresas,
                                                String numeroFactura,
                                                String folioErp,
                                                String rfc,
                                                String serie,
                                                String noCliente,
+                                               List<Integer> clientesAgente,
                                                String razonSocial, Date fechaDesde, Date fechaHasta, int estatus,
                                                String numPolizaSeguro,
                                                String UUID,
@@ -125,6 +126,13 @@ public class VistaCfdiOtroDao {
                 cr.add(Expression.le("fecha", fechaHasta));
             }
 
+
+            /*------------SE AGREGA CODIGO PARA LOS AGENTES-------------------*/
+            if(agente && (clientesAgente != null && !clientesAgente.isEmpty()))
+                cr.add(Restrictions.in("noCliente", clientesAgente));
+            /*----------------------------------------------------------------*/
+
+
             cr.addOrder(Order.desc("fecha"));
             //paginacion
             cr.setProjection(Projections.rowCount());
@@ -154,11 +162,12 @@ public class VistaCfdiOtroDao {
     }
 
 
-    public List<VistaCfdiOtro> ListaParametrosClientes(int idUser, Integer[] idsEmpresas, String numeroFactura,
+    public List<VistaCfdiOtro> ListaParametrosClientes(int idUser, boolean agente,  Integer[] idsEmpresas, String numeroFactura,
                                                        String folioErp,
                                                        String rfc,
                                                        String serie,
                                                        String noCliente,///Inmutable
+                                                       List<Integer> clientesAgente,
                                                        String razonSocial,
                                                        Date fechaDesde, Date fechaHasta,
                                                        String numPolizaSeguro,
@@ -248,6 +257,12 @@ public class VistaCfdiOtroDao {
                 fechaHasta = diaF.getTime();
                 cr.add(Expression.le("fecha", fechaHasta));
             }
+
+
+            /*------------SE AGREGA CODIGO PARA LOS AGENTES-------------------*/
+            if(agente && (clientesAgente != null && !clientesAgente.isEmpty()))
+                cr.add(Restrictions.in("noCliente", clientesAgente));
+            /*----------------------------------------------------------------*/
 
             cr.addOrder(Order.desc("fecha"));
 
