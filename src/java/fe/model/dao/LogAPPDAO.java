@@ -8,24 +8,20 @@ package fe.model.dao;
  *
  * @author Lily
  */
+
+import fe.db.MAcceso;
+import fe.db.MAcceso.Nivel;
+import fe.db.MLogApp;
+import fe.model.util.hibernateutil.HibernateUtilApl;
+import fe.model.util.hibernateutil.HibernateUtilEmi;
+import org.hibernate.Criteria;
+import org.hibernate.HibernateException;
+import org.hibernate.criterion.*;
+
+import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-
-import org.hibernate.Criteria;
-import org.hibernate.HibernateException;
-import org.hibernate.criterion.Expression;
-import org.hibernate.criterion.Order;
-import org.hibernate.criterion.Restrictions;
-
-import fe.db.MAcceso;
-import fe.db.MLogApp;
-import fe.db.MAcceso.Nivel;
-import fe.model.util.hibernateutil.HibernateUtilApl;
-import fe.model.util.hibernateutil.HibernateUtilEmi;
-import java.io.Serializable;
-import org.hibernate.criterion.CriteriaSpecification;
-import org.hibernate.criterion.Projections;
 
 @SuppressWarnings("deprecation")
 public class LogAPPDAO implements Serializable {

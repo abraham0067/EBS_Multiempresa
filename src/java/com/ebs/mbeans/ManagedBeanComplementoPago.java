@@ -1,38 +1,18 @@
 package com.ebs.mbeans;
 
 import com.ebs.helpers.LambdasHelper;
-import com.ebs.util.IdGenerator;
-import com.ebs.util.XmlMocksProvider;
 import com.ebs.util.FloatsNumbersUtil;
+import com.ebs.util.IdGenerator;
 import fe.db.*;
 import fe.model.dao.*;
-//import fe.model.fmanual.DocRelacionadoContainer;
-//import fe.model.fmanual.PagoContainer;
 import fe.model.util.Limpiador;
 import fe.net.ClienteFacturaManual;
 import fe.sat.CommentFE;
 import fe.sat.CommentFEData;
 import fe.sat.ComprobanteException;
 import fe.sat.Direccion12Data;
-import fe.sat.complementos.v33.DoctoRelacionado;
-import fe.sat.complementos.v33.DoctoRelacionadoData;
-import fe.sat.complementos.v33.Pago;
-import fe.sat.complementos.v33.PagoData;
-import fe.sat.complementos.v33.Pagos;
-import fe.sat.complementos.v33.PagosData;
-import fe.sat.v33.AdditionalData;
-import fe.sat.v33.CatalogoData;
-import fe.sat.v33.CfdiRelacionado;
-import fe.sat.v33.CfdiRelacionadoData;
-import fe.sat.v33.CfdiRelacionadosData;
-import fe.sat.v33.ComprobanteData;
-import fe.sat.v33.Concepto;
-import fe.sat.v33.ConceptoData;
-import fe.sat.v33.DatosComprobanteData;
-import fe.sat.v33.EmisorData;
-import fe.sat.v33.ReceptorData;
-import lombok.Getter;
-import lombok.Setter;
+import fe.sat.complementos.v33.*;
+import fe.sat.v33.*;
 import mx.com.ebs.emision.factura.utilierias.PintarLog;
 import org.jdom.Document;
 import org.jdom.JDOMException;
@@ -55,9 +35,14 @@ import java.io.Serializable;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+//import fe.model.fmanual.DocRelacionadoContainer;
+//import fe.model.fmanual.PagoContainer;
 
 /**
  * Created by eflores on 19/07/2017.
@@ -74,13 +59,9 @@ public class ManagedBeanComplementoPago implements Serializable {
     private static final String ATEBREGEXPATT = "PRUEBAXX-ATEB-SERV-SACV-TIMBREPRUEBA";
     private ArrayList<String> respuestas;
 
-    @Getter
     private final int NO_REQUERIDO = 0;
-    @Getter
     public final int REQUERIDO = 1;
-    @Getter
     private final int OPCIONAL = 2;
-    @Getter
     private final int DESCONOCIDO = -1;
 
     private int OPERATION_OVER_PAGO = 0;//0-creacion, 1-Modificacion
@@ -109,26 +90,16 @@ public class ManagedBeanComplementoPago implements Serializable {
 
     private double MAX_VALUE_MONTO_PAGO = 20000000;// TODO: 05/06/2017 CAMBIAR ESTE VALOR FIJO POR EL QUE ESTA GUARDADO EN LA BASE DE DATOS
 
-    @Getter
-    @Setter
     private boolean skip;
 
     //Elementos del form
 
-    @Getter
-    @Setter
     private List<MReceptor> receptores;
-    @Getter
-    @Setter
     private List<MFolios> folios;
     //Datos de generacion de factura
     private MEmpresa emisor;
     private MReceptor receptor;
-    @Getter
-    @Setter
     private int idEmpresa;//ID de la empresa emisora
-    @Getter
-    @Setter
     private int idCliente;//ID DEL RECEPTOR O CLIENTE
 
     private MFolios folio;
@@ -137,29 +108,15 @@ public class ManagedBeanComplementoPago implements Serializable {
      * Codigo obtenido no automaticamente del PAC para facturar fuera de los limites
      * establecidos en el catalogo
      */
-    @Setter
-    @Getter
     private boolean codConfRequerido = false;
 
-    @Setter
-    @Getter
     private String codigoConfirmacion;
-    @Getter
-    @Setter
     private String comment;
 
     //CFDIs relacionados(reemplazao de un pago por otro pago por correccion de datos)
-    @Getter
-    @Setter
     private String uuidCfdiRelacionado;
-    @Getter
-    @Setter
     private String tipoRelacionCfdis;
-    @Getter
-    @Setter
     private List<CfdiRelacionadoData> cfdiRelacionados;
-    @Getter
-    @Setter
     private List<CfdiRelacionadoData> cfdiRelacionadosSelection;
 
 
@@ -167,155 +124,73 @@ public class ManagedBeanComplementoPago implements Serializable {
     //      PAGOS
     //-----------------------------------------------------------------------------------------------------------------
 
-    @Getter
-    @Setter
     private String uuidDocRel;
     //Busqueda de CFDI por  UUID
-    @Getter
-    @Setter
     private String uuidCfdiBusqueda;
-    @Getter
-    @Setter
     private int idCFDISelect;
-    @Getter
-    @Setter
     private List<MCfd> listaMCfdi;
-    @Getter
-    @Setter
-    double saldoDisponibleEmisor = 0.0;///GUARDADO EN MXN Y CONVERTIDO A LA MONEDA DEL PAGO.
-    @Getter
-    @Setter
-    double saldoDisponibleEmisorMonedaDR = 0.0;//En la moneda del docrel
-    @Getter
-    @Setter
-    List<MPagos> pagosPendientes;
-    @Getter
-    @Setter
-    List<MPagos> pagosPendientesAgregados;
-    @Getter
-    @Setter
-    MPagos pagoPendienteSelection;
+    private double saldoDisponibleEmisor = 0.0;///GUARDADO EN MXN Y CONVERTIDO A LA MONEDA DEL PAGO.
+    private double saldoDisponibleEmisorMonedaDR = 0.0;//En la moneda del docrel
+    private List<MPagos> pagosPendientes;
+    private List<MPagos> pagosPendientesAgregados;
+    private MPagos pagoPendienteSelection;
 
-    @Getter
-    @Setter
-    MCfd mcfdi;
+    private MCfd mcfdi;
 
-    @Getter
-    @Setter
     public PagoData pagoTempContainer;
-    @Getter
-    @Setter
     public List<PagoData> pagos;
-    @Getter
-    @Setter
     public List<PagoData> pagosSelection;
 
     //-----------------------------------------------------------------------------------------------------------------
     //      DOCUMENTOS RELACIONADOS DEL PAGO
     //-----------------------------------------------------------------------------------------------------------------
-    @Getter
-    @Setter
     private DoctoRelacionadoData docRelTempPago;
-    @Getter
-    @Setter
     private List<DoctoRelacionadoData> docsRelPago;
-    @Getter
-    @Setter
     private List<DoctoRelacionadoData> docsRelPagoSelection;
 
-    @Getter
-    @Setter
     private boolean requiredTipoCambioDocRel = false;
-    @Getter
-    @Setter
     private boolean disabledBttnAgregarDoctoRel = true;
 
 
-    @Getter
-    @Setter
     private boolean esReceptorExtranjero = false;
-    @Getter
-    @Setter
     private boolean esEmisorExtranjero = false;
 
     ///Controlar la activacion de los campos
-    @Getter
-    @Setter
     public boolean inputActivoCertPago = false;
-    @Getter
-    @Setter
     public boolean inputActivoCadPago = false;
-    @Getter
-    @Setter
     public boolean inputActivoSelloPago = false;
 
 
-    @Getter
-    @Setter
     public int requiredBancarizado = 0;
-    @Getter
-    @Setter
     public int requiredNumOper = 0;
-    @Getter
-    @Setter
     public int requiredRfcEmiCor = 0;
-    @Getter
-    @Setter
     public int requiredCtaOrd = 0;
-    @Getter
-    @Setter
     public int requiredRfcEmiCtaBen = 0;
-    @Getter
-    @Setter
     public int requiredCtaBen = 0;
-    @Getter
-    @Setter
     public int requiredTipoCadPago = 0;
-    @Getter
-    @Setter
     public int requiredNomBancEmi = 0;
-    @Getter
-    @Setter
     public int requiredResidenciaFiscal = 0;
-    @Getter
-    @Setter
     public int requiredNumRegIdTrib = 0;
 
-    @Getter
-    @Setter
     private String residenciaFiscal;//Pais
     //Numero de registroIdTrib para cuado el receptor es extranjero
-    @Getter
-    @Setter
     private String numRegIdTrib;
     /*
      * Lugar de emision
      */
-    @Getter
-    @Setter
     private String codigoPostal;
 
-    @Getter
-    @Setter
     private String descCp;
 
 
-    @Getter
-    @Setter
     private boolean flgBttonEliminarUuid = true;
-    @Getter
-    @Setter
     private boolean flgBttonEliminarDocRelComplemento = true;
 
-    @Getter
-    @Setter
     private boolean flgDisabledBttonEliminarPago = true;
 
     /*
      * Datos para Documentos relacionados, pagos en parcialidades o diferido
      */
-    @Getter
-    @Setter
     private List<MCcodigopostal> cps;
 
     private MCformapago objFormaPago;
@@ -324,32 +199,18 @@ public class ManagedBeanComplementoPago implements Serializable {
     /*
      * Regimen fiscal emisor
      */
-    @Getter
-    @Setter
     private String regimenFiscal;
     private String ambiente = "DESARROLLO";
-    @Getter
-    @Setter
     private Integer decimalesRequeridos;
-    @Getter
-    @Setter
     private Double porcentajeVariacion;
-    @Setter
-    @Getter
     private double tipoCambioPago = 1.0;//Tipo de cambio del pago
 
     //Conceptos
     private List<ConceptoFactura> conceptosAsignados;
-    @Getter
-    @Setter
     private int idFolio;
     private ComprobanteData comprobanteData;
     private boolean parcialidadValida = true;
-    @Setter
-    @Getter
     private String numeroProveedor;
-    @Setter
-    @Getter
     private String[] OrdenCompra;
 
     private DecimalFormatSymbols simbolos = new DecimalFormatSymbols();
@@ -361,36 +222,22 @@ public class ManagedBeanComplementoPago implements Serializable {
     //-------------------------------------------------------------------------
     // Daos
     //-------------------------------------------------------------------------
-    @Getter
-    @Setter
     private List<MCformapago> cfs;
     private List<MCimpuesto> imps;
-    @Getter
-    @Setter
     private List<MCmetodoPago> mps;
-    @Getter
-    @Setter
     private List<MCmoneda> monedas;
-    @Getter
-    @Setter
     private List<MCpais> paises;
     private List<MCpatentesAduanales> patentes;
     private List<MCpedimentoAduana> pedimentos;
     private List<MCprodserv> productos;
-    @Getter
-    @Setter
     private List<MCregimenFiscal> regims;
     private List<MCtipoComprobante> comprobantes;
     private List<MCtipoFactor> factores;
 
     //Tipos de relaciones CFDIs
-    @Getter
-    @Setter
     private List<MCtipoRelacionCfdi> relaciones;
 
     private List<MCunidades> unidades;
-    @Getter
-    @Setter
     private List<MCusoComprobantes> usos;
 
     //DAOS
@@ -414,52 +261,24 @@ public class ManagedBeanComplementoPago implements Serializable {
     private ReceptorDAO daoRec;
 
     //Bindings
-    @Setter
-    @Getter
     private UIInput inputTipoCambio;
-    @Setter
-    @Getter
     private UIInput inputCodigoConfirmacion;
-    @Setter
-    @Getter
     private UIInput inputFormaPagoComplemento;
-    @Setter
-    @Getter
     private UIInput inputRfcEmisorCtaOrd;
-    @Setter
-    @Getter
     private UIInput inputNomBancoOrdExt;
-    @Setter
-    @Getter
     private UIInput inputCtaOrdenante;
-    @Setter
-    @Getter
     private UIInput inputRfcEmisorCtaBen;
-    @Setter
-    @Getter
     private UIInput inputCtaBeneficiario;
-    @Setter
-    @Getter
     private UIInput inputTipoCadPago;
 
 
-    @Setter
-    @Getter
     private UIInput inputResidenciaFiscal;
-    @Setter
-    @Getter
     private UIInput inputNumRegIdTrib;
 
     //BINDINGS DOCUMENTOS RELACIONADOS
 
-    @Getter
-    @Setter
     private UIInput inputDocRelTipoCambio;
-    @Getter
-    @Setter
     private boolean cargaSpei;
-    @Getter
-    @Setter
     UploadedFile xmlSpei;
 
 
@@ -2103,6 +1922,670 @@ public class ManagedBeanComplementoPago implements Serializable {
 
     public void actualizaDatosReceptor() {
 
+    }
+
+    public int getNO_REQUERIDO() {
+        return this.NO_REQUERIDO;
+    }
+
+    public int getREQUERIDO() {
+        return this.REQUERIDO;
+    }
+
+    public int getOPCIONAL() {
+        return this.OPCIONAL;
+    }
+
+    public int getDESCONOCIDO() {
+        return this.DESCONOCIDO;
+    }
+
+    public boolean isSkip() {
+        return this.skip;
+    }
+
+    public List<MReceptor> getReceptores() {
+        return this.receptores;
+    }
+
+    public List<MFolios> getFolios() {
+        return this.folios;
+    }
+
+    public int getIdEmpresa() {
+        return this.idEmpresa;
+    }
+
+    public int getIdCliente() {
+        return this.idCliente;
+    }
+
+    public boolean isCodConfRequerido() {
+        return this.codConfRequerido;
+    }
+
+    public String getCodigoConfirmacion() {
+        return this.codigoConfirmacion;
+    }
+
+    public String getComment() {
+        return this.comment;
+    }
+
+    public String getUuidCfdiRelacionado() {
+        return this.uuidCfdiRelacionado;
+    }
+
+    public String getTipoRelacionCfdis() {
+        return this.tipoRelacionCfdis;
+    }
+
+    public List<CfdiRelacionadoData> getCfdiRelacionados() {
+        return this.cfdiRelacionados;
+    }
+
+    public List<CfdiRelacionadoData> getCfdiRelacionadosSelection() {
+        return this.cfdiRelacionadosSelection;
+    }
+
+    public String getUuidDocRel() {
+        return this.uuidDocRel;
+    }
+
+    public String getUuidCfdiBusqueda() {
+        return this.uuidCfdiBusqueda;
+    }
+
+    public int getIdCFDISelect() {
+        return this.idCFDISelect;
+    }
+
+    public List<MCfd> getListaMCfdi() {
+        return this.listaMCfdi;
+    }
+
+    public double getSaldoDisponibleEmisor() {
+        return this.saldoDisponibleEmisor;
+    }
+
+    public double getSaldoDisponibleEmisorMonedaDR() {
+        return this.saldoDisponibleEmisorMonedaDR;
+    }
+
+    public List<MPagos> getPagosPendientes() {
+        return this.pagosPendientes;
+    }
+
+    public List<MPagos> getPagosPendientesAgregados() {
+        return this.pagosPendientesAgregados;
+    }
+
+    public MPagos getPagoPendienteSelection() {
+        return this.pagoPendienteSelection;
+    }
+
+    public MCfd getMcfdi() {
+        return this.mcfdi;
+    }
+
+    public PagoData getPagoTempContainer() {
+        return this.pagoTempContainer;
+    }
+
+    public List<PagoData> getPagos() {
+        return this.pagos;
+    }
+
+    public List<PagoData> getPagosSelection() {
+        return this.pagosSelection;
+    }
+
+    public DoctoRelacionadoData getDocRelTempPago() {
+        return this.docRelTempPago;
+    }
+
+    public List<DoctoRelacionadoData> getDocsRelPago() {
+        return this.docsRelPago;
+    }
+
+    public List<DoctoRelacionadoData> getDocsRelPagoSelection() {
+        return this.docsRelPagoSelection;
+    }
+
+    public boolean isRequiredTipoCambioDocRel() {
+        return this.requiredTipoCambioDocRel;
+    }
+
+    public boolean isDisabledBttnAgregarDoctoRel() {
+        return this.disabledBttnAgregarDoctoRel;
+    }
+
+    public boolean isEsReceptorExtranjero() {
+        return this.esReceptorExtranjero;
+    }
+
+    public boolean isEsEmisorExtranjero() {
+        return this.esEmisorExtranjero;
+    }
+
+    public boolean isInputActivoCertPago() {
+        return this.inputActivoCertPago;
+    }
+
+    public boolean isInputActivoCadPago() {
+        return this.inputActivoCadPago;
+    }
+
+    public boolean isInputActivoSelloPago() {
+        return this.inputActivoSelloPago;
+    }
+
+    public int getRequiredBancarizado() {
+        return this.requiredBancarizado;
+    }
+
+    public int getRequiredNumOper() {
+        return this.requiredNumOper;
+    }
+
+    public int getRequiredRfcEmiCor() {
+        return this.requiredRfcEmiCor;
+    }
+
+    public int getRequiredCtaOrd() {
+        return this.requiredCtaOrd;
+    }
+
+    public int getRequiredRfcEmiCtaBen() {
+        return this.requiredRfcEmiCtaBen;
+    }
+
+    public int getRequiredCtaBen() {
+        return this.requiredCtaBen;
+    }
+
+    public int getRequiredTipoCadPago() {
+        return this.requiredTipoCadPago;
+    }
+
+    public int getRequiredNomBancEmi() {
+        return this.requiredNomBancEmi;
+    }
+
+    public int getRequiredResidenciaFiscal() {
+        return this.requiredResidenciaFiscal;
+    }
+
+    public int getRequiredNumRegIdTrib() {
+        return this.requiredNumRegIdTrib;
+    }
+
+    public String getResidenciaFiscal() {
+        return this.residenciaFiscal;
+    }
+
+    public String getNumRegIdTrib() {
+        return this.numRegIdTrib;
+    }
+
+    public String getCodigoPostal() {
+        return this.codigoPostal;
+    }
+
+    public String getDescCp() {
+        return this.descCp;
+    }
+
+    public boolean isFlgBttonEliminarUuid() {
+        return this.flgBttonEliminarUuid;
+    }
+
+    public boolean isFlgBttonEliminarDocRelComplemento() {
+        return this.flgBttonEliminarDocRelComplemento;
+    }
+
+    public boolean isFlgDisabledBttonEliminarPago() {
+        return this.flgDisabledBttonEliminarPago;
+    }
+
+    public List<MCcodigopostal> getCps() {
+        return this.cps;
+    }
+
+    public String getRegimenFiscal() {
+        return this.regimenFiscal;
+    }
+
+    public Integer getDecimalesRequeridos() {
+        return this.decimalesRequeridos;
+    }
+
+    public Double getPorcentajeVariacion() {
+        return this.porcentajeVariacion;
+    }
+
+    public double getTipoCambioPago() {
+        return this.tipoCambioPago;
+    }
+
+    public int getIdFolio() {
+        return this.idFolio;
+    }
+
+    public String getNumeroProveedor() {
+        return this.numeroProveedor;
+    }
+
+    public String[] getOrdenCompra() {
+        return this.OrdenCompra;
+    }
+
+    public List<MCformapago> getCfs() {
+        return this.cfs;
+    }
+
+    public List<MCmetodoPago> getMps() {
+        return this.mps;
+    }
+
+    public List<MCmoneda> getMonedas() {
+        return this.monedas;
+    }
+
+    public List<MCpais> getPaises() {
+        return this.paises;
+    }
+
+    public List<MCregimenFiscal> getRegims() {
+        return this.regims;
+    }
+
+    public List<MCtipoRelacionCfdi> getRelaciones() {
+        return this.relaciones;
+    }
+
+    public List<MCusoComprobantes> getUsos() {
+        return this.usos;
+    }
+
+    public UIInput getInputTipoCambio() {
+        return this.inputTipoCambio;
+    }
+
+    public UIInput getInputCodigoConfirmacion() {
+        return this.inputCodigoConfirmacion;
+    }
+
+    public UIInput getInputFormaPagoComplemento() {
+        return this.inputFormaPagoComplemento;
+    }
+
+    public UIInput getInputRfcEmisorCtaOrd() {
+        return this.inputRfcEmisorCtaOrd;
+    }
+
+    public UIInput getInputNomBancoOrdExt() {
+        return this.inputNomBancoOrdExt;
+    }
+
+    public UIInput getInputCtaOrdenante() {
+        return this.inputCtaOrdenante;
+    }
+
+    public UIInput getInputRfcEmisorCtaBen() {
+        return this.inputRfcEmisorCtaBen;
+    }
+
+    public UIInput getInputCtaBeneficiario() {
+        return this.inputCtaBeneficiario;
+    }
+
+    public UIInput getInputTipoCadPago() {
+        return this.inputTipoCadPago;
+    }
+
+    public UIInput getInputResidenciaFiscal() {
+        return this.inputResidenciaFiscal;
+    }
+
+    public UIInput getInputNumRegIdTrib() {
+        return this.inputNumRegIdTrib;
+    }
+
+    public UIInput getInputDocRelTipoCambio() {
+        return this.inputDocRelTipoCambio;
+    }
+
+    public boolean isCargaSpei() {
+        return this.cargaSpei;
+    }
+
+    public UploadedFile getXmlSpei() {
+        return this.xmlSpei;
+    }
+
+    public void setSkip(boolean skip) {
+        this.skip = skip;
+    }
+
+    public void setReceptores(List<MReceptor> receptores) {
+        this.receptores = receptores;
+    }
+
+    public void setFolios(List<MFolios> folios) {
+        this.folios = folios;
+    }
+
+    public void setIdEmpresa(int idEmpresa) {
+        this.idEmpresa = idEmpresa;
+    }
+
+    public void setIdCliente(int idCliente) {
+        this.idCliente = idCliente;
+    }
+
+    public void setCodConfRequerido(boolean codConfRequerido) {
+        this.codConfRequerido = codConfRequerido;
+    }
+
+    public void setCodigoConfirmacion(String codigoConfirmacion) {
+        this.codigoConfirmacion = codigoConfirmacion;
+    }
+
+    public void setComment(String comment) {
+        this.comment = comment;
+    }
+
+    public void setUuidCfdiRelacionado(String uuidCfdiRelacionado) {
+        this.uuidCfdiRelacionado = uuidCfdiRelacionado;
+    }
+
+    public void setTipoRelacionCfdis(String tipoRelacionCfdis) {
+        this.tipoRelacionCfdis = tipoRelacionCfdis;
+    }
+
+    public void setCfdiRelacionados(List<CfdiRelacionadoData> cfdiRelacionados) {
+        this.cfdiRelacionados = cfdiRelacionados;
+    }
+
+    public void setCfdiRelacionadosSelection(List<CfdiRelacionadoData> cfdiRelacionadosSelection) {
+        this.cfdiRelacionadosSelection = cfdiRelacionadosSelection;
+    }
+
+    public void setUuidDocRel(String uuidDocRel) {
+        this.uuidDocRel = uuidDocRel;
+    }
+
+    public void setUuidCfdiBusqueda(String uuidCfdiBusqueda) {
+        this.uuidCfdiBusqueda = uuidCfdiBusqueda;
+    }
+
+    public void setIdCFDISelect(int idCFDISelect) {
+        this.idCFDISelect = idCFDISelect;
+    }
+
+    public void setListaMCfdi(List<MCfd> listaMCfdi) {
+        this.listaMCfdi = listaMCfdi;
+    }
+
+    public void setSaldoDisponibleEmisor(double saldoDisponibleEmisor) {
+        this.saldoDisponibleEmisor = saldoDisponibleEmisor;
+    }
+
+    public void setSaldoDisponibleEmisorMonedaDR(double saldoDisponibleEmisorMonedaDR) {
+        this.saldoDisponibleEmisorMonedaDR = saldoDisponibleEmisorMonedaDR;
+    }
+
+    public void setPagosPendientes(List<MPagos> pagosPendientes) {
+        this.pagosPendientes = pagosPendientes;
+    }
+
+    public void setPagosPendientesAgregados(List<MPagos> pagosPendientesAgregados) {
+        this.pagosPendientesAgregados = pagosPendientesAgregados;
+    }
+
+    public void setPagoPendienteSelection(MPagos pagoPendienteSelection) {
+        this.pagoPendienteSelection = pagoPendienteSelection;
+    }
+
+    public void setMcfdi(MCfd mcfdi) {
+        this.mcfdi = mcfdi;
+    }
+
+    public void setPagoTempContainer(PagoData pagoTempContainer) {
+        this.pagoTempContainer = pagoTempContainer;
+    }
+
+    public void setPagos(List<PagoData> pagos) {
+        this.pagos = pagos;
+    }
+
+    public void setPagosSelection(List<PagoData> pagosSelection) {
+        this.pagosSelection = pagosSelection;
+    }
+
+    public void setDocRelTempPago(DoctoRelacionadoData docRelTempPago) {
+        this.docRelTempPago = docRelTempPago;
+    }
+
+    public void setDocsRelPago(List<DoctoRelacionadoData> docsRelPago) {
+        this.docsRelPago = docsRelPago;
+    }
+
+    public void setDocsRelPagoSelection(List<DoctoRelacionadoData> docsRelPagoSelection) {
+        this.docsRelPagoSelection = docsRelPagoSelection;
+    }
+
+    public void setRequiredTipoCambioDocRel(boolean requiredTipoCambioDocRel) {
+        this.requiredTipoCambioDocRel = requiredTipoCambioDocRel;
+    }
+
+    public void setDisabledBttnAgregarDoctoRel(boolean disabledBttnAgregarDoctoRel) {
+        this.disabledBttnAgregarDoctoRel = disabledBttnAgregarDoctoRel;
+    }
+
+    public void setEsReceptorExtranjero(boolean esReceptorExtranjero) {
+        this.esReceptorExtranjero = esReceptorExtranjero;
+    }
+
+    public void setEsEmisorExtranjero(boolean esEmisorExtranjero) {
+        this.esEmisorExtranjero = esEmisorExtranjero;
+    }
+
+    public void setInputActivoCertPago(boolean inputActivoCertPago) {
+        this.inputActivoCertPago = inputActivoCertPago;
+    }
+
+    public void setInputActivoCadPago(boolean inputActivoCadPago) {
+        this.inputActivoCadPago = inputActivoCadPago;
+    }
+
+    public void setInputActivoSelloPago(boolean inputActivoSelloPago) {
+        this.inputActivoSelloPago = inputActivoSelloPago;
+    }
+
+    public void setRequiredBancarizado(int requiredBancarizado) {
+        this.requiredBancarizado = requiredBancarizado;
+    }
+
+    public void setRequiredNumOper(int requiredNumOper) {
+        this.requiredNumOper = requiredNumOper;
+    }
+
+    public void setRequiredRfcEmiCor(int requiredRfcEmiCor) {
+        this.requiredRfcEmiCor = requiredRfcEmiCor;
+    }
+
+    public void setRequiredCtaOrd(int requiredCtaOrd) {
+        this.requiredCtaOrd = requiredCtaOrd;
+    }
+
+    public void setRequiredRfcEmiCtaBen(int requiredRfcEmiCtaBen) {
+        this.requiredRfcEmiCtaBen = requiredRfcEmiCtaBen;
+    }
+
+    public void setRequiredCtaBen(int requiredCtaBen) {
+        this.requiredCtaBen = requiredCtaBen;
+    }
+
+    public void setRequiredTipoCadPago(int requiredTipoCadPago) {
+        this.requiredTipoCadPago = requiredTipoCadPago;
+    }
+
+    public void setRequiredNomBancEmi(int requiredNomBancEmi) {
+        this.requiredNomBancEmi = requiredNomBancEmi;
+    }
+
+    public void setRequiredResidenciaFiscal(int requiredResidenciaFiscal) {
+        this.requiredResidenciaFiscal = requiredResidenciaFiscal;
+    }
+
+    public void setRequiredNumRegIdTrib(int requiredNumRegIdTrib) {
+        this.requiredNumRegIdTrib = requiredNumRegIdTrib;
+    }
+
+    public void setResidenciaFiscal(String residenciaFiscal) {
+        this.residenciaFiscal = residenciaFiscal;
+    }
+
+    public void setNumRegIdTrib(String numRegIdTrib) {
+        this.numRegIdTrib = numRegIdTrib;
+    }
+
+    public void setCodigoPostal(String codigoPostal) {
+        this.codigoPostal = codigoPostal;
+    }
+
+    public void setDescCp(String descCp) {
+        this.descCp = descCp;
+    }
+
+    public void setFlgBttonEliminarUuid(boolean flgBttonEliminarUuid) {
+        this.flgBttonEliminarUuid = flgBttonEliminarUuid;
+    }
+
+    public void setFlgBttonEliminarDocRelComplemento(boolean flgBttonEliminarDocRelComplemento) {
+        this.flgBttonEliminarDocRelComplemento = flgBttonEliminarDocRelComplemento;
+    }
+
+    public void setFlgDisabledBttonEliminarPago(boolean flgDisabledBttonEliminarPago) {
+        this.flgDisabledBttonEliminarPago = flgDisabledBttonEliminarPago;
+    }
+
+    public void setCps(List<MCcodigopostal> cps) {
+        this.cps = cps;
+    }
+
+    public void setRegimenFiscal(String regimenFiscal) {
+        this.regimenFiscal = regimenFiscal;
+    }
+
+    public void setDecimalesRequeridos(Integer decimalesRequeridos) {
+        this.decimalesRequeridos = decimalesRequeridos;
+    }
+
+    public void setPorcentajeVariacion(Double porcentajeVariacion) {
+        this.porcentajeVariacion = porcentajeVariacion;
+    }
+
+    public void setTipoCambioPago(double tipoCambioPago) {
+        this.tipoCambioPago = tipoCambioPago;
+    }
+
+    public void setIdFolio(int idFolio) {
+        this.idFolio = idFolio;
+    }
+
+    public void setNumeroProveedor(String numeroProveedor) {
+        this.numeroProveedor = numeroProveedor;
+    }
+
+    public void setOrdenCompra(String[] OrdenCompra) {
+        this.OrdenCompra = OrdenCompra;
+    }
+
+    public void setCfs(List<MCformapago> cfs) {
+        this.cfs = cfs;
+    }
+
+    public void setMps(List<MCmetodoPago> mps) {
+        this.mps = mps;
+    }
+
+    public void setMonedas(List<MCmoneda> monedas) {
+        this.monedas = monedas;
+    }
+
+    public void setPaises(List<MCpais> paises) {
+        this.paises = paises;
+    }
+
+    public void setRegims(List<MCregimenFiscal> regims) {
+        this.regims = regims;
+    }
+
+    public void setRelaciones(List<MCtipoRelacionCfdi> relaciones) {
+        this.relaciones = relaciones;
+    }
+
+    public void setUsos(List<MCusoComprobantes> usos) {
+        this.usos = usos;
+    }
+
+    public void setInputTipoCambio(UIInput inputTipoCambio) {
+        this.inputTipoCambio = inputTipoCambio;
+    }
+
+    public void setInputCodigoConfirmacion(UIInput inputCodigoConfirmacion) {
+        this.inputCodigoConfirmacion = inputCodigoConfirmacion;
+    }
+
+    public void setInputFormaPagoComplemento(UIInput inputFormaPagoComplemento) {
+        this.inputFormaPagoComplemento = inputFormaPagoComplemento;
+    }
+
+    public void setInputRfcEmisorCtaOrd(UIInput inputRfcEmisorCtaOrd) {
+        this.inputRfcEmisorCtaOrd = inputRfcEmisorCtaOrd;
+    }
+
+    public void setInputNomBancoOrdExt(UIInput inputNomBancoOrdExt) {
+        this.inputNomBancoOrdExt = inputNomBancoOrdExt;
+    }
+
+    public void setInputCtaOrdenante(UIInput inputCtaOrdenante) {
+        this.inputCtaOrdenante = inputCtaOrdenante;
+    }
+
+    public void setInputRfcEmisorCtaBen(UIInput inputRfcEmisorCtaBen) {
+        this.inputRfcEmisorCtaBen = inputRfcEmisorCtaBen;
+    }
+
+    public void setInputCtaBeneficiario(UIInput inputCtaBeneficiario) {
+        this.inputCtaBeneficiario = inputCtaBeneficiario;
+    }
+
+    public void setInputTipoCadPago(UIInput inputTipoCadPago) {
+        this.inputTipoCadPago = inputTipoCadPago;
+    }
+
+    public void setInputResidenciaFiscal(UIInput inputResidenciaFiscal) {
+        this.inputResidenciaFiscal = inputResidenciaFiscal;
+    }
+
+    public void setInputNumRegIdTrib(UIInput inputNumRegIdTrib) {
+        this.inputNumRegIdTrib = inputNumRegIdTrib;
+    }
+
+    public void setInputDocRelTipoCambio(UIInput inputDocRelTipoCambio) {
+        this.inputDocRelTipoCambio = inputDocRelTipoCambio;
+    }
+
+    public void setCargaSpei(boolean cargaSpei) {
+        this.cargaSpei = cargaSpei;
+    }
+
+    public void setXmlSpei(UploadedFile xmlSpei) {
+        this.xmlSpei = xmlSpei;
     }
 
 //    public void testGuaradPago(){

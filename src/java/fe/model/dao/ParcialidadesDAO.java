@@ -1,19 +1,14 @@
 package fe.model.dao;
 
-import java.util.List;
-
-import org.hibernate.Criteria;
-import org.hibernate.HibernateException;
-import org.hibernate.criterion.Order;
-import org.hibernate.criterion.Restrictions;
-
 import fe.db.MParcialidades;
 import fe.model.util.hibernateutil.HibernateUtilApl;
 import fe.model.util.hibernateutil.HibernateUtilEmi;
+import org.hibernate.Criteria;
+import org.hibernate.HibernateException;
+import org.hibernate.criterion.*;
+
 import java.io.Serializable;
-import org.hibernate.criterion.Criterion;
-import org.hibernate.criterion.Projection;
-import org.hibernate.criterion.Projections;
+import java.util.List;
 
 public class ParcialidadesDAO implements Serializable {
 

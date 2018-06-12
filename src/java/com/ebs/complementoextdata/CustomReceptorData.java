@@ -1,18 +1,11 @@
 package com.ebs.complementoextdata;
 
-import lombok.Getter;
-import lombok.Setter;
-
 /**
  * Created by eflores on 16/01/2018.
  */
 public class CustomReceptorData {
-    @Getter
-    @Setter
-    String NumRegIdTrib;
-    @Getter
-    @Setter
-    CustomDomicilioData Domicilio;
+    private String NumRegIdTrib;
+    private CustomDomicilioData Domicilio;
 
     public CustomReceptorData() {
         this("",new CustomDomicilioData());
@@ -21,5 +14,21 @@ public class CustomReceptorData {
     public CustomReceptorData(String numRegIdTrib, CustomDomicilioData domicilio) {
         NumRegIdTrib = numRegIdTrib;
         Domicilio = domicilio;
+    }
+
+    public String getNumRegIdTrib() {
+        return this.NumRegIdTrib;
+    }
+
+    public CustomDomicilioData getDomicilio() {
+        return this.Domicilio;
+    }
+
+    public void setNumRegIdTrib(String NumRegIdTrib) {
+        this.NumRegIdTrib = NumRegIdTrib;
+    }
+
+    public void setDomicilio(CustomDomicilioData Domicilio) {
+        this.Domicilio = Domicilio;
     }
 }

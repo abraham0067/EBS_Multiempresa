@@ -10,28 +10,20 @@ import fe.db.MAcceso.Nivel;
 import fe.db.MConfig;
 import fe.db.MEmpresa;
 import fe.db.MPerfil;
-import fe.model.dao.ConfigDAO;
-import fe.model.dao.EmpresaDAO;
-import fe.model.dao.LogAccesoDAO;
-import fe.model.dao.PerfilDAO;
-import fe.model.dao.UsuarioDAO;
+import fe.model.dao.*;
 import fe.model.util.ControlPasword;
 import fe.model.util.SendMail;
+import org.primefaces.model.DualListModel;
 
-import java.io.IOException;
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-
-import lombok.Getter;
-import lombok.Setter;
-import org.primefaces.model.DualListModel;
+import java.io.IOException;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Managed bean para la administracion de los usuarios, funciona para usuarios
@@ -41,18 +33,12 @@ import org.primefaces.model.DualListModel;
  */
 public class ManagedBeanUsuarios implements Serializable {
 
-    @Getter
     private final int NONE = -1;
-    @Getter
     private final int CREACION = 0;
-    @Getter
     private final int MODIFICACION = 1;
 
-    @Getter
     private final int NIVEL_INTERNO = 0;
-    @Getter
     private final int NIVEL_EXTERNO = 1;
-    @Getter
     private MAcceso usuarioAcceso;
     //Modelos
 
@@ -62,76 +48,32 @@ public class ManagedBeanUsuarios implements Serializable {
     private String appContext;
 
 
-    @Getter
-    @Setter
     private List<MAcceso> usuarios;
-    @Getter
-    @Setter
     private List<MPerfil> perfiles;
-    @Getter
-    @Setter
     private List<MEmpresa> empresasTarget;//Empresas disponibless
-    @Getter
-    @Setter
     private List<MEmpresa> empresasSource;//Empresas seleccionadas
-    @Getter
-    @Setter
     private List<MEmpresa> empresasPadres;//Todas las empresas
-    @Getter
-    @Setter
     private MAcceso usuarioSelected;
-    @Getter
-    @Setter
     private MEmpresa empresaPadre;
-    @Getter
-    @Setter
     private MPerfil perfil;
-    @Getter
-    @Setter
     private DualListModel<MEmpresa> allEmpresas;
-    @Getter
-    @Setter
     private MAcceso usuarioAccesoAux;
-    @Getter @Setter private int empresaIdFiltro;
-    @Getter
-    @Setter
+    private int empresaIdFiltro;
     private int idUsuario;
-    @Getter
-    @Setter
     private int idEmpPadre;
-    @Getter
-    @Setter
     private int idPerfil;
-    @Getter
-    @Setter
     private int nivelNuevoUsuario = -1;///Solo para usuarios logeados como internos
-    @Getter
-    @Setter
     private String paramBusqueda;
-    @Getter
-    @Setter
     private String tipoBus;
-    @Getter
-    @Setter
     private String clave;
-    @Getter
-    @Setter
     private String passGenericoTmp;
-    @Getter
-    @Setter
     private int estatus;
-    @Getter
-    @Setter
     private boolean bolFlag;
-    @Getter
     private ControlPasword ctrlpass;
-    @Getter
     private SendMail mailManager;
     //Bandera para indicar el tipo de operacion que se esta realizando
     //0-Creacion de una nueva empresa
     //1-Modificacion de una existente
-    @Getter
-    @Setter
     private int currentOperation = NONE;
 
     //DAOS
@@ -141,7 +83,6 @@ public class ManagedBeanUsuarios implements Serializable {
     private PerfilDAO daoPerfil;
     private ConfigDAO daoCon;
 
-    @Getter
     private static String URL_PORTAL = "http://localhost:8080/FacturacionElectronica/";
 
     /**
@@ -149,6 +90,10 @@ public class ManagedBeanUsuarios implements Serializable {
      */
     public ManagedBeanUsuarios() {
 
+    }
+
+    public static String getURL_PORTAL() {
+        return ManagedBeanUsuarios.URL_PORTAL;
     }
 
     @PostConstruct
@@ -666,4 +611,211 @@ public class ManagedBeanUsuarios implements Serializable {
         empresasSource = null;
     }
 
+    public int getNONE() {
+        return this.NONE;
+    }
+
+    public int getCREACION() {
+        return this.CREACION;
+    }
+
+    public int getMODIFICACION() {
+        return this.MODIFICACION;
+    }
+
+    public int getNIVEL_INTERNO() {
+        return this.NIVEL_INTERNO;
+    }
+
+    public int getNIVEL_EXTERNO() {
+        return this.NIVEL_EXTERNO;
+    }
+
+    public MAcceso getUsuarioAcceso() {
+        return this.usuarioAcceso;
+    }
+
+    public List<MAcceso> getUsuarios() {
+        return this.usuarios;
+    }
+
+    public List<MPerfil> getPerfiles() {
+        return this.perfiles;
+    }
+
+    public List<MEmpresa> getEmpresasTarget() {
+        return this.empresasTarget;
+    }
+
+    public List<MEmpresa> getEmpresasSource() {
+        return this.empresasSource;
+    }
+
+    public List<MEmpresa> getEmpresasPadres() {
+        return this.empresasPadres;
+    }
+
+    public MAcceso getUsuarioSelected() {
+        return this.usuarioSelected;
+    }
+
+    public MEmpresa getEmpresaPadre() {
+        return this.empresaPadre;
+    }
+
+    public MPerfil getPerfil() {
+        return this.perfil;
+    }
+
+    public DualListModel<MEmpresa> getAllEmpresas() {
+        return this.allEmpresas;
+    }
+
+    public MAcceso getUsuarioAccesoAux() {
+        return this.usuarioAccesoAux;
+    }
+
+    public int getEmpresaIdFiltro() {
+        return this.empresaIdFiltro;
+    }
+
+    public int getIdUsuario() {
+        return this.idUsuario;
+    }
+
+    public int getIdEmpPadre() {
+        return this.idEmpPadre;
+    }
+
+    public int getIdPerfil() {
+        return this.idPerfil;
+    }
+
+    public int getNivelNuevoUsuario() {
+        return this.nivelNuevoUsuario;
+    }
+
+    public String getParamBusqueda() {
+        return this.paramBusqueda;
+    }
+
+    public String getTipoBus() {
+        return this.tipoBus;
+    }
+
+    public String getClave() {
+        return this.clave;
+    }
+
+    public String getPassGenericoTmp() {
+        return this.passGenericoTmp;
+    }
+
+    public int getEstatus() {
+        return this.estatus;
+    }
+
+    public boolean isBolFlag() {
+        return this.bolFlag;
+    }
+
+    public ControlPasword getCtrlpass() {
+        return this.ctrlpass;
+    }
+
+    public SendMail getMailManager() {
+        return this.mailManager;
+    }
+
+    public int getCurrentOperation() {
+        return this.currentOperation;
+    }
+
+    public void setUsuarios(List<MAcceso> usuarios) {
+        this.usuarios = usuarios;
+    }
+
+    public void setPerfiles(List<MPerfil> perfiles) {
+        this.perfiles = perfiles;
+    }
+
+    public void setEmpresasTarget(List<MEmpresa> empresasTarget) {
+        this.empresasTarget = empresasTarget;
+    }
+
+    public void setEmpresasSource(List<MEmpresa> empresasSource) {
+        this.empresasSource = empresasSource;
+    }
+
+    public void setEmpresasPadres(List<MEmpresa> empresasPadres) {
+        this.empresasPadres = empresasPadres;
+    }
+
+    public void setUsuarioSelected(MAcceso usuarioSelected) {
+        this.usuarioSelected = usuarioSelected;
+    }
+
+    public void setEmpresaPadre(MEmpresa empresaPadre) {
+        this.empresaPadre = empresaPadre;
+    }
+
+    public void setPerfil(MPerfil perfil) {
+        this.perfil = perfil;
+    }
+
+    public void setAllEmpresas(DualListModel<MEmpresa> allEmpresas) {
+        this.allEmpresas = allEmpresas;
+    }
+
+    public void setUsuarioAccesoAux(MAcceso usuarioAccesoAux) {
+        this.usuarioAccesoAux = usuarioAccesoAux;
+    }
+
+    public void setEmpresaIdFiltro(int empresaIdFiltro) {
+        this.empresaIdFiltro = empresaIdFiltro;
+    }
+
+    public void setIdUsuario(int idUsuario) {
+        this.idUsuario = idUsuario;
+    }
+
+    public void setIdEmpPadre(int idEmpPadre) {
+        this.idEmpPadre = idEmpPadre;
+    }
+
+    public void setIdPerfil(int idPerfil) {
+        this.idPerfil = idPerfil;
+    }
+
+    public void setNivelNuevoUsuario(int nivelNuevoUsuario) {
+        this.nivelNuevoUsuario = nivelNuevoUsuario;
+    }
+
+    public void setParamBusqueda(String paramBusqueda) {
+        this.paramBusqueda = paramBusqueda;
+    }
+
+    public void setTipoBus(String tipoBus) {
+        this.tipoBus = tipoBus;
+    }
+
+    public void setClave(String clave) {
+        this.clave = clave;
+    }
+
+    public void setPassGenericoTmp(String passGenericoTmp) {
+        this.passGenericoTmp = passGenericoTmp;
+    }
+
+    public void setEstatus(int estatus) {
+        this.estatus = estatus;
+    }
+
+    public void setBolFlag(boolean bolFlag) {
+        this.bolFlag = bolFlag;
+    }
+
+    public void setCurrentOperation(int currentOperation) {
+        this.currentOperation = currentOperation;
+    }
 }

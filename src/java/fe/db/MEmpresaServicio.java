@@ -1,7 +1,7 @@
 package fe.db;
 
-import java.io.*;
 import javax.persistence.*;
+import java.io.Serializable;
 
 @Entity
 @Table(name = "M_EMPRESA_SERVICIO", catalog = "FACCORP_APL")

@@ -1,18 +1,11 @@
 package com.ebs.complementoextdata;
 
-import lombok.Getter;
-import lombok.Setter;
-
 /**
  * Created by eflores on 16/01/2018.
  */
 public class CustomCatalogoData {
-    @Getter
-    @Setter
-    String Clave = "";
-    @Getter
-    @Setter
-    String Descripcion = "";
+    private String Clave = "";
+    private String Descripcion = "";
 
     public CustomCatalogoData() {
         this("", "");
@@ -23,4 +16,19 @@ public class CustomCatalogoData {
         Descripcion = descripcion;
     }
 
+    public String getClave() {
+        return this.Clave;
+    }
+
+    public String getDescripcion() {
+        return this.Descripcion;
+    }
+
+    public void setClave(String Clave) {
+        this.Clave = Clave;
+    }
+
+    public void setDescripcion(String Descripcion) {
+        this.Descripcion = Descripcion;
+    }
 }

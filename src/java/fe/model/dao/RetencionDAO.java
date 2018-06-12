@@ -1,11 +1,13 @@
 package fe.model.dao;
 
-import java.io.*;
-import org.hibernate.*;
-import org.hibernate.criterion.*;
 import fe.db.*;
 import fe.model.util.hibernateutil.HibernateUtilApl;
 import fe.model.util.hibernateutil.HibernateUtilEmi;
+import org.hibernate.Criteria;
+import org.hibernate.HibernateException;
+import org.hibernate.criterion.*;
+
+import java.io.Serializable;
 import java.util.*;
 
 public class RetencionDAO {

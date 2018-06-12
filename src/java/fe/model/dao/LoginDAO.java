@@ -7,11 +7,12 @@ package fe.model.dao;
 import fe.db.MAcceso;
 import fe.model.util.hibernateutil.HibernateUtilApl;
 import fe.model.util.hibernateutil.HibernateUtilEmi;
-import java.io.Serializable;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.criterion.Restrictions;
 import org.jasypt.encryption.pbe.StandardPBEStringEncryptor;
+
+import java.io.Serializable;
 
 /**
  *

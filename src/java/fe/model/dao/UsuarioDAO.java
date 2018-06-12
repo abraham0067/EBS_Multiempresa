@@ -1,21 +1,16 @@
 package fe.model.dao;
 
-import java.util.List;
-
-import org.hibernate.Criteria;
-import org.hibernate.HibernateException;
-import org.hibernate.Session;
-import org.hibernate.Transaction;
-import org.hibernate.criterion.Order;
-import org.hibernate.criterion.Restrictions;
-
 import fe.db.MAcceso;
-import fe.db.MLogAcceso;
 import fe.db.MAcceso.Nivel;
 import fe.model.util.hibernateutil.HibernateUtilApl;
 import fe.model.util.hibernateutil.HibernateUtilEmi;
+import org.hibernate.Criteria;
+import org.hibernate.HibernateException;
+import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Restrictions;
 
 import java.io.Serializable;
+import java.util.List;
 
 public class UsuarioDAO implements Serializable {
 

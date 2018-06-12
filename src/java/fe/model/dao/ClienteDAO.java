@@ -1,18 +1,18 @@
 package fe.model.dao;
 
-import com.barcodelib.barcode.a.g.c.e;
+import fe.db.MAcceso;
+import fe.db.MAcceso.Nivel;
 import fe.db.MCliente;
 import fe.db.MEmpresa;
 import fe.model.util.hibernateutil.HibernateUtilApl;
 import fe.model.util.hibernateutil.HibernateUtilEmi;
-import org.hibernate.HibernateException;
 import org.hibernate.Criteria;
+import org.hibernate.HibernateException;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
+
 import java.io.Serializable;
 import java.util.List;
-import fe.db.MAcceso.Nivel;
-import fe.db.MAcceso;
 
 public class ClienteDAO implements Serializable {
 

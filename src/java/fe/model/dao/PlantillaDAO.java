@@ -1,18 +1,17 @@
 package fe.model.dao;
 
-import java.util.List;
-
+import fe.db.MEmpresa;
+import fe.db.MPlantilla;
+import fe.model.util.hibernateutil.HibernateUtilApl;
+import fe.model.util.hibernateutil.HibernateUtilEmi;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 
-import fe.db.MEmpresa;
-import fe.db.MPlantilla;
-import fe.model.util.hibernateutil.HibernateUtilApl;
-import fe.model.util.hibernateutil.HibernateUtilEmi;
 import java.io.Serializable;
+import java.util.List;
 
 public class PlantillaDAO implements Serializable {
 

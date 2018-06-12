@@ -1,21 +1,13 @@
 package fe.db;
 
+import org.hibernate.annotations.Index;
+
+import javax.persistence.*;
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Lob;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
 //import org.apache.commons.lang.StringEscapeUtils;
-
-import org.hibernate.annotations.Index;
 
 
 @SuppressWarnings("serial")

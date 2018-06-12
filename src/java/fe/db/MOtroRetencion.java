@@ -1,8 +1,8 @@
 package fe.db;
 
-import java.io.*;
-import java.util.*;
 import javax.persistence.*;
+import java.io.Serializable;
+import java.util.Date;
 //import org.apache.commons.lang.StringEscapeUtils;
 
 @Entity

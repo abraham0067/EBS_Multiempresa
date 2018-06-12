@@ -1,8 +1,5 @@
 package com.ebs.complementoextdata;
 
-import lombok.Getter;
-import lombok.Setter;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,27 +7,13 @@ import java.util.List;
  * Created by eflores on 16/01/2018.
  */
 public class CustomMercanciaData {
-    @Getter
-    @Setter
-    String NoIdentificacion;
-    @Getter
-    @Setter
-    CustomCatalogoData FraccionArancelaria;
-    @Getter
-    @Setter
-    double CantidadAduana;
-    @Getter
-    @Setter
-    CustomCatalogoData UnidadAduana;
-    @Getter
-    @Setter
-    double ValorUnitarioAduana;
-    @Getter
-    @Setter
-    double ValorDolares;
-    @Getter
-    @Setter
-    List<CustomDescripcionEspecificaData> descripcionesEspecificas;
+    private String NoIdentificacion;
+    private CustomCatalogoData FraccionArancelaria;
+    private double CantidadAduana;
+    private CustomCatalogoData UnidadAduana;
+    private double ValorUnitarioAduana;
+    private double ValorDolares;
+    private List<CustomDescripcionEspecificaData> descripcionesEspecificas;
 
     public CustomMercanciaData() {
         this("", new CustomCatalogoData("", ""), 1.0,
@@ -52,6 +35,62 @@ public class CustomMercanciaData {
         UnidadAduana = unidadAduana;
         ValorUnitarioAduana = valorUnitarioAduana;
         ValorDolares = valorDolares;
+        this.descripcionesEspecificas = descripcionesEspecificas;
+    }
+
+    public String getNoIdentificacion() {
+        return this.NoIdentificacion;
+    }
+
+    public CustomCatalogoData getFraccionArancelaria() {
+        return this.FraccionArancelaria;
+    }
+
+    public double getCantidadAduana() {
+        return this.CantidadAduana;
+    }
+
+    public CustomCatalogoData getUnidadAduana() {
+        return this.UnidadAduana;
+    }
+
+    public double getValorUnitarioAduana() {
+        return this.ValorUnitarioAduana;
+    }
+
+    public double getValorDolares() {
+        return this.ValorDolares;
+    }
+
+    public List<CustomDescripcionEspecificaData> getDescripcionesEspecificas() {
+        return this.descripcionesEspecificas;
+    }
+
+    public void setNoIdentificacion(String NoIdentificacion) {
+        this.NoIdentificacion = NoIdentificacion;
+    }
+
+    public void setFraccionArancelaria(CustomCatalogoData FraccionArancelaria) {
+        this.FraccionArancelaria = FraccionArancelaria;
+    }
+
+    public void setCantidadAduana(double CantidadAduana) {
+        this.CantidadAduana = CantidadAduana;
+    }
+
+    public void setUnidadAduana(CustomCatalogoData UnidadAduana) {
+        this.UnidadAduana = UnidadAduana;
+    }
+
+    public void setValorUnitarioAduana(double ValorUnitarioAduana) {
+        this.ValorUnitarioAduana = ValorUnitarioAduana;
+    }
+
+    public void setValorDolares(double ValorDolares) {
+        this.ValorDolares = ValorDolares;
+    }
+
+    public void setDescripcionesEspecificas(List<CustomDescripcionEspecificaData> descripcionesEspecificas) {
         this.descripcionesEspecificas = descripcionesEspecificas;
     }
 }

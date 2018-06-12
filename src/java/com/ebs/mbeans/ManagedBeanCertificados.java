@@ -13,7 +13,20 @@ import fe.model.dao.LlaveDAO;
 import fe.model.dao.LogAccesoDAO;
 import fe.model.util.CifraTexto;
 import fe.pki.PKI;
+import fe.pki.PkiException;
+import org.apache.commons.io.IOUtils;
+import org.bouncycastle.asn1.ASN1InputStream;
+import org.bouncycastle.asn1.DEREncodable;
+import org.bouncycastle.asn1.DERSequence;
+import org.bouncycastle.asn1.DERTaggedObject;
+import org.primefaces.event.FileUploadEvent;
+import org.primefaces.model.UploadedFile;
 
+import javax.annotation.PostConstruct;
+import javax.faces.application.FacesMessage;
+import javax.faces.context.FacesContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -26,24 +39,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.annotation.PostConstruct;
-import javax.faces.application.FacesMessage;
-import javax.faces.context.FacesContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-
-import fe.pki.PkiException;
-import lombok.Getter;
-import lombok.Setter;
-import org.apache.commons.io.IOUtils;
-
-import org.bouncycastle.asn1.ASN1InputStream;
-import org.bouncycastle.asn1.ASN1Encodable;
-import org.bouncycastle.asn1.DEREncodable;
-import org.bouncycastle.asn1.DERSequence;
-import org.bouncycastle.asn1.DERTaggedObject;
-import org.primefaces.event.FileUploadEvent;
-import org.primefaces.model.UploadedFile;
 
 /**
  * @author Eduardo C. Flores Ambrosio <Eduardo at EB&S>
@@ -62,8 +57,6 @@ public class ManagedBeanCertificados implements Serializable {
     private LogAccesoDAO daoLog;
     private MEmpresa empresa;
 
-    @Getter
-    @Setter
     private int idEmpresaSelect = -1;
 
     //Bandera
@@ -71,23 +64,11 @@ public class ManagedBeanCertificados implements Serializable {
     //Modelos
     private MAcceso usuarioAcceso;
     //Nuevo certificado
-    @Getter
-    @Setter
     private int idEmpresaNuevoCert;//Id de la empresa para la cual se agregara el nuevo certificado
-    @Getter
-    @Setter
     private String clave1;
-    @Getter
-    @Setter
     private String clave2;
-    @Getter
-    @Setter
     private String certName;
-    @Getter
-    @Setter
     private String keyName;
-    @Getter
-    @Setter
     private boolean activarCertificado = false;
 
     private UploadedFile key;
@@ -567,4 +548,59 @@ public class ManagedBeanCertificados implements Serializable {
     }
 
 
+    public int getIdEmpresaSelect() {
+        return this.idEmpresaSelect;
+    }
+
+    public int getIdEmpresaNuevoCert() {
+        return this.idEmpresaNuevoCert;
+    }
+
+    public String getClave1() {
+        return this.clave1;
+    }
+
+    public String getClave2() {
+        return this.clave2;
+    }
+
+    public String getCertName() {
+        return this.certName;
+    }
+
+    public String getKeyName() {
+        return this.keyName;
+    }
+
+    public boolean isActivarCertificado() {
+        return this.activarCertificado;
+    }
+
+    public void setIdEmpresaSelect(int idEmpresaSelect) {
+        this.idEmpresaSelect = idEmpresaSelect;
+    }
+
+    public void setIdEmpresaNuevoCert(int idEmpresaNuevoCert) {
+        this.idEmpresaNuevoCert = idEmpresaNuevoCert;
+    }
+
+    public void setClave1(String clave1) {
+        this.clave1 = clave1;
+    }
+
+    public void setClave2(String clave2) {
+        this.clave2 = clave2;
+    }
+
+    public void setCertName(String certName) {
+        this.certName = certName;
+    }
+
+    public void setKeyName(String keyName) {
+        this.keyName = keyName;
+    }
+
+    public void setActivarCertificado(boolean activarCertificado) {
+        this.activarCertificado = activarCertificado;
+    }
 }

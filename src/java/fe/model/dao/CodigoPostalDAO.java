@@ -8,15 +8,14 @@ package fe.model.dao;
 import fe.db.MCcodigopostal;
 import fe.model.util.hibernateutil.HibernateUtilApl;
 import fe.model.util.hibernateutil.HibernateUtilEmi;
-
-import java.io.Serializable;
-import java.util.List;
-
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.NonUniqueResultException;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Restrictions;
+
+import java.io.Serializable;
+import java.util.List;
 
 /**
  * @author Eduardo C. Flores Ambrosio <EB&S>

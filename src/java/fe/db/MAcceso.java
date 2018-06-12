@@ -5,25 +5,15 @@ package fe.db;
  * @Date 14-01-2013
  * Tabla de Acceso para almacenar e identificar a usuarios
  */
-import java.io.Serializable;
-import java.text.SimpleDateFormat;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.GeneratedValue;
-import javax.persistence.ManyToMany;
-import javax.persistence.Table;
-import javax.persistence.Column;
-import javax.persistence.ManyToOne;
-import javax.persistence.CascadeType;
+
 import org.hibernate.annotations.Index;
 
+import javax.persistence.*;
+import java.io.Serializable;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
-import javax.persistence.Temporal;
 //import org.apache.commons.lang.StringEscapeUtils;
 
 @SuppressWarnings("serial")

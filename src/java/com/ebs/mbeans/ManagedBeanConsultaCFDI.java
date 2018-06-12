@@ -5,8 +5,7 @@
  */
 package com.ebs.mbeans;
 
-import com.ebs.CancelacionCFDI.CancelaCFDITest;
-import com.ebs.CancelacionCFDI.CancelaCFDI;
+import com.ebs.CancelacionCFDI.*;
 import com.ebs.catalogos.TiposComprobante;
 import com.ebs.catalogos.TiposDocumento;
 import com.ebs.clienteFEWS.ClienteFEWS;
@@ -29,9 +28,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
-
-import lombok.Getter;
-import lombok.Setter;
 import org.joda.time.Days;
 import org.joda.time.LocalDateTime;
 
@@ -66,8 +62,7 @@ public class ManagedBeanConsultaCFDI implements Serializable {
     private String strEstatus;
 
 
-    @Getter
-    @Setter
+    
     private int empresaIdFiltro = -1;
     /*
             opciones.add(new SelectItem("numeroFactura", "Numero Factura"));
@@ -80,43 +75,32 @@ public class ManagedBeanConsultaCFDI implements Serializable {
                 opciones.add(new SelectItem("noCliente", "No. Cliente"));
                 opciones.add(new SelectItem("razonSocial", "Razón Social"));
      */
-    @Getter
-    @Setter
+    
     private String numeroFactura;
-    @Getter
-    @Setter
+    
     private String folioErp;
-    @Getter
-    @Setter
+    
     private String rfc;
-    @Getter
-    @Setter
+    
     private String serie;
-    @Getter
-    @Setter
+    
     private String noCliente;
-    @Getter
-    @Setter
+    
     private boolean esClienteEmpresa;
 
-    @Getter
-    @Setter
+    
     private String razonSocial;
 
-    @Getter
-    @Setter
+    
     private Date datDesde;//Fecha Inicial
-    @Getter
-    @Setter
+    
     private Date datHasta;//Fecha Final
 
 
-    @Getter
-    @Setter
+    
     private String numPolizaSeguro;//Parametro de busqueda de bupa mexico
 
-    @Getter
-    @Setter
+    
     private String UUID;
 
 
@@ -134,23 +118,18 @@ public class ManagedBeanConsultaCFDI implements Serializable {
     private CfdiDAO daoCFDI;
     private MaterialDAO matDao;
     private MCfd cfd;
-    @Getter
-    @Setter
+    
     private List<Integer> listCFDS;
-    @Getter
-    @Setter
+    
     private List<Integer> listCFDSAux;
     //private List<MCfd> selectedCFDS;//Donde se guardaran los cfdi extraidos del listmap
-    @Getter
-    @Setter
+    
     private List<Integer> selectedCFDSIds;//Donde se guardaran los cfdi extraidos del listmap
     private MCfd selectedMCFD;//FACTURA axiliar
 
-    @Getter
-    @Setter
+    
     private LazyDataModel<VistaCfdiOtro> listMapMCA;
-    @Getter
-    @Setter
+    
     private List<VistaCfdiOtro> listMapMCASelecteds;
 
     private SimpleDateFormat sdfDateFormatter;
@@ -243,7 +222,7 @@ public class ManagedBeanConsultaCFDI implements Serializable {
         idsEmpresasAsignadas = lista.toArray(new Integer[lista.size()]);
 
         //BUSCA EN LOS PERFILES SI EL USUARIO PUEDE CANCELAR ARCHIVOS
-        this.cancelar = ((activeUser.getPerfil().getPerfil() & Long.parseLong(numPerfilCancelacion)) == Long.parseLong(numPerfilCancelacion)) ? true : false;
+        this.cancelar = (activeUser.getPerfil().getPerfil() & Long.parseLong(numPerfilCancelacion)) == Long.parseLong(numPerfilCancelacion);
 
     }
 
@@ -269,13 +248,16 @@ public class ManagedBeanConsultaCFDI implements Serializable {
                 switch (id){
                     case 1:
                         //BUSCAR SI EL CLIENTE TIENE OTRO CLIENTE
+                        System.out.println("Buscando si el cliente tiene clientes");
                         AgenteClienteDAO cliente = new AgenteClienteDAO();
-                        Integer idAgente = cliente.BuscarAgente(activeUser.getId());
-                        if(idAgente != null && idAgente > 0 ){
-                            List<Integer> clientesAgente = cliente.BuscarClientesDeAgente(activeUser.getId());
+                        String idAgente = cliente.BuscarAgente(activeUser.getId());
+                        if(idAgente != null && !idAgente.isEmpty() ){
+                            List<String> clientesAgente = cliente.BuscarClientesDeAgente(idAgente);
                             //GENERA LA BUSQUEDA CON PARAMETROS ADICIONALES
                             iniciaBusqueda(idsBusqueda, true, clientesAgente);
-                        }
+                        }else
+                            iniciaBusqueda(idsBusqueda, false, null);
+
                         break;
                 }
             }
@@ -284,7 +266,7 @@ public class ManagedBeanConsultaCFDI implements Serializable {
             iniciaBusqueda(idsBusqueda, false, null);
     }
 
-    private void iniciaBusqueda(Integer[] idsBusqueda, boolean agente, List<Integer> clientesAgente){
+    private void iniciaBusqueda(Integer[] idsBusqueda, boolean agente, List<String> clientesAgente){
         if (esClienteEmpresa) {//Si el Usuario es un cliente
             System.out.println("Buscando cliente cliente");
             if (validacionCliente()) {
@@ -673,21 +655,21 @@ public class ManagedBeanConsultaCFDI implements Serializable {
                                     //CANCELA FACTURAS CON UUID´S ANTERIORES
                                     if (cfd.getUuid().startsWith("PRUEBA")) {
                                         if (folio2 != null && !folio2.isEmpty())
-                                            acuse = cancela.cancelaTestFolioErp2(rfcEmpresa, cfd.getSerieErp(), cfd.getFolioErp(), folio2, pswCancelacion);
+                                            acuse = cancela.cancelaTestFolioErp2("Portal", rfcEmpresa, cfd.getSerieErp(), cfd.getFolioErp(), folio2, pswCancelacion);
                                         else
-                                            acuse = cancela.cancelaTest(rfcEmpresa, cfd.getSerieErp(), cfd.getFolioErp(), pswCancelacion);
+                                            acuse = cancela.cancelaTest("Portal", rfcEmpresa, cfd.getSerieErp(), cfd.getFolioErp(), pswCancelacion);
                                     } else
-                                        acuse = cancela.cancelaTestUuid(rfcEmpresa, cfd.getUuid(), pswCancelacion);
+                                        acuse = cancela.cancelaTestUuid("Portal", rfcEmpresa, cfd.getUuid(), pswCancelacion);
 
 
                                 } else {
                                     System.out.print("Cancelando->Produccion");
-                                    acuse = new CancelaCFDI().cancelaUuid(rfcEmpresa, cfd.getUuid(), pswCancelacion);
+                                    acuse = new CancelaCFDI().cancelaUuid("Portal", rfcEmpresa, cfd.getUuid(), pswCancelacion);
                                 }
 
                             } else {
                                 System.out.print("Cancelando->Produccion");
-                                acuse = new CancelaCFDI().cancelaUuid(rfcEmpresa, cfd.getUuid(), pswCancelacion);
+                                acuse = new CancelaCFDI().cancelaUuid("Portal", rfcEmpresa, cfd.getUuid(), pswCancelacion);
                             }
 
                             /*
@@ -1246,5 +1228,221 @@ public class ManagedBeanConsultaCFDI implements Serializable {
 
     public void setCancelar(boolean cancelar) {
         this.cancelar = cancelar;
+    }
+
+    public Integer[] getIdsEmpresasAsignadas() {
+        return idsEmpresasAsignadas;
+    }
+
+    public void setIdsEmpresasAsignadas(Integer[] idsEmpresasAsignadas) {
+        this.idsEmpresasAsignadas = idsEmpresasAsignadas;
+    }
+
+    public int getEmpresaIdFiltro() {
+        return empresaIdFiltro;
+    }
+
+    public void setEmpresaIdFiltro(int empresaIdFiltro) {
+        this.empresaIdFiltro = empresaIdFiltro;
+    }
+
+    public String getNumeroFactura() {
+        return numeroFactura;
+    }
+
+    public void setNumeroFactura(String numeroFactura) {
+        this.numeroFactura = numeroFactura;
+    }
+
+    public String getFolioErp() {
+        return folioErp;
+    }
+
+    public void setFolioErp(String folioErp) {
+        this.folioErp = folioErp;
+    }
+
+    public String getRfc() {
+        return rfc;
+    }
+
+    public void setRfc(String rfc) {
+        this.rfc = rfc;
+    }
+
+    public String getSerie() {
+        return serie;
+    }
+
+    public void setSerie(String serie) {
+        this.serie = serie;
+    }
+
+    public String getNoCliente() {
+        return noCliente;
+    }
+
+    public void setNoCliente(String noCliente) {
+        this.noCliente = noCliente;
+    }
+
+    public boolean isEsClienteEmpresa() {
+        return esClienteEmpresa;
+    }
+
+    public void setEsClienteEmpresa(boolean esClienteEmpresa) {
+        this.esClienteEmpresa = esClienteEmpresa;
+    }
+
+    public String getRazonSocial() {
+        return razonSocial;
+    }
+
+    public void setRazonSocial(String razonSocial) {
+        this.razonSocial = razonSocial;
+    }
+
+    public Date getDatDesde() {
+        return datDesde;
+    }
+
+    public void setDatDesde(Date datDesde) {
+        this.datDesde = datDesde;
+    }
+
+    public Date getDatHasta() {
+        return datHasta;
+    }
+
+    public void setDatHasta(Date datHasta) {
+        this.datHasta = datHasta;
+    }
+
+    public String getNumPolizaSeguro() {
+        return numPolizaSeguro;
+    }
+
+    public void setNumPolizaSeguro(String numPolizaSeguro) {
+        this.numPolizaSeguro = numPolizaSeguro;
+    }
+
+    public String getUUID() {
+        return UUID;
+    }
+
+    public void setUUID(String UUID) {
+        this.UUID = UUID;
+    }
+
+    public EmpresaDAO getDaoEmp() {
+        return daoEmp;
+    }
+
+    public void setDaoEmp(EmpresaDAO daoEmp) {
+        this.daoEmp = daoEmp;
+    }
+
+    public ArchivosCfdDAO getDaoArch() {
+        return daoArch;
+    }
+
+    public void setDaoArch(ArchivosCfdDAO daoArch) {
+        this.daoArch = daoArch;
+    }
+
+    public ConfigDAO getDAOCong() {
+        return DAOCong;
+    }
+
+    public void setDAOCong(ConfigDAO DAOCong) {
+        this.DAOCong = DAOCong;
+    }
+
+    public CfdiDAO getDaoCFDI() {
+        return daoCFDI;
+    }
+
+    public void setDaoCFDI(CfdiDAO daoCFDI) {
+        this.daoCFDI = daoCFDI;
+    }
+
+    public List<Integer> getListCFDS() {
+        return listCFDS;
+    }
+
+    public void setListCFDS(List<Integer> listCFDS) {
+        this.listCFDS = listCFDS;
+    }
+
+    public List<Integer> getListCFDSAux() {
+        return listCFDSAux;
+    }
+
+    public void setListCFDSAux(List<Integer> listCFDSAux) {
+        this.listCFDSAux = listCFDSAux;
+    }
+
+    public List<Integer> getSelectedCFDSIds() {
+        return selectedCFDSIds;
+    }
+
+    public void setSelectedCFDSIds(List<Integer> selectedCFDSIds) {
+        this.selectedCFDSIds = selectedCFDSIds;
+    }
+
+    public LazyDataModel<VistaCfdiOtro> getListMapMCA() {
+        return listMapMCA;
+    }
+
+    public void setListMapMCA(LazyDataModel<VistaCfdiOtro> listMapMCA) {
+        this.listMapMCA = listMapMCA;
+    }
+
+    public List<VistaCfdiOtro> getListMapMCASelecteds() {
+        return listMapMCASelecteds;
+    }
+
+    public void setListMapMCASelecteds(List<VistaCfdiOtro> listMapMCASelecteds) {
+        this.listMapMCASelecteds = listMapMCASelecteds;
+    }
+
+    public HttpServletRequest getHttpServletRequest() {
+        return httpServletRequest;
+    }
+
+    public FacesContext getFaceContext() {
+        return faceContext;
+    }
+
+    public String getAppContext() {
+        return appContext;
+    }
+
+    public void setAppContext(String appContext) {
+        this.appContext = appContext;
+    }
+
+    public boolean isDebug() {
+        return debug;
+    }
+
+    public void setDebug(boolean debug) {
+        this.debug = debug;
+    }
+
+    public String getPswCancelacion() {
+        return pswCancelacion;
+    }
+
+    public String getNumPerfilCancelacion() {
+        return numPerfilCancelacion;
+    }
+
+    public LogAccesoDAO getDaoLog() {
+        return daoLog;
+    }
+
+    public void setDaoLog(LogAccesoDAO daoLog) {
+        this.daoLog = daoLog;
     }
 }

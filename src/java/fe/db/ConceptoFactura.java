@@ -3,8 +3,6 @@ package fe.db;
 import com.ebs.catalogos.TipoImpuesto;
 import com.ebs.exceptions.BadImpuestoTypeException;
 import fe.model.fmanual.ImpuestoContainer;
-import lombok.Getter;
-import lombok.Setter;
 
 import java.io.Serializable;
 import java.math.RoundingMode;
@@ -17,83 +15,39 @@ import java.util.Locale;
 
 public class ConceptoFactura implements Serializable {
 
-    @Getter
-    @Setter
     private int id;
-    @Getter
-    @Setter
     private String conceptofacturacion;//descripcion
-    @Getter
-    @Setter
     private String claveconcepto;//noidentificacion
-    @Getter
-    @Setter
     private String noCuentaPredial;
-    @Getter
-    @Setter
     private String pedimento = "";
-    @Getter
-    @Setter
     private double valorUnitario;
-    @Getter
-    @Setter
     private double cantidad = 1.0;
-    @Getter
-    @Setter
     private double cantidadAduana = 1.0;
-    @Getter
-    @Setter
     private double descuento;//
-    @Getter
-    @Setter
     private String claveProdServ;//Clave
-    @Getter
-    @Setter
     private String claveUnidad;//Clave
-    @Getter
-    @Setter
     private String unidad;//unidad de medida
-    @Getter
-    @Setter
     private double importe = 0.00;//
-    @Getter
-    @Setter
     private String busquedaProdServ = "";
-    @Getter
-    @Setter
     private String busquedaUnidad = "";
-    @Getter
-    @Setter
     private List<ImpuestoContainer> traslados;//Datos de impuestos de traslados
-    @Getter
-    @Setter
     private List<ImpuestoContainer> retenciones;//Datos de impuestos de retenciones
-    @Getter
-    @Setter
     private List<String> params;
-    @Getter
-    @Setter
     private List<Integer> indicesParams;
-    @Getter
-    @Setter
     private double precioUnitarioAdenda = 0.0;
-    @Getter
-    @Setter
     private double montoLineaAdenda= 0.0;
 
-    @Getter
-    @Setter
     private double tipoCambioUsd = 1.0;
-    @Getter @Setter private boolean usandoComplementoComercioExterior = false;
-    @Getter @Setter  String fraccionArancelaria;
-    @Getter @Setter  String unidadAduana;
-    @Getter @Setter  double valorUnitarioAduana;
-    @Getter @Setter  double valorDolares;
+    private boolean usandoComplementoComercioExterior = false;
+    String fraccionArancelaria;
+    String unidadAduana;
+    double valorUnitarioAduana;
+    double valorDolares;
     ///Comercio exterior descripcion especifica del concepto
-    @Getter @Setter  String marca        ;
-    @Getter @Setter  String modelo       ;
-    @Getter @Setter  String subModelo    ;
-    @Getter @Setter  String numeroSerie  ;
+    String marca        ;
+    String modelo       ;
+    String subModelo    ;
+    String numeroSerie  ;
 
 
     DecimalFormat decf = new DecimalFormat("00.00");
@@ -310,4 +264,251 @@ public class ConceptoFactura implements Serializable {
         return nf.format(cantidad);
     }
 
+    public int getId() {
+        return this.id;
+    }
+
+    public String getConceptofacturacion() {
+        return this.conceptofacturacion;
+    }
+
+    public String getClaveconcepto() {
+        return this.claveconcepto;
+    }
+
+    public String getNoCuentaPredial() {
+        return this.noCuentaPredial;
+    }
+
+    public String getPedimento() {
+        return this.pedimento;
+    }
+
+    public double getValorUnitario() {
+        return this.valorUnitario;
+    }
+
+    public double getCantidad() {
+        return this.cantidad;
+    }
+
+    public double getCantidadAduana() {
+        return this.cantidadAduana;
+    }
+
+    public double getDescuento() {
+        return this.descuento;
+    }
+
+    public String getClaveProdServ() {
+        return this.claveProdServ;
+    }
+
+    public String getClaveUnidad() {
+        return this.claveUnidad;
+    }
+
+    public String getUnidad() {
+        return this.unidad;
+    }
+
+    public double getImporte() {
+        return this.importe;
+    }
+
+    public String getBusquedaProdServ() {
+        return this.busquedaProdServ;
+    }
+
+    public String getBusquedaUnidad() {
+        return this.busquedaUnidad;
+    }
+
+    public List<ImpuestoContainer> getTraslados() {
+        return this.traslados;
+    }
+
+    public List<ImpuestoContainer> getRetenciones() {
+        return this.retenciones;
+    }
+
+    public List<String> getParams() {
+        return this.params;
+    }
+
+    public List<Integer> getIndicesParams() {
+        return this.indicesParams;
+    }
+
+    public double getPrecioUnitarioAdenda() {
+        return this.precioUnitarioAdenda;
+    }
+
+    public double getMontoLineaAdenda() {
+        return this.montoLineaAdenda;
+    }
+
+    public double getTipoCambioUsd() {
+        return this.tipoCambioUsd;
+    }
+
+    public boolean isUsandoComplementoComercioExterior() {
+        return this.usandoComplementoComercioExterior;
+    }
+
+    public String getFraccionArancelaria() {
+        return this.fraccionArancelaria;
+    }
+
+    public String getUnidadAduana() {
+        return this.unidadAduana;
+    }
+
+    public double getValorUnitarioAduana() {
+        return this.valorUnitarioAduana;
+    }
+
+    public double getValorDolares() {
+        return this.valorDolares;
+    }
+
+    public String getMarca() {
+        return this.marca;
+    }
+
+    public String getModelo() {
+        return this.modelo;
+    }
+
+    public String getSubModelo() {
+        return this.subModelo;
+    }
+
+    public String getNumeroSerie() {
+        return this.numeroSerie;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public void setConceptofacturacion(String conceptofacturacion) {
+        this.conceptofacturacion = conceptofacturacion;
+    }
+
+    public void setClaveconcepto(String claveconcepto) {
+        this.claveconcepto = claveconcepto;
+    }
+
+    public void setNoCuentaPredial(String noCuentaPredial) {
+        this.noCuentaPredial = noCuentaPredial;
+    }
+
+    public void setPedimento(String pedimento) {
+        this.pedimento = pedimento;
+    }
+
+    public void setValorUnitario(double valorUnitario) {
+        this.valorUnitario = valorUnitario;
+    }
+
+    public void setCantidad(double cantidad) {
+        this.cantidad = cantidad;
+    }
+
+    public void setCantidadAduana(double cantidadAduana) {
+        this.cantidadAduana = cantidadAduana;
+    }
+
+    public void setDescuento(double descuento) {
+        this.descuento = descuento;
+    }
+
+    public void setClaveProdServ(String claveProdServ) {
+        this.claveProdServ = claveProdServ;
+    }
+
+    public void setClaveUnidad(String claveUnidad) {
+        this.claveUnidad = claveUnidad;
+    }
+
+    public void setUnidad(String unidad) {
+        this.unidad = unidad;
+    }
+
+    public void setImporte(double importe) {
+        this.importe = importe;
+    }
+
+    public void setBusquedaProdServ(String busquedaProdServ) {
+        this.busquedaProdServ = busquedaProdServ;
+    }
+
+    public void setBusquedaUnidad(String busquedaUnidad) {
+        this.busquedaUnidad = busquedaUnidad;
+    }
+
+    public void setTraslados(List<ImpuestoContainer> traslados) {
+        this.traslados = traslados;
+    }
+
+    public void setRetenciones(List<ImpuestoContainer> retenciones) {
+        this.retenciones = retenciones;
+    }
+
+    public void setParams(List<String> params) {
+        this.params = params;
+    }
+
+    public void setIndicesParams(List<Integer> indicesParams) {
+        this.indicesParams = indicesParams;
+    }
+
+    public void setPrecioUnitarioAdenda(double precioUnitarioAdenda) {
+        this.precioUnitarioAdenda = precioUnitarioAdenda;
+    }
+
+    public void setMontoLineaAdenda(double montoLineaAdenda) {
+        this.montoLineaAdenda = montoLineaAdenda;
+    }
+
+    public void setTipoCambioUsd(double tipoCambioUsd) {
+        this.tipoCambioUsd = tipoCambioUsd;
+    }
+
+    public void setUsandoComplementoComercioExterior(boolean usandoComplementoComercioExterior) {
+        this.usandoComplementoComercioExterior = usandoComplementoComercioExterior;
+    }
+
+    public void setFraccionArancelaria(String fraccionArancelaria) {
+        this.fraccionArancelaria = fraccionArancelaria;
+    }
+
+    public void setUnidadAduana(String unidadAduana) {
+        this.unidadAduana = unidadAduana;
+    }
+
+    public void setValorUnitarioAduana(double valorUnitarioAduana) {
+        this.valorUnitarioAduana = valorUnitarioAduana;
+    }
+
+    public void setValorDolares(double valorDolares) {
+        this.valorDolares = valorDolares;
+    }
+
+    public void setMarca(String marca) {
+        this.marca = marca;
+    }
+
+    public void setModelo(String modelo) {
+        this.modelo = modelo;
+    }
+
+    public void setSubModelo(String subModelo) {
+        this.subModelo = subModelo;
+    }
+
+    public void setNumeroSerie(String numeroSerie) {
+        this.numeroSerie = numeroSerie;
+    }
 }

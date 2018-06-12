@@ -1,25 +1,31 @@
 package fe.db;
 
-import java.io.*;
 import javax.persistence.*;
+import java.io.Serializable;
+import java.util.List;
+import java.util.Objects;
 
 
 @Entity
 @Table(name = "M_AGENTE_CLIENTE", catalog = "FACCORP_APL")
 public class MAgenteCliente implements Serializable {
-    private int id;
+    /** Identificador Unico AutoIncremental*/
+    private Integer id;
     private String agente;
-    private int accesoAgenteId;
-    private int accesoClienteId;
     private MAcceso mAccesoByAccesoAgenteId;
-    private MAcceso mAccesoByAccesoClienteId;
+    private String NumeroCliente;
 
     @Id
-    @Column(name = "ID", nullable = true, insertable = "false", updatable = "false")
-    public int getId() {
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "ID")
+    public Integer getId() {
         return id;
     }
 
+    /**
+     * @param id
+     *            the id to set
+     */
     public void setId(int id) {
         this.id = id;
     }
@@ -34,25 +40,26 @@ public class MAgenteCliente implements Serializable {
         this.agente = agente;
     }
 
-    @Basic
-    @Column(name = "acceso_agente_ID", nullable = false)
-    public int getAccesoAgenteId() {
-        return accesoAgenteId;
-    }
+    //@Basic
+    //@Column(name = "acceso_agente_ID", nullable = false)
+    //public int getAccesoAgenteId() {
+     //   return accesoAgenteId;
+   // }
 
-    public void setAccesoAgenteId(int accesoAgenteId) {
-        this.accesoAgenteId = accesoAgenteId;
-    }
+   // public void setAccesoAgenteId(int accesoAgenteId) {
+     ///   this.accesoAgenteId = accesoAgenteId;
+    //}
 
-    @Basic
-    @Column(name = "acceso_cliente_ID", nullable = false)
-    public int getAccesoClienteId() {
-        return accesoClienteId;
-    }
+    //@Basic
+    //@Column(name = "acceso_cliente_ID", nullable = false)
+    //public int getAccesoClienteId() {
+     //   return accesoClienteId;
+    //}
 
-    public void setAccesoClienteId(int accesoClienteId) {
-        this.accesoClienteId = accesoClienteId;
-    }
+    //public void setAccesoClienteId(int accesoClienteId) {
+    //    this.accesoClienteId = accesoClienteId;
+    //}
+
 
     @ManyToOne
     @JoinColumn(name = "acceso_agente_ID", referencedColumnName = "ID", nullable = false)
@@ -64,13 +71,12 @@ public class MAgenteCliente implements Serializable {
         this.mAccesoByAccesoAgenteId = mAccesoByAccesoAgenteId;
     }
 
-    @ManyToOne
-    @JoinColumn(name = "acceso_cliente_ID", referencedColumnName = "ID", nullable = false)
-    public MAcceso getmAccesoByAccesoClienteId() {
-        return mAccesoByAccesoClienteId;
+    @Column(name = "Numero_Cliente", nullable = false, length = 45)
+    public String getNumeroCliente() {
+        return NumeroCliente;
     }
 
-    public void setmAccesoByAccesoClienteId(MAcceso mAccesoByAccesoClienteId) {
-        this.mAccesoByAccesoClienteId = mAccesoByAccesoClienteId;
+    public void setNumeroCliente(String numeroCliente) {
+        this.NumeroCliente = numeroCliente;
     }
 }

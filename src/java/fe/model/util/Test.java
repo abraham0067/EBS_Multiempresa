@@ -1,9 +1,9 @@
 package fe.model.util;
 
+import org.bouncycastle.util.encoders.Base64;
+
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-
-import org.bouncycastle.util.encoders.Base64;
 
 public class Test {
 

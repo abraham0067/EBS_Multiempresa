@@ -9,12 +9,9 @@ import com.ebs.clienteFEWS.ClienteFEWS;
 import com.ebs.model.LazyProformaDataModel;
 import fe.db.MAcceso;
 import fe.db.MCfdProforma;
-import fe.db.MEmpresa;
 import fe.db.MOtroProforma;
 import fe.model.dao.ConfigDAO;
 import fe.model.dao.ProformaDao;
-import lombok.Getter;
-import lombok.Setter;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -42,46 +39,24 @@ public class ManagedBeanConsultaProforma implements Serializable {
     private static final int ESTADO_DOCUMENTO_GENERADO = 1;
     private static final int ESTADO_DOCUMENTO_OK = 2;
 
-    @Getter
-    @Setter
     private int empresaIdFiltro = -1;
     private Integer[] idsEmpresasAsignadas;
-    @Getter
-    @Setter
     private String strEstatus;
-    @Getter
-    @Setter
     private String tipBusq;//-1 indica que no existe el tipo de busqueda
-    @Getter
-    @Setter
     private boolean booTipoBusqueda;//Bandera para activar o desactivar la casilla del parametro
-    @Getter
-    @Setter
     private String paramBusq;//Parametro de busqueda
-    @Getter
-    @Setter
     private Date datDesde;//Fecha Inicial
-    @Getter
-    @Setter
     private Date datHasta;//Fecha Final
 
     private String contentName;
     private String archivoSubFileName;
     private String archivoSubContentType;
-    @Getter
-    @Setter
     private List<MCfdProforma> archivosCFDI;
-    @Getter
-    @Setter
     private List<MCfdProforma> listMap;//USADO EN LA CANCELACION
     private ConfigDAO DAOCong;
     private ProformaDao daoCFDI;
     ;
-    @Getter
-    @Setter
     private LazyDataModel<MCfdProforma> listMapMCA;
-    @Getter
-    @Setter
     private List<MCfdProforma> listMapMCASelecteds;
     private List<Integer> listAuxSelected;
     private SimpleDateFormat sdfDateFormatter;
@@ -454,5 +429,93 @@ public class ManagedBeanConsultaProforma implements Serializable {
             res = "-";
         }
         return res;
+    }
+
+    public int getEmpresaIdFiltro() {
+        return this.empresaIdFiltro;
+    }
+
+    public String getStrEstatus() {
+        return this.strEstatus;
+    }
+
+    public String getTipBusq() {
+        return this.tipBusq;
+    }
+
+    public boolean isBooTipoBusqueda() {
+        return this.booTipoBusqueda;
+    }
+
+    public String getParamBusq() {
+        return this.paramBusq;
+    }
+
+    public Date getDatDesde() {
+        return this.datDesde;
+    }
+
+    public Date getDatHasta() {
+        return this.datHasta;
+    }
+
+    public List<MCfdProforma> getArchivosCFDI() {
+        return this.archivosCFDI;
+    }
+
+    public List<MCfdProforma> getListMap() {
+        return this.listMap;
+    }
+
+    public LazyDataModel<MCfdProforma> getListMapMCA() {
+        return this.listMapMCA;
+    }
+
+    public List<MCfdProforma> getListMapMCASelecteds() {
+        return this.listMapMCASelecteds;
+    }
+
+    public void setEmpresaIdFiltro(int empresaIdFiltro) {
+        this.empresaIdFiltro = empresaIdFiltro;
+    }
+
+    public void setStrEstatus(String strEstatus) {
+        this.strEstatus = strEstatus;
+    }
+
+    public void setTipBusq(String tipBusq) {
+        this.tipBusq = tipBusq;
+    }
+
+    public void setBooTipoBusqueda(boolean booTipoBusqueda) {
+        this.booTipoBusqueda = booTipoBusqueda;
+    }
+
+    public void setParamBusq(String paramBusq) {
+        this.paramBusq = paramBusq;
+    }
+
+    public void setDatDesde(Date datDesde) {
+        this.datDesde = datDesde;
+    }
+
+    public void setDatHasta(Date datHasta) {
+        this.datHasta = datHasta;
+    }
+
+    public void setArchivosCFDI(List<MCfdProforma> archivosCFDI) {
+        this.archivosCFDI = archivosCFDI;
+    }
+
+    public void setListMap(List<MCfdProforma> listMap) {
+        this.listMap = listMap;
+    }
+
+    public void setListMapMCA(LazyDataModel<MCfdProforma> listMapMCA) {
+        this.listMapMCA = listMapMCA;
+    }
+
+    public void setListMapMCASelecteds(List<MCfdProforma> listMapMCASelecteds) {
+        this.listMapMCASelecteds = listMapMCASelecteds;
     }
 }

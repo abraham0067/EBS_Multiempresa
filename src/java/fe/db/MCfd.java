@@ -9,22 +9,15 @@ package fe.db;
  *
  *
  */
+
+import org.hibernate.annotations.Index;
+
+import javax.persistence.*;
 import java.io.Serializable;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-
-import org.hibernate.annotations.Index;
 
 
 @SuppressWarnings({"serial", "unused"})

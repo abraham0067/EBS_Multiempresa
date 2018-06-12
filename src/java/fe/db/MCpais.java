@@ -4,8 +4,9 @@
  * and open the template in the editor.
  */
 package fe.db;
-import java.io.Serializable;
+
 import javax.persistence.*;
+import java.io.Serializable;
 /**
  *
  * @author Eduardo C. Flores Ambrosio <EB&S>

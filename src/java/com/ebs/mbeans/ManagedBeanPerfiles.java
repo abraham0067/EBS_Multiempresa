@@ -5,8 +5,10 @@
  */
 package com.ebs.mbeans;
 
-import static com.sun.faces.el.ELUtils.createValueExpression;
-
+import com.ebs.menu.MenuBuilder;
+import com.ebs.menu.MenuItem;
+import com.ebs.menu.SubMenu;
+import com.ebs.menu.WebMenu;
 import fe.db.MAcceso;
 import fe.db.MAcceso.Nivel;
 import fe.db.MEmpresa;
@@ -16,36 +18,30 @@ import fe.model.dao.EmpresaDAO;
 import fe.model.dao.LogAccesoDAO;
 import fe.model.dao.LoginDAO;
 import fe.model.dao.PerfilDAO;
-//import fe.web.webPerfil;
-import com.ebs.menu.*;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-import javax.annotation.PostConstruct;
-import javax.faces.application.FacesMessage;
-import javax.faces.context.FacesContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-
-import lombok.Getter;
-import lombok.Setter;
 import org.apache.commons.io.IOUtils;
-import org.primefaces.context.RequestContext;
-
-import java.io.Serializable;
-import javax.faces.component.html.HtmlForm;
-import javax.swing.text.StyledEditorKit;
-
 import org.primefaces.component.commandbutton.CommandButton;
 import org.primefaces.component.fieldset.Fieldset;
 import org.primefaces.component.growl.Growl;
 import org.primefaces.component.inputswitch.InputSwitch;
 import org.primefaces.component.outputlabel.OutputLabel;
 import org.primefaces.component.panelgrid.PanelGrid;
-import org.primefaces.model.menu.Submenu;
+import org.primefaces.context.RequestContext;
+
+import javax.annotation.PostConstruct;
+import javax.faces.application.FacesMessage;
+import javax.faces.component.html.HtmlForm;
+import javax.faces.context.FacesContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+import java.io.IOException;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
+import static com.sun.faces.el.ELUtils.createValueExpression;
+
+//import fe.web.webPerfil;
 
 /**
  * @author Eduardo C. Flores Ambrosio <Eduardo at EB&S>
@@ -70,7 +66,7 @@ public class ManagedBeanPerfiles implements Serializable {
 
     private int idEmpresaSelect;//Para el registro de un nuevo perfil
     private Integer idPerfil;
-    @Getter @Setter private int empresaIdFiltro;
+    private int empresaIdFiltro;
 
     private MPerfil perfil;
     private MPerfil nuevoPerfil;
@@ -535,4 +531,12 @@ public class ManagedBeanPerfiles implements Serializable {
         this.values = values;
     }
 
+
+    public int getEmpresaIdFiltro() {
+        return this.empresaIdFiltro;
+    }
+
+    public void setEmpresaIdFiltro(int empresaIdFiltro) {
+        this.empresaIdFiltro = empresaIdFiltro;
+    }
 }

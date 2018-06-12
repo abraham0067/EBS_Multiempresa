@@ -5,8 +5,7 @@
  */
 package com.ebs.mbeans;
 
-import com.ebs.CancelacionRetencion.CancelaRetencion;
-import com.ebs.CancelacionRetencion.CancelaRetencionTest;
+import com.ebs.CancelacionRetencion.*;
 //import com.ebs.fe.wsgi.util.Zipper;
 import com.opensymphony.xwork2.ActionSupport;
 import com.ebs.model.LazyMapearRetencionArchiDataModel;
@@ -43,10 +42,7 @@ import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-
 import fe.pki.PKI;
-import lombok.Getter;
-import lombok.Setter;
 import org.apache.commons.io.FilenameUtils;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.DefaultStreamedContent;
@@ -64,8 +60,6 @@ public class ManagedBeanRetenciones implements Serializable {
     private FacesContext context;
     private HttpServletRequest httpRequest;
     private String appContext;
-
-
     private List<McfdRetencion> ListCFds;
     private LazyDataModel<MapearRetencionArchi> listMapRetenciones;
     private List<MapearRetencionArchi> selectedRetenciones;
@@ -105,7 +99,6 @@ public class ManagedBeanRetenciones implements Serializable {
     private String ReciboFechatxt;
     private int idAux;
 
-    @Getter @Setter
     private UploadedFile ufRetencionesFile;
 
     private String claveWebService = "samaujYHh3voRwBSM5ajw29Wd6Y=";
@@ -625,5 +618,14 @@ public class ManagedBeanRetenciones implements Serializable {
     public void setBusestatus(int busestatus) {
         this.busestatus = busestatus;
     }
+
+    public UploadedFile getUfRetencionesFile() {
+        return ufRetencionesFile;
+    }
+
+    public void setUfRetencionesFile(UploadedFile ufRetencionesFile) {
+        this.ufRetencionesFile = ufRetencionesFile;
+    }
+
 
 }

@@ -8,9 +8,7 @@ package fe.model.fmanual;
 import com.ebs.catalogos.TipoImpuesto;
 import com.ebs.util.FloatsNumbersUtil;
 import com.mchange.lang.FloatUtils;
-import lombok.Getter;
-import lombok.NonNull;
-import lombok.Setter;
+
 
 import java.io.Serializable;
 
@@ -21,44 +19,36 @@ public class ImpuestoContainer implements Serializable {
     /*
      * Tipo de impuesto del objeto
      */
-    @Getter
-    @Setter
+    
     private TipoImpuesto tipo = TipoImpuesto.TRASLADO;
     /*
      * Clave de impuesto
      */
-    @Getter
-    @Setter
+    
     private String impuesto;
-    @Getter
-    @Setter
+    
     private String descripcionImpuesto;
     /*
      * Cantidad base
      */
-    @Getter
-    @Setter
+    
     private String base;
     /*
      * Clave del tipo de factos
      */
-    @Getter
-    @Setter
+    
     private String tipoFactor;
     /*
      * Tasa
      */
-    @Getter
-    @Setter
+    
     private String tasaOcuota;
     /*
      * Requerido en caso de que el tipo de factos se diferente de EXENTO()
      */
-    @Getter
-    @Setter
+    
     private String importe;
-    @Getter
-    @Setter
+    
     private boolean aplicar;
 
     public ImpuestoContainer(TipoImpuesto tipo) {
@@ -72,7 +62,7 @@ public class ImpuestoContainer implements Serializable {
         aplicar = false;
     }
 
-    public ImpuestoContainer(TipoImpuesto tipo, @NonNull String tipoFactor) {
+    public ImpuestoContainer(TipoImpuesto tipo,  String tipoFactor) {
         this.tipo = tipo;
         this.tipoFactor = tipoFactor;
         impuesto = "";
@@ -83,7 +73,7 @@ public class ImpuestoContainer implements Serializable {
         aplicar = false;
     }
 
-    public ImpuestoContainer(@NonNull String impuesto, @NonNull String base, @NonNull String tipoFactor, @NonNull String tasaOcuota, @NonNull TipoImpuesto tipo) {
+    public ImpuestoContainer( String impuesto,  String base,  String tipoFactor,  String tasaOcuota,  TipoImpuesto tipo) {
         this.impuesto = impuesto;
         this.base = base;
         this.tipoFactor = tipoFactor;
@@ -95,8 +85,8 @@ public class ImpuestoContainer implements Serializable {
 
     }
 
-    public void loadData(@NonNull String impuesto, @NonNull String base, @NonNull String tipoFactor,
-                         @NonNull String tasaOcuota, @NonNull TipoImpuesto tipo) {
+    public void loadData( String impuesto,  String base,  String tipoFactor,
+                          String tasaOcuota,  TipoImpuesto tipo) {
         this.impuesto = impuesto;
         this.base = base;
         this.tipoFactor = tipoFactor;
@@ -124,4 +114,67 @@ public class ImpuestoContainer implements Serializable {
         }
     }
 
+    public TipoImpuesto getTipo() {
+        return tipo;
+    }
+
+    public void setTipo(TipoImpuesto tipo) {
+        this.tipo = tipo;
+    }
+
+    public String getImpuesto() {
+        return impuesto;
+    }
+
+    public void setImpuesto(String impuesto) {
+        this.impuesto = impuesto;
+    }
+
+    public String getDescripcionImpuesto() {
+        return descripcionImpuesto;
+    }
+
+    public void setDescripcionImpuesto(String descripcionImpuesto) {
+        this.descripcionImpuesto = descripcionImpuesto;
+    }
+
+    public String getBase() {
+        return base;
+    }
+
+    public void setBase(String base) {
+        this.base = base;
+    }
+
+    public String getTipoFactor() {
+        return tipoFactor;
+    }
+
+    public void setTipoFactor(String tipoFactor) {
+        this.tipoFactor = tipoFactor;
+    }
+
+    public String getTasaOcuota() {
+        return tasaOcuota;
+    }
+
+    public void setTasaOcuota(String tasaOcuota) {
+        this.tasaOcuota = tasaOcuota;
+    }
+
+    public String getImporte() {
+        return importe;
+    }
+
+    public void setImporte(String importe) {
+        this.importe = importe;
+    }
+
+    public boolean isAplicar() {
+        return aplicar;
+    }
+
+    public void setAplicar(boolean aplicar) {
+        this.aplicar = aplicar;
+    }
 }

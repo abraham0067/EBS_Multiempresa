@@ -17,16 +17,16 @@ public class AgenteClienteDAO {
         hibManagerSU = new HibernateUtilEmi();
     }
 
-    public Integer BuscarAgente(int idCliente) {
-        Integer agente = null;
+    public String BuscarAgente(int idCliente) {
+        String agente = null;
         try {
             hibManagerRO.initTransaction();
-            String sql = "SELECT m.agente  FROM MAgenteCliente m WHERE m.accesoAgenteId =:idCliente";
+            String sql = "SELECT m.agente  FROM MAgenteCliente m WHERE m.mAccesoByAccesoAgenteId.id =:idCliente";
             Query cfd =  hibManagerRO.getSession().createQuery(sql);
             cfd.setParameter("idCliente", idCliente);
             cfd.setMaxResults(1);
 
-            agente = (Integer) cfd.uniqueResult();
+            agente = (String)cfd.uniqueResult();
 
             hibManagerRO.getTransaction().commit();
         } catch (HibernateException ex) {
@@ -38,15 +38,15 @@ public class AgenteClienteDAO {
         return agente;
     }
 
-    public List<Integer> BuscarClientesDeAgente(int idCliente) {
-        List<Integer> agente = null;
+    public List<String> BuscarClientesDeAgente(String idAgente) {
+        List<String> noCliente = null;
         try {
             hibManagerRO.initTransaction();
-            String sql = "SELECT m.agente  FROM MAgenteCliente m WHERE m.accesoAgenteId =:idCliente";
+            String sql = "SELECT m.numeroCliente FROM MAgenteCliente m WHERE m.agente =:idAgente";
             Query cfd =  hibManagerRO.getSession().createQuery(sql);
-            cfd.setParameter("idCliente", idCliente);
+            cfd.setParameter("idAgente", idAgente);
 
-            agente = cfd.list();
+            noCliente = cfd.list();
 
             hibManagerRO.getTransaction().commit();
         } catch (HibernateException ex) {
@@ -55,7 +55,7 @@ public class AgenteClienteDAO {
         } finally {
             hibManagerRO.closeSession();
         }
-        return agente;
+        return noCliente;
     }
 
 }

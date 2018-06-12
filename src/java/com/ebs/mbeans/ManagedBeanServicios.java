@@ -1,18 +1,14 @@
 package com.ebs.mbeans;
 
 import fe.db.CServiciosFacturacion;
-import fe.db.MServicio;
 import fe.db.MServiciosFacturacion;
 import fe.model.dao.ServiciosFacturacionDAO;
-import lombok.Getter;
-import lombok.Setter;
 import org.hibernate.HibernateException;
 import org.primefaces.component.commandbutton.CommandButton;
 import org.primefaces.component.fieldset.Fieldset;
 import org.primefaces.component.inputswitch.InputSwitch;
 import org.primefaces.component.outputlabel.OutputLabel;
 import org.primefaces.component.panelgrid.PanelGrid;
-import org.primefaces.context.PrimeFacesContext;
 import org.primefaces.context.RequestContext;
 
 import javax.faces.application.FacesMessage;
@@ -26,39 +22,23 @@ import static com.sun.faces.el.ELUtils.createValueExpression;
 
 public class ManagedBeanServicios implements Serializable {
 
-    @Getter
-    @Setter
-    List<CServiciosFacturacion> servicios;
-    @Getter
-    @Setter
-    List<MServiciosFacturacion> mServicios;
-    ServiciosFacturacionDAO serviciosDao;
+    private List<CServiciosFacturacion> servicios;
+    private List<MServiciosFacturacion> mServicios;
+    private ServiciosFacturacionDAO serviciosDao;
 
-    List<CServiciosFacturacion> auxServicios;
+    private List<CServiciosFacturacion> auxServicios;
 
-    List<MServiciosFacturacion> auxMServicios;
+    private List<MServiciosFacturacion> auxMServicios;
 
-    @Getter
-    @Setter
     private int idEmpresaSelect;
-    @Getter
-    @Setter
     private int idServicioSelect;
-    @Getter
-    @Setter
-    HtmlForm serviciosForm;
-    @Getter
-    @Setter
+    private HtmlForm serviciosForm;
     private boolean[] valuesServicios;
 
-    @Getter
-    @Setter
     private String[] valuesServiciosDelete;
 
     private List<Integer> servId;
 
-    @Getter
-    @Setter
     private String nombreServicio;
 
 
@@ -321,5 +301,69 @@ public class ManagedBeanServicios implements Serializable {
         }
 
         RequestContext.getCurrentInstance().addCallbackParam("resDelete", status);
+    }
+
+    public List<CServiciosFacturacion> getServicios() {
+        return this.servicios;
+    }
+
+    public List<MServiciosFacturacion> getMServicios() {
+        return this.mServicios;
+    }
+
+    public int getIdEmpresaSelect() {
+        return this.idEmpresaSelect;
+    }
+
+    public int getIdServicioSelect() {
+        return this.idServicioSelect;
+    }
+
+    public HtmlForm getServiciosForm() {
+        return this.serviciosForm;
+    }
+
+    public boolean[] getValuesServicios() {
+        return this.valuesServicios;
+    }
+
+    public String[] getValuesServiciosDelete() {
+        return this.valuesServiciosDelete;
+    }
+
+    public String getNombreServicio() {
+        return this.nombreServicio;
+    }
+
+    public void setServicios(List<CServiciosFacturacion> servicios) {
+        this.servicios = servicios;
+    }
+
+    public void setMServicios(List<MServiciosFacturacion> mServicios) {
+        this.mServicios = mServicios;
+    }
+
+    public void setIdEmpresaSelect(int idEmpresaSelect) {
+        this.idEmpresaSelect = idEmpresaSelect;
+    }
+
+    public void setIdServicioSelect(int idServicioSelect) {
+        this.idServicioSelect = idServicioSelect;
+    }
+
+    public void setServiciosForm(HtmlForm serviciosForm) {
+        this.serviciosForm = serviciosForm;
+    }
+
+    public void setValuesServicios(boolean[] valuesServicios) {
+        this.valuesServicios = valuesServicios;
+    }
+
+    public void setValuesServiciosDelete(String[] valuesServiciosDelete) {
+        this.valuesServiciosDelete = valuesServiciosDelete;
+    }
+
+    public void setNombreServicio(String nombreServicio) {
+        this.nombreServicio = nombreServicio;
     }
 }

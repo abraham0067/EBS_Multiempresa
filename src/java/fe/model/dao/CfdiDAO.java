@@ -1,34 +1,17 @@
 package fe.model.dao;
 
+import fe.db.*;
+import fe.model.util.hibernateutil.HibernateUtilApl;
+import fe.model.util.hibernateutil.HibernateUtilEmi;
+import org.hibernate.Criteria;
+import org.hibernate.HibernateException;
+import org.hibernate.criterion.*;
+
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-
-import com.ebs.catalogos.TiposDocumento;
-import org.hibernate.Criteria;
-import org.hibernate.HibernateException;
-import org.hibernate.criterion.Expression;
-import org.hibernate.criterion.MatchMode;
-import org.hibernate.criterion.Order;
-import org.hibernate.criterion.Restrictions;
-
-import fe.db.MAcceso;
-import fe.db.MArchivosCfd;
-import fe.db.MCfd;
-import fe.db.MCfdXml;
-import fe.db.MOtro;
-import fe.db.MapearCfdArchi;
-import fe.model.util.hibernateutil.HibernateUtilApl;
-import fe.model.util.hibernateutil.HibernateUtilEmi;
-
-import java.io.Serializable;
-
-import org.hibernate.Session;
-import org.hibernate.Transaction;
-import org.hibernate.criterion.CriteriaSpecification;
-import org.hibernate.criterion.Criterion;
-import org.hibernate.criterion.Projections;
 
 
 public class CfdiDAO implements Serializable {

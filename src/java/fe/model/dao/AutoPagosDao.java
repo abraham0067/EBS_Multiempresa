@@ -7,11 +7,7 @@ import fe.db.MOtroPagos;
 import fe.model.util.hibernateutil.HibernateUtilApl;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
-import org.hibernate.criterion.CriteriaSpecification;
-import org.hibernate.criterion.Expression;
-import org.hibernate.criterion.Order;
-import org.hibernate.criterion.Projections;
-import org.hibernate.criterion.Restrictions;
+import org.hibernate.criterion.*;
 
 import java.io.Serializable;
 import java.util.Calendar;

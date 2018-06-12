@@ -1,24 +1,13 @@
 package com.ebs.complementoextdata;
 
-import lombok.Getter;
-import lombok.Setter;
-
 /**
  * Created by eflores on 16/01/2018.
  */
 public class CustomDescripcionEspecificaData {
-    @Getter
-    @Setter
-    String Marca = "";
-    @Getter
-    @Setter
-    String Modelo = "";
-    @Getter
-    @Setter
-    String SubModelo = "";
-    @Getter
-    @Setter
-    String NumeroSerie = "";
+    private String Marca = "";
+    private String Modelo = "";
+    private String SubModelo = "";
+    private String NumeroSerie = "";
 
     public CustomDescripcionEspecificaData() {
         this("", "", "", "");
@@ -34,5 +23,37 @@ public class CustomDescripcionEspecificaData {
         Modelo = modelo;
         SubModelo = subModelo;
         NumeroSerie = numeroSerie;
+    }
+
+    public String getMarca() {
+        return this.Marca;
+    }
+
+    public String getModelo() {
+        return this.Modelo;
+    }
+
+    public String getSubModelo() {
+        return this.SubModelo;
+    }
+
+    public String getNumeroSerie() {
+        return this.NumeroSerie;
+    }
+
+    public void setMarca(String Marca) {
+        this.Marca = Marca;
+    }
+
+    public void setModelo(String Modelo) {
+        this.Modelo = Modelo;
+    }
+
+    public void setSubModelo(String SubModelo) {
+        this.SubModelo = SubModelo;
+    }
+
+    public void setNumeroSerie(String NumeroSerie) {
+        this.NumeroSerie = NumeroSerie;
     }
 }

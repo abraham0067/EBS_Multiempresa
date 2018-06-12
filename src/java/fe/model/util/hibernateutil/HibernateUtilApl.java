@@ -5,12 +5,13 @@
  */
 package fe.model.util.hibernateutil;
 
-import java.io.Serializable;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
-import org.hibernate.Transaction;
 import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
 import org.hibernate.cfg.AnnotationConfiguration;
+
+import java.io.Serializable;
 
 /**
  *

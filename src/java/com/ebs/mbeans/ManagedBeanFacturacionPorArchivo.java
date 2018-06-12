@@ -1,17 +1,16 @@
 package com.ebs.mbeans;
 
 import com.ebs.LeerExcel.LeerDatosExcel;
-import fe.db.*;
-import fe.model.dao.*;
-import fe.model.util.Limpiador;
+import fe.db.MAcceso;
+import fe.db.MConfig;
+import fe.db.MEmpresa;
+import fe.db.MEmpresaMTimbre;
+import fe.model.dao.ConfigDAO;
+import fe.model.dao.EmpresaDAO;
+import fe.model.dao.EmpresaTimbreDAO;
+import fe.model.dao.LogAccesoDAO;
 import fe.net.ClienteFacturaManual;
-import fe.sat.Direccion12Data;
-import fe.sat.v33.CatalogoData;
 import fe.sat.v33.ComprobanteData;
-import fe.sat.v33.EmisorData;
-import fe.sat.v33.ReceptorData;
-import lombok.Getter;
-import lombok.Setter;
 import mx.com.ebs.emision.factura.utilierias.PintarLog;
 import org.jdom.Document;
 import org.jdom.Namespace;
@@ -25,12 +24,12 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.io.ByteArrayInputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import javax.servlet.http.HttpSession;
 
 @ManagedBean
 @SessionScoped
@@ -53,19 +52,11 @@ public class ManagedBeanFacturacionPorArchivo implements Serializable {
     private static boolean DEBUG = false;
     private UploadedFile uploadedFile;
 
-    @Setter
-    @Getter
     private String nombreArchivo;
-    @Setter
-    @Getter
     private int idEmpresa;//ID de la empresa emisora
 
-    @Setter
-    @Getter
     private boolean deshabilitaBotonGeneraFActura;
     private ArrayList<String> respuestas;
-    @Setter
-    @Getter
     private MEmpresa empresaEmisora;
     /**
      * Creates a new instance of ManagedBeanPlantillas
@@ -234,6 +225,38 @@ public class ManagedBeanFacturacionPorArchivo implements Serializable {
             res = false;
         }
         return res;
+    }
+
+    public String getNombreArchivo() {
+        return this.nombreArchivo;
+    }
+
+    public int getIdEmpresa() {
+        return this.idEmpresa;
+    }
+
+    public boolean isDeshabilitaBotonGeneraFActura() {
+        return this.deshabilitaBotonGeneraFActura;
+    }
+
+    public MEmpresa getEmpresaEmisora() {
+        return this.empresaEmisora;
+    }
+
+    public void setNombreArchivo(String nombreArchivo) {
+        this.nombreArchivo = nombreArchivo;
+    }
+
+    public void setIdEmpresa(int idEmpresa) {
+        this.idEmpresa = idEmpresa;
+    }
+
+    public void setDeshabilitaBotonGeneraFActura(boolean deshabilitaBotonGeneraFActura) {
+        this.deshabilitaBotonGeneraFActura = deshabilitaBotonGeneraFActura;
+    }
+
+    public void setEmpresaEmisora(MEmpresa empresaEmisora) {
+        this.empresaEmisora = empresaEmisora;
     }
 
     /*public ComprobanteData agregarDatosComprobante(ComprobanteData comprobanteData){

@@ -12,17 +12,15 @@ import fe.db.MLogAcceso;
 import fe.db.MLogApp;
 import fe.model.dao.LogAPPDAO;
 import fe.model.dao.LogAccesoDAO;
-import java.io.Serializable;
-import java.util.Date;
+import org.primefaces.model.LazyDataModel;
+
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-
-import lombok.Getter;
-import lombok.Setter;
-import org.primefaces.model.LazyDataModel;
+import java.io.Serializable;
+import java.util.Date;
 
 /**
  *
@@ -48,8 +46,8 @@ public class ManagedBeanLogs implements Serializable {
     private String paramBusqueda;
 
     ///Campos de busqueda para logs de proceso de facturacion
-    @Getter @Setter    private String serie;
-    @Getter @Setter    private String folioErp;
+    private String serie;
+    private String folioErp;
 
     private int idEmpresaSelected;
     private LogAccesoDAO daoLog;
@@ -238,5 +236,20 @@ public class ManagedBeanLogs implements Serializable {
     public void setListLogAcceso(LazyDataModel<MLogAcceso> listLogAcceso) {
         this.listLogAcceso = listLogAcceso;
     }
-    
+
+    public String getSerie() {
+        return this.serie;
+    }
+
+    public String getFolioErp() {
+        return this.folioErp;
+    }
+
+    public void setSerie(String serie) {
+        this.serie = serie;
+    }
+
+    public void setFolioErp(String folioErp) {
+        this.folioErp = folioErp;
+    }
 }

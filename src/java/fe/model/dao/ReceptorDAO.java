@@ -1,20 +1,18 @@
 package fe.model.dao;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import fe.db.MAcceso;
+import fe.db.MAcceso.Nivel;
 import fe.db.MEmpresa;
+import fe.db.MReceptor;
+import fe.model.util.hibernateutil.HibernateUtilApl;
+import fe.model.util.hibernateutil.HibernateUtilEmi;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 
-import fe.db.MAcceso;
-import fe.db.MReceptor;
-import fe.db.MAcceso.Nivel;
-import fe.model.util.hibernateutil.HibernateUtilApl;
-import fe.model.util.hibernateutil.HibernateUtilEmi;
 import java.io.Serializable;
+import java.util.List;
 
 public class ReceptorDAO implements Serializable {
 

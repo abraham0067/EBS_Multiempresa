@@ -1,20 +1,18 @@
 package fe.model.dao;
 
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-
+import fe.db.MAcceso;
+import fe.db.MInvoice;
+import fe.model.util.hibernateutil.HibernateUtilApl;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.criterion.Expression;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 
-import fe.db.MAcceso;
-import fe.db.MInvoice;
-import fe.model.util.hibernateutil.HibernateUtilApl;
-import fe.model.util.hibernateutil.HibernateUtilEmi;
 import java.io.Serializable;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
 
 @SuppressWarnings("deprecation")
 public class CfdDAO implements Serializable {

@@ -33,7 +33,7 @@ public class VistaCfdiOtroDao {
                                                String rfc,
                                                String serie,
                                                String noCliente,
-                                               List<Integer> clientesAgente,
+                                               List<String> clientesAgente,
                                                String razonSocial, Date fechaDesde, Date fechaHasta, int estatus,
                                                String numPolizaSeguro,
                                                String UUID,
@@ -167,7 +167,7 @@ public class VistaCfdiOtroDao {
                                                        String rfc,
                                                        String serie,
                                                        String noCliente,///Inmutable
-                                                       List<Integer> clientesAgente,
+                                                       List<String> clientesAgente,
                                                        String razonSocial,
                                                        Date fechaDesde, Date fechaHasta,
                                                        String numPolizaSeguro,
@@ -215,17 +215,21 @@ public class VistaCfdiOtroDao {
                 cr.add(Restrictions.in("serie", series));
             }
 
-            if (noCliente != null && !noCliente.isEmpty()) {
-
-                String[] noClientes = noCliente.trim().split(",");
-
-                if(noClientes.length >= 2){
-                    cr.add(Restrictions.in("noCliente",noClientes));
-                }else{
-                    cr.add(Restrictions.like("noCliente", "%" + noCliente.trim() + "%", MatchMode.ANYWHERE));
+            /*------------SE AGREGA CODIGO PARA LOS AGENTES-------------------*/
+            if(agente && (clientesAgente != null && !clientesAgente.isEmpty()))
+                cr.add(Restrictions.in("noCliente", clientesAgente));
+            /*----------------------------------------------------------------*/
+            else {
+                if (noCliente != null && !noCliente.isEmpty()) {
+                    String[] noClientes = noCliente.trim().split(",");
+                    if (noClientes.length >= 2) {
+                        cr.add(Restrictions.in("noCliente", noClientes));
+                    } else {
+                        cr.add(Restrictions.like("noCliente", "%" + noCliente.trim() + "%", MatchMode.ANYWHERE));
+                    }
                 }
-
             }
+
             if (razonSocial != null && !razonSocial.isEmpty()) {
                 cr.add(Restrictions.like("razonSocial", razonSocial.trim(), MatchMode.ANYWHERE));
             }
@@ -258,11 +262,6 @@ public class VistaCfdiOtroDao {
                 cr.add(Expression.le("fecha", fechaHasta));
             }
 
-
-            /*------------SE AGREGA CODIGO PARA LOS AGENTES-------------------*/
-            if(agente && (clientesAgente != null && !clientesAgente.isEmpty()))
-                cr.add(Restrictions.in("noCliente", clientesAgente));
-            /*----------------------------------------------------------------*/
 
             cr.addOrder(Order.desc("fecha"));
 

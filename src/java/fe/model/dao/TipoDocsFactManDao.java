@@ -3,7 +3,6 @@ package fe.model.dao;
 
 import fe.db.MTdocsFactman;
 import fe.model.util.hibernateutil.HibernateUtilApl;
-import fe.model.util.hibernateutil.HibernateUtilEmi;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.criterion.Order;

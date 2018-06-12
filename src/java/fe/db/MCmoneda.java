@@ -5,8 +5,8 @@
  */
 package fe.db;
 
-import java.io.Serializable;
 import javax.persistence.*;
+import java.io.Serializable;
 
 /**
  * Created by eflores on 25/04/2017.

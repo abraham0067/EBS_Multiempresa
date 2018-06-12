@@ -28,7 +28,6 @@ import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import lombok.Getter;
 import org.primefaces.context.RequestContext;
 
 /**
@@ -38,7 +37,6 @@ import org.primefaces.context.RequestContext;
 @ManagedBean(name = "managedBeanLogin")
 @RequestScoped
 public class ManagedBeanLogin implements Serializable {
-    @Getter
     private int  numberOfActiveUsers =  0;
 
     //Datos del usuario
@@ -436,6 +434,9 @@ public class ManagedBeanLogin implements Serializable {
     public void setIsProduction(boolean isProduction) {
         this.isProduction = isProduction;
     }
-    
-    
+
+    public int getNumberOfActiveUsers() {
+        return numberOfActiveUsers;
+    }
+
 }

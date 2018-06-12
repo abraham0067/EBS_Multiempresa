@@ -1,9 +1,8 @@
 package fe.model.util;
 
 import com.lowagie.text.html.HtmlEncoder;
-import fe.pki.*;
-import org.bouncycastle.util.encoders.*;
-import java.net.*;
+import fe.pki.PKI;
+import org.bouncycastle.util.encoders.Base64;
 
 public class CifraTexto
 {

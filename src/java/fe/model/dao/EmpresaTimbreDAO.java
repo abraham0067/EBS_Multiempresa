@@ -1,11 +1,11 @@
 package fe.model.dao;
 
+import fe.db.MEmpresaMTimbre;
+import fe.model.util.hibernateutil.HibernateUtilApl;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.criterion.Restrictions;
 
-import fe.db.MEmpresaMTimbre;
-import fe.model.util.hibernateutil.HibernateUtilApl;
 import java.io.Serializable;
 
 public class EmpresaTimbreDAO implements Serializable {

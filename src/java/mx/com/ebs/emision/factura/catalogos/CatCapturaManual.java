@@ -1,17 +1,16 @@
 
 package mx.com.ebs.emision.factura.catalogos;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import lombok.Getter;
-import mx.com.ebs.emision.factura.utilierias.PintarLog;
-import mx.com.ebs.emision.factura.utilierias.SesionUsuario;
-import mx.com.ebs.emision.factura.vo.catalogos.CatalogosBean;
 import fe.db.MEmpresa;
 import fe.db.MFolios;
 import fe.model.dao.EmpresaDAO;
+import mx.com.ebs.emision.factura.utilierias.PintarLog;
+import mx.com.ebs.emision.factura.utilierias.SesionUsuario;
+import mx.com.ebs.emision.factura.vo.catalogos.CatalogosBean;
+
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class CatCapturaManual extends Catalogo implements Serializable {
@@ -25,11 +24,8 @@ public class CatCapturaManual extends Catalogo implements Serializable {
     private static List<CatalogosBean> ivaMetaRet;
     private static List<CatalogosBean> isrMetaRet;
 
-    @Getter
     private static CatalogosBean ivaCatSingle;
-    @Getter
     private static CatalogosBean iepsCatSingle;
-    @Getter
     private static CatalogosBean isrCatSingle;
 
     private List<MEmpresa> listEmisor;       // lista de Emisores tomados de la base de datos
@@ -62,6 +58,18 @@ public class CatCapturaManual extends Catalogo implements Serializable {
         setListEmisor(consultaCatalogosEmpresasAsociadas());
         setIvaMeta(ivaMeta);
 
+    }
+
+    public static CatalogosBean getIvaCatSingle() {
+        return CatCapturaManual.ivaCatSingle;
+    }
+
+    public static CatalogosBean getIepsCatSingle() {
+        return CatCapturaManual.iepsCatSingle;
+    }
+
+    public static CatalogosBean getIsrCatSingle() {
+        return CatCapturaManual.isrCatSingle;
     }
 
     /**

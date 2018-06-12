@@ -7,7 +7,6 @@ import org.hibernate.HibernateException;
 import org.hibernate.Query;
 
 import java.util.List;
-import java.util.stream.Stream;
 
 public class ServiciosDAO {
     private HibernateUtilApl hibManagerRO;

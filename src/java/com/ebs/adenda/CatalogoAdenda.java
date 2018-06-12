@@ -1,15 +1,23 @@
 package com.ebs.adenda;
 
-import lombok.Getter;
-import lombok.Setter;
-
 public class CatalogoAdenda {
 
-    @Getter
-    @Setter
     private int idTipoAdenda;
-    @Getter
-    @Setter
     private String adenda;
 
+    public int getIdTipoAdenda() {
+        return this.idTipoAdenda;
+    }
+
+    public String getAdenda() {
+        return this.adenda;
+    }
+
+    public void setIdTipoAdenda(int idTipoAdenda) {
+        this.idTipoAdenda = idTipoAdenda;
+    }
+
+    public void setAdenda(String adenda) {
+        this.adenda = adenda;
+    }
 }

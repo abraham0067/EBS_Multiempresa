@@ -7,13 +7,13 @@ package fe.model.dao;
 
 import fe.db.MCcuotasImpuestos;
 import fe.model.util.hibernateutil.HibernateUtilApl;
-
-import java.io.Serializable;
-import java.util.List;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Restrictions;
+
+import java.io.Serializable;
+import java.util.List;
 
 /**
  *

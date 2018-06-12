@@ -6,23 +6,22 @@ package fe.xml;
 
 import com.barcodelib.barcode.QRCode;
 import fe.db.DBServer;
+import net.sf.jasperreports.engine.JasperRunManager;
+import net.sf.jasperreports.engine.data.JRXmlDataSource;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.ResourceBundle;
-import java.awt.Graphics2D;
-import java.awt.Image;
-import java.awt.Rectangle;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.sql.Blob;
-import java.util.HashMap;
-import java.util.Locale;
-import net.sf.jasperreports.engine.JasperRunManager;
-import net.sf.jasperreports.engine.data.JRXmlDataSource;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
 import java.sql.ResultSet;
 import java.text.NumberFormat;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.ResourceBundle;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 
 /**

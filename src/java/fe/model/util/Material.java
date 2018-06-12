@@ -6,8 +6,6 @@
 
 package fe.model.util;
 
-import org.apache.commons.lang3.StringEscapeUtils;
-
 import java.io.Serializable;
 
 /**

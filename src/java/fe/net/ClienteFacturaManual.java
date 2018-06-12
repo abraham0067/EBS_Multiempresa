@@ -3,21 +3,20 @@ package fe.net;
 import com.ebs.fe.wsgi.prd.ClientePrd;
 import com.ebs.fe.wsgi.test.ClienteTest;
 import com.ebs.fe.wsgi.util.Zipper;
-//import com.ebs.util.Zipper;
-import fe.sat.v33.CFDIFactory33;
-import fe.sat.v33.ComprobanteData;
 import fe.sat.ComprobanteException;
 import fe.sat.complementos.ComplementoException;
+import fe.sat.v33.CFDIFactory33;
+import fe.sat.v33.ComprobanteData;
 import fe.xml.CharUnicode;
-import fe.xml.ReadXMLProperties;
+import org.jdom.Document;
+import org.jdom.output.XMLOutputter;
 
-import java.util.Calendar;
 import java.io.*;
+import java.util.Calendar;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
-import org.jdom.Document;
-import org.jdom.output.XMLOutputter;
+//import com.ebs.util.Zipper;
 
 public class ClienteFacturaManual {
 

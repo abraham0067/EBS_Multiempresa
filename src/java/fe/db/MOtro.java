@@ -8,16 +8,9 @@ package fe.db;
  * que el cliente requiera en el portal.
  */
 
+import javax.persistence.*;
 import java.io.Serializable;
-import javax.persistence.Entity;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Table;
-import javax.persistence.Column;
 import java.util.Date;
-import javax.persistence.OneToOne;
-import javax.persistence.Temporal;
 //import org.apache.commons.lang.StringEscapeUtils;
 
 @SuppressWarnings("serial")

@@ -35,7 +35,7 @@ public class LazyCfdiDataModel extends LazyDataModel<VistaCfdiOtro> {
     private String rfc;
     private String serie;
     private String noCliente;
-    private List<Integer> clientesAgente;
+    private List<String> clientesAgente;
     private String razonSocial;
     private Date datDesde;//Fecha Inicial
     private Date datHasta;//Fecha Final
@@ -60,7 +60,7 @@ public class LazyCfdiDataModel extends LazyDataModel<VistaCfdiOtro> {
                              String rfc,
                              String serie,
                              String noCliente,
-                             List<Integer> clientesAgente,
+                             List<String> clientesAgente,
                              String razonSocial,
                              Date datDesde,
                              Date datHasta,
@@ -97,7 +97,7 @@ public class LazyCfdiDataModel extends LazyDataModel<VistaCfdiOtro> {
                              String rfc,
                              String serie,
                              String noCliente,
-                             List<Integer> clientesAgente,
+                             List<String> clientesAgente,
                              String razonSocial,
                              Date datDesde,
                              Date datHasta,
@@ -154,10 +154,8 @@ public class LazyCfdiDataModel extends LazyDataModel<VistaCfdiOtro> {
     public List<VistaCfdiOtro> load(int first, int pageSize, String sortField, SortOrder sortOrder, Map<String, Object> filters) {
         VistaCfdiOtroDao daoCfdi = new VistaCfdiOtroDao();
         //sort
-        if (sortField != null) {
+        if (sortField != null)
             Collections.sort(dataSource, new LazySorterCfdi(sortField, sortOrder));
-        }
-
 
         if (isCliente) {
             dataSource = daoCfdi.ListaParametrosClientes(

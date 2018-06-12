@@ -2,12 +2,9 @@ package fe.db;
 // Generated 26-nov-2015 16:41:11 by Hibernate Tools 4.3.1
 
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
+import javax.persistence.*;
+
 import static javax.persistence.GenerationType.IDENTITY;
-import javax.persistence.Id;
-import javax.persistence.Table;
 //import org.apache.commons.lang.StringEscapeUtils;
 
 /**

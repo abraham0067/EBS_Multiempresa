@@ -2,40 +2,28 @@ package com.ebs.mbeans;
 
 
 import com.ebs.adenda.*;
+import com.ebs.catalogos.TipoImpuesto;
 import com.ebs.complementoextdata.*;
 import com.ebs.exceptions.BadImpuestoTypeException;
+import com.ebs.helpers.LambdasHelper;
 import com.ebs.util.FloatsNumbersUtil;
 import com.ebs.util.IdGenerator;
-import com.ebs.catalogos.TipoImpuesto;
-import com.ebs.helpers.LambdasHelper;
+import fe.audi.*;
 import fe.db.*;
 import fe.model.dao.*;
 import fe.model.fmanual.ImpuestoContainer;
 import fe.model.util.CapturaManualModelo;
 import fe.net.ClienteFacturaManual;
 import fe.sat.addenda.coats.AddendaCoatsData;
-import fe.sat.complementos.comercioexterior.ComercioExteriorData;
-import fe.sat.complementos.comercioexterior.DescripcionesEspecificas;
-import fe.sat.complementos.comercioexterior.DescripcionesEspecificasData;
-import fe.sat.complementos.comercioexterior.DestinatarioComercio;
-import fe.sat.complementos.comercioexterior.DestinatarioComercioData;
-import fe.sat.complementos.comercioexterior.DomicilioComercio;
-import fe.sat.complementos.comercioexterior.DomicilioComercioData;
-import fe.sat.complementos.comercioexterior.EmisorComercioData;
-import fe.sat.complementos.comercioexterior.MercanciaComercio;
-import fe.sat.complementos.comercioexterior.MercanciaComercioData;
-import fe.sat.complementos.comercioexterior.PropietarioComercio;
-import fe.sat.complementos.comercioexterior.PropietarioComercioData;
-import fe.sat.complementos.comercioexterior.ReceptorComercioData;
+import fe.sat.complementos.comercioexterior.*;
 import fe.sat.complementos.v33.ComplementoFe;
-import fe.sat.v33.RetencionData;
-import fe.sat.v33.TrasladoData;
 import fe.sat.v33.*;
-import lombok.Getter;
-import lombok.Setter;
+import fe.vw.AddendaVolksWagenData;
+import fe.vw.FacturaVWData;
+import fe.vw.ParteVW;
+import fe.vw.ParteVWData;
 import mx.com.ebs.emision.factura.catalogos.CatCapturaManual;
 import mx.com.ebs.emision.factura.utilierias.PintarLog;
-import mx.com.ebs.emision.factura.vo.catalogos.CatalogosBean;
 import org.primefaces.behavior.ajax.AjaxBehavior;
 import org.primefaces.component.fieldset.Fieldset;
 import org.primefaces.component.inputtext.InputText;
@@ -46,6 +34,7 @@ import org.primefaces.context.RequestContext;
 
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
+import javax.faces.component.UIInput;
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -57,11 +46,6 @@ import java.text.NumberFormat;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import javax.faces.component.UIInput;
-import javax.ws.rs.GET;
-
-import fe.vw.*;
-import fe.audi.*;
 
 import static com.sun.faces.el.ELUtils.createValueExpression;
 
@@ -157,33 +141,17 @@ public class ManagedBeanFacturacionManual implements Serializable {
     private boolean codConfRequerido = false;
     private String codigoConfirmacion;
 
-    @Getter
-    @Setter
     private boolean cptoTmpShldAdd = false;
     /*
      * Lugar de emision
      */
-    @Getter
-    @Setter
     private String codigoPostal;
-    @Getter
-    @Setter
     private String residenciaFiscal;
-    @Getter
-    @Setter
     private String numRegIdTrib;
-    @Getter
-    @Setter
     private List<MCpais> paises;
-    @Getter
-    @Setter
     private boolean esReceptorExtranjero = false;
 
-    @Getter
-    @Setter
     public int requiredResidenciaFiscal = 0;
-    @Getter
-    @Setter
     public int requiredNumRegIdTrib = 0;
 
     /*
@@ -226,14 +194,8 @@ public class ManagedBeanFacturacionManual implements Serializable {
      * Moneda
      */
     private String moneda;
-    @Getter
-    @Setter
     private Integer decimalesRequeridos;
-    @Getter
-    @Setter
     private Double porcentajeVariacion;
-    @Getter
-    @Setter
     boolean resOperationApplyChanges = false;
     /**
      * Catalogo Impuestos de traslados por objeto temporal
@@ -255,8 +217,6 @@ public class ManagedBeanFacturacionManual implements Serializable {
     private List<ImpuestoContainer> trasladosFact;//Pueden haber varias combinaciones de IMPUESTO,FACTOR Y TASA
     private List<ImpuestoContainer> retencionesFact;//Se deben agrupar por tipo de impuesto
 
-    @Getter
-    @Setter
     private double tipoCambioDatosFacturaInput = 1.0;//Proporcionado por el usuario e
     private double tipoCambioActualBackend = 1.0;//Proporcionado por el SAT
     private double montoDescuento = 0.0;//Nivel Comprobante
@@ -269,21 +229,13 @@ public class ManagedBeanFacturacionManual implements Serializable {
     private ConceptoFactura tempConcepto;//Cuando se crea y se agrea un concepto
 
 
-    @Getter
     private final int NO_REQUERIDO = 0;
-    @Getter
     public final int REQUERIDO = 1;
-    @Getter
     private final int OPCIONAL = 2;
-    @Getter
     private final int DESCONOCIDO = -1;
 
 
-    @Getter
-    @Setter
     private int idFolio;
-    @Getter
-    @Setter
     private int idTipoDoc;
     private MTdocsFactman tipoDocObjFact;
     //Conceptos Asignados
@@ -308,10 +260,528 @@ public class ManagedBeanFacturacionManual implements Serializable {
     private boolean flgButtonEliminarDisabled = true;//Inicialmente el boton esta desactivado
     private double limiteSuperior = 0.0;
     private double limiteInferior = 0.0;
-    @Getter
-    @Setter
     private List<MTdocsFactman> tiposDocs;
     private IdGenerator idGen;
+
+    public boolean isCptoTmpShldAdd() {
+        return this.cptoTmpShldAdd;
+    }
+
+    public String getCodigoPostal() {
+        return this.codigoPostal;
+    }
+
+    public String getResidenciaFiscal() {
+        return this.residenciaFiscal;
+    }
+
+    public String getNumRegIdTrib() {
+        return this.numRegIdTrib;
+    }
+
+    public List<MCpais> getPaises() {
+        return this.paises;
+    }
+
+    public boolean isEsReceptorExtranjero() {
+        return this.esReceptorExtranjero;
+    }
+
+    public int getRequiredResidenciaFiscal() {
+        return this.requiredResidenciaFiscal;
+    }
+
+    public int getRequiredNumRegIdTrib() {
+        return this.requiredNumRegIdTrib;
+    }
+
+    public Integer getDecimalesRequeridos() {
+        return this.decimalesRequeridos;
+    }
+
+    public Double getPorcentajeVariacion() {
+        return this.porcentajeVariacion;
+    }
+
+    public boolean isResOperationApplyChanges() {
+        return this.resOperationApplyChanges;
+    }
+
+    public double getTipoCambioDatosFacturaInput() {
+        return this.tipoCambioDatosFacturaInput;
+    }
+
+    public int getNO_REQUERIDO() {
+        return this.NO_REQUERIDO;
+    }
+
+    public int getREQUERIDO() {
+        return this.REQUERIDO;
+    }
+
+    public int getOPCIONAL() {
+        return this.OPCIONAL;
+    }
+
+    public int getDESCONOCIDO() {
+        return this.DESCONOCIDO;
+    }
+
+    public int getIdFolio() {
+        return this.idFolio;
+    }
+
+    public int getIdTipoDoc() {
+        return this.idTipoDoc;
+    }
+
+    public List<MTdocsFactman> getTiposDocs() {
+        return this.tiposDocs;
+    }
+
+    public String[] getValuesAdditionalDataComp() {
+        return this.valuesAdditionalDataComp;
+    }
+
+    public String[] getValuesAdditionalDataCpto() {
+        return this.valuesAdditionalDataCpto;
+    }
+
+    public UIInput getInputTipoCambio() {
+        return this.inputTipoCambio;
+    }
+
+    public UIInput getInputCodigoConfirmacion() {
+        return this.inputCodigoConfirmacion;
+    }
+
+    public UIInput getInputResidenciaFiscal() {
+        return this.inputResidenciaFiscal;
+    }
+
+    public UIInput getInputNumRegIdTrib() {
+        return this.inputNumRegIdTrib;
+    }
+
+    public boolean isDisabledInputCondicionesDePago() {
+        return this.disabledInputCondicionesDePago;
+    }
+
+    public boolean isDisabledInputFormaDePago() {
+        return this.disabledInputFormaDePago;
+    }
+
+    public boolean isDisabledInputMetodoDePago() {
+        return this.disabledInputMetodoDePago;
+    }
+
+    public boolean isDisabledInputTipoCambio() {
+        return this.disabledInputTipoCambio;
+    }
+
+    public boolean isDisabledInputDescuentoDetalleConcepto() {
+        return this.disabledInputDescuentoDetalleConcepto;
+    }
+
+    public boolean isDisabledInputValorUnitarioDetalleConcepto() {
+        return this.disabledInputValorUnitarioDetalleConcepto;
+    }
+
+    public boolean isDisabledFieldSetImpuestosDetalleConcepto() {
+        return this.disabledFieldSetImpuestosDetalleConcepto;
+    }
+
+    public Fieldset getFieldSetRefComp() {
+        return this.fieldSetRefComp;
+    }
+
+    public Fieldset getFieldSetRefCpto() {
+        return this.fieldSetRefCpto;
+    }
+
+    public String getEmailCliente() {
+        return this.emailCliente;
+    }
+
+    public boolean isEnviarEmailCliente() {
+        return this.enviarEmailCliente;
+    }
+
+    public boolean isDisponibleComercioExterior() {
+        return this.disponibleComercioExterior;
+    }
+
+    public boolean isUsarComplementoComercioExterior() {
+        return this.usarComplementoComercioExterior;
+    }
+
+    public FlagsEntradasComercioExterior getFlagsEntradasComercioExterior() {
+        return this.flagsEntradasComercioExterior;
+    }
+
+    public List<CustomMercanciaData> getMercanciasData() {
+        return this.mercanciasData;
+    }
+
+    public CustomEmisorData getSingleEmisorData() {
+        return this.singleEmisorData;
+    }
+
+    public CustomDomicilioData getSingleDomicilioEmisorData() {
+        return this.singleDomicilioEmisorData;
+    }
+
+    public CustomPropietarioData getSinglePropietarioData() {
+        return this.singlePropietarioData;
+    }
+
+    public CustomReceptorData getSingleReceptorData() {
+        return this.singleReceptorData;
+    }
+
+    public CustomDomicilioData getSingleDomicilioReceptorData() {
+        return this.singleDomicilioReceptorData;
+    }
+
+    public CustomDestinatarioData getSingleDestinatarioData() {
+        return this.singleDestinatarioData;
+    }
+
+    public CustomDomicilioData getSingleDomicilioDestinatarioData() {
+        return this.singleDomicilioDestinatarioData;
+    }
+
+    public CustomComplementoComercioExteriorMetadata getSingleComplementoComercioExteriorData() {
+        return this.singleComplementoComercioExteriorData;
+    }
+
+    public Adenda getSingleAdenda() {
+        return this.singleAdenda;
+    }
+
+    public Proveedor getDataProveedorAdenda() {
+        return this.dataProveedorAdenda;
+    }
+
+    public Referencias getDataReferenciaAdenda() {
+        return this.dataReferenciaAdenda;
+    }
+
+    public List<Partes> getDataPartesAdenda() {
+        return this.dataPartesAdenda;
+    }
+
+    public Map<String, Integer> getListAdenda() {
+        return this.listAdenda;
+    }
+
+    public boolean isUsarComplementoAdendaVW() {
+        return this.usarComplementoAdendaVW;
+    }
+
+    public boolean isUsarComplementoAdendaAudi() {
+        return this.usarComplementoAdendaAudi;
+    }
+
+    public boolean isAdendaProductos() {
+        return this.adendaProductos;
+    }
+
+    public boolean isAdendaServicios() {
+        return this.adendaServicios;
+    }
+
+    public String getTipoAdenda() {
+        return this.tipoAdenda;
+    }
+
+    public String getClienteAddenda() {
+        return this.clienteAddenda;
+    }
+
+    public FacturaVWData getFactura() {
+        return this.factura;
+    }
+
+    public String getCodigoImpuestoAdenda() {
+        return this.codigoImpuestoAdenda;
+    }
+
+    public FacturaAudiData getFacturaAudi() {
+        return this.facturaAudi;
+    }
+
+    public boolean isServicioComercioExterior() {
+        return this.servicioComercioExterior;
+    }
+
+    public boolean isServAdendaVW() {
+        return this.servAdendaVW;
+    }
+
+    public boolean isServAdendaAudi() {
+        return this.servAdendaAudi;
+    }
+
+    public boolean isServAdenda() {
+        return this.servAdenda;
+    }
+
+    public List<CatalogoAdenda> getCatalogoAdendaList() {
+        return this.catalogoAdendaList;
+    }
+
+    public void setCptoTmpShldAdd(boolean cptoTmpShldAdd) {
+        this.cptoTmpShldAdd = cptoTmpShldAdd;
+    }
+
+    public void setCodigoPostal(String codigoPostal) {
+        this.codigoPostal = codigoPostal;
+    }
+
+    public void setResidenciaFiscal(String residenciaFiscal) {
+        this.residenciaFiscal = residenciaFiscal;
+    }
+
+    public void setNumRegIdTrib(String numRegIdTrib) {
+        this.numRegIdTrib = numRegIdTrib;
+    }
+
+    public void setPaises(List<MCpais> paises) {
+        this.paises = paises;
+    }
+
+    public void setEsReceptorExtranjero(boolean esReceptorExtranjero) {
+        this.esReceptorExtranjero = esReceptorExtranjero;
+    }
+
+    public void setRequiredResidenciaFiscal(int requiredResidenciaFiscal) {
+        this.requiredResidenciaFiscal = requiredResidenciaFiscal;
+    }
+
+    public void setRequiredNumRegIdTrib(int requiredNumRegIdTrib) {
+        this.requiredNumRegIdTrib = requiredNumRegIdTrib;
+    }
+
+    public void setDecimalesRequeridos(Integer decimalesRequeridos) {
+        this.decimalesRequeridos = decimalesRequeridos;
+    }
+
+    public void setPorcentajeVariacion(Double porcentajeVariacion) {
+        this.porcentajeVariacion = porcentajeVariacion;
+    }
+
+    public void setResOperationApplyChanges(boolean resOperationApplyChanges) {
+        this.resOperationApplyChanges = resOperationApplyChanges;
+    }
+
+    public void setTipoCambioDatosFacturaInput(double tipoCambioDatosFacturaInput) {
+        this.tipoCambioDatosFacturaInput = tipoCambioDatosFacturaInput;
+    }
+
+    public void setIdFolio(int idFolio) {
+        this.idFolio = idFolio;
+    }
+
+    public void setIdTipoDoc(int idTipoDoc) {
+        this.idTipoDoc = idTipoDoc;
+    }
+
+    public void setTiposDocs(List<MTdocsFactman> tiposDocs) {
+        this.tiposDocs = tiposDocs;
+    }
+
+    public void setValuesAdditionalDataComp(String[] valuesAdditionalDataComp) {
+        this.valuesAdditionalDataComp = valuesAdditionalDataComp;
+    }
+
+    public void setValuesAdditionalDataCpto(String[] valuesAdditionalDataCpto) {
+        this.valuesAdditionalDataCpto = valuesAdditionalDataCpto;
+    }
+
+    public void setInputTipoCambio(UIInput inputTipoCambio) {
+        this.inputTipoCambio = inputTipoCambio;
+    }
+
+    public void setInputCodigoConfirmacion(UIInput inputCodigoConfirmacion) {
+        this.inputCodigoConfirmacion = inputCodigoConfirmacion;
+    }
+
+    public void setInputResidenciaFiscal(UIInput inputResidenciaFiscal) {
+        this.inputResidenciaFiscal = inputResidenciaFiscal;
+    }
+
+    public void setInputNumRegIdTrib(UIInput inputNumRegIdTrib) {
+        this.inputNumRegIdTrib = inputNumRegIdTrib;
+    }
+
+    public void setDisabledInputCondicionesDePago(boolean disabledInputCondicionesDePago) {
+        this.disabledInputCondicionesDePago = disabledInputCondicionesDePago;
+    }
+
+    public void setDisabledInputFormaDePago(boolean disabledInputFormaDePago) {
+        this.disabledInputFormaDePago = disabledInputFormaDePago;
+    }
+
+    public void setDisabledInputMetodoDePago(boolean disabledInputMetodoDePago) {
+        this.disabledInputMetodoDePago = disabledInputMetodoDePago;
+    }
+
+    public void setDisabledInputTipoCambio(boolean disabledInputTipoCambio) {
+        this.disabledInputTipoCambio = disabledInputTipoCambio;
+    }
+
+    public void setDisabledInputDescuentoDetalleConcepto(boolean disabledInputDescuentoDetalleConcepto) {
+        this.disabledInputDescuentoDetalleConcepto = disabledInputDescuentoDetalleConcepto;
+    }
+
+    public void setDisabledInputValorUnitarioDetalleConcepto(boolean disabledInputValorUnitarioDetalleConcepto) {
+        this.disabledInputValorUnitarioDetalleConcepto = disabledInputValorUnitarioDetalleConcepto;
+    }
+
+    public void setDisabledFieldSetImpuestosDetalleConcepto(boolean disabledFieldSetImpuestosDetalleConcepto) {
+        this.disabledFieldSetImpuestosDetalleConcepto = disabledFieldSetImpuestosDetalleConcepto;
+    }
+
+    public void setFieldSetRefComp(Fieldset fieldSetRefComp) {
+        this.fieldSetRefComp = fieldSetRefComp;
+    }
+
+    public void setFieldSetRefCpto(Fieldset fieldSetRefCpto) {
+        this.fieldSetRefCpto = fieldSetRefCpto;
+    }
+
+    public void setEmailCliente(String emailCliente) {
+        this.emailCliente = emailCliente;
+    }
+
+    public void setEnviarEmailCliente(boolean enviarEmailCliente) {
+        this.enviarEmailCliente = enviarEmailCliente;
+    }
+
+    public void setDisponibleComercioExterior(boolean disponibleComercioExterior) {
+        this.disponibleComercioExterior = disponibleComercioExterior;
+    }
+
+    public void setUsarComplementoComercioExterior(boolean usarComplementoComercioExterior) {
+        this.usarComplementoComercioExterior = usarComplementoComercioExterior;
+    }
+
+    public void setFlagsEntradasComercioExterior(FlagsEntradasComercioExterior flagsEntradasComercioExterior) {
+        this.flagsEntradasComercioExterior = flagsEntradasComercioExterior;
+    }
+
+    public void setMercanciasData(List<CustomMercanciaData> mercanciasData) {
+        this.mercanciasData = mercanciasData;
+    }
+
+    public void setSingleEmisorData(CustomEmisorData singleEmisorData) {
+        this.singleEmisorData = singleEmisorData;
+    }
+
+    public void setSingleDomicilioEmisorData(CustomDomicilioData singleDomicilioEmisorData) {
+        this.singleDomicilioEmisorData = singleDomicilioEmisorData;
+    }
+
+    public void setSinglePropietarioData(CustomPropietarioData singlePropietarioData) {
+        this.singlePropietarioData = singlePropietarioData;
+    }
+
+    public void setSingleReceptorData(CustomReceptorData singleReceptorData) {
+        this.singleReceptorData = singleReceptorData;
+    }
+
+    public void setSingleDomicilioReceptorData(CustomDomicilioData singleDomicilioReceptorData) {
+        this.singleDomicilioReceptorData = singleDomicilioReceptorData;
+    }
+
+    public void setSingleDestinatarioData(CustomDestinatarioData singleDestinatarioData) {
+        this.singleDestinatarioData = singleDestinatarioData;
+    }
+
+    public void setSingleDomicilioDestinatarioData(CustomDomicilioData singleDomicilioDestinatarioData) {
+        this.singleDomicilioDestinatarioData = singleDomicilioDestinatarioData;
+    }
+
+    public void setSingleComplementoComercioExteriorData(CustomComplementoComercioExteriorMetadata singleComplementoComercioExteriorData) {
+        this.singleComplementoComercioExteriorData = singleComplementoComercioExteriorData;
+    }
+
+    public void setSingleAdenda(Adenda singleAdenda) {
+        this.singleAdenda = singleAdenda;
+    }
+
+    public void setDataProveedorAdenda(Proveedor dataProveedorAdenda) {
+        this.dataProveedorAdenda = dataProveedorAdenda;
+    }
+
+    public void setDataReferenciaAdenda(Referencias dataReferenciaAdenda) {
+        this.dataReferenciaAdenda = dataReferenciaAdenda;
+    }
+
+    public void setDataPartesAdenda(List<Partes> dataPartesAdenda) {
+        this.dataPartesAdenda = dataPartesAdenda;
+    }
+
+    public void setListAdenda(Map<String, Integer> listAdenda) {
+        this.listAdenda = listAdenda;
+    }
+
+    public void setUsarComplementoAdendaVW(boolean usarComplementoAdendaVW) {
+        this.usarComplementoAdendaVW = usarComplementoAdendaVW;
+    }
+
+    public void setUsarComplementoAdendaAudi(boolean usarComplementoAdendaAudi) {
+        this.usarComplementoAdendaAudi = usarComplementoAdendaAudi;
+    }
+
+    public void setAdendaProductos(boolean adendaProductos) {
+        this.adendaProductos = adendaProductos;
+    }
+
+    public void setAdendaServicios(boolean adendaServicios) {
+        this.adendaServicios = adendaServicios;
+    }
+
+    public void setTipoAdenda(String tipoAdenda) {
+        this.tipoAdenda = tipoAdenda;
+    }
+
+    public void setClienteAddenda(String clienteAddenda) {
+        this.clienteAddenda = clienteAddenda;
+    }
+
+    public void setFactura(FacturaVWData factura) {
+        this.factura = factura;
+    }
+
+    public void setCodigoImpuestoAdenda(String codigoImpuestoAdenda) {
+        this.codigoImpuestoAdenda = codigoImpuestoAdenda;
+    }
+
+    public void setFacturaAudi(FacturaAudiData facturaAudi) {
+        this.facturaAudi = facturaAudi;
+    }
+
+    public void setServicioComercioExterior(boolean servicioComercioExterior) {
+        this.servicioComercioExterior = servicioComercioExterior;
+    }
+
+    public void setServAdendaVW(boolean servAdendaVW) {
+        this.servAdendaVW = servAdendaVW;
+    }
+
+    public void setServAdendaAudi(boolean servAdendaAudi) {
+        this.servAdendaAudi = servAdendaAudi;
+    }
+
+    public void setServAdenda(boolean servAdenda) {
+        this.servAdenda = servAdenda;
+    }
+
+    public void setCatalogoAdendaList(List<CatalogoAdenda> catalogoAdendaList) {
+        this.catalogoAdendaList = catalogoAdendaList;
+    }
 
     enum OPERACION {
         CREACION,
@@ -323,12 +793,8 @@ public class ManagedBeanFacturacionManual implements Serializable {
 
     private ArrayList<String> respuestas;
 
-    @Setter
-    @Getter
     private String[] valuesAdditionalDataComp;
     private Integer[] valuesAdditionalDataCompIndexes;///para determinar el indice del additional params en el que seagregara cada param
-    @Setter
-    @Getter
     private String[] valuesAdditionalDataCpto;
     private Integer[] valuesAdditionalDataCptoIndexes;///para determinar el indice del additional params en el que seagregara cada param
 
@@ -339,49 +805,23 @@ public class ManagedBeanFacturacionManual implements Serializable {
 
 
     //Bindings
-    @Setter
-    @Getter
     private UIInput inputTipoCambio;
-    @Setter
-    @Getter
     private UIInput inputCodigoConfirmacion;
-    @Setter
-    @Getter
     private UIInput inputResidenciaFiscal;
-    @Setter
-    @Getter
     private UIInput inputNumRegIdTrib;
 
-    @Setter
-    @Getter
     private boolean disabledInputCondicionesDePago;
-    @Setter
-    @Getter
     private boolean disabledInputFormaDePago;
-    @Setter
-    @Getter
     private boolean disabledInputMetodoDePago;
-    @Setter
-    @Getter
     private boolean disabledInputTipoCambio;
 
 
-    @Setter
-    @Getter
     private boolean disabledInputDescuentoDetalleConcepto;
-    @Setter
-    @Getter
     private boolean disabledInputValorUnitarioDetalleConcepto;
-    @Setter
-    @Getter
     private boolean disabledFieldSetImpuestosDetalleConcepto;
 
-    @Setter
-    @Getter
     private Fieldset fieldSetRefComp;
 
-    @Setter
-    @Getter
     private Fieldset fieldSetRefCpto;
     private static final String RFC_CME = "CME891127EA1";
     private static final String RFC_AAA = "AAA010101AAA";
@@ -390,113 +830,47 @@ public class ManagedBeanFacturacionManual implements Serializable {
 
 
     ///Envio de correo automatico factura manual
-    @Setter
-    @Getter
     private String emailCliente;
-    @Setter
-    @Getter
     private boolean enviarEmailCliente;
 
 
     ///Complemento Comercio Exterior data model
     ///Son similares a los conceptos solo que hay que convertir cantidades cuando la moneda no es USD
     ///Algunos campo se copian tal cual y existen algunos nuevos que se agregan
-    @Setter
-    @Getter
     private boolean disponibleComercioExterior;
-    @Setter
-    @Getter
     private boolean usarComplementoComercioExterior;
-    @Setter
-    @Getter
     private FlagsEntradasComercioExterior flagsEntradasComercioExterior;
-    @Getter
-    @Setter
     List<CustomMercanciaData> mercanciasData;
-    @Getter
-    @Setter
     CustomEmisorData singleEmisorData;
-    @Getter
-    @Setter
     CustomDomicilioData singleDomicilioEmisorData;
-    @Getter
-    @Setter
     CustomPropietarioData singlePropietarioData;
-    @Getter
-    @Setter
     CustomReceptorData singleReceptorData;
-    @Getter
-    @Setter
     CustomDomicilioData singleDomicilioReceptorData;
-    @Getter
-    @Setter
     CustomDestinatarioData singleDestinatarioData;
-    @Getter
-    @Setter
     CustomDomicilioData singleDomicilioDestinatarioData;
-    @Getter
-    @Setter
     CustomComplementoComercioExteriorMetadata singleComplementoComercioExteriorData;
-    @Getter
-    @Setter
     Adenda singleAdenda;
-    @Getter
-    @Setter
     Proveedor dataProveedorAdenda;
-    @Getter
-    @Setter
     Referencias dataReferenciaAdenda;
-    @Getter
-    @Setter
     List<Partes> dataPartesAdenda;
-    @Getter
-    @Setter
     Map<String, Integer> listAdenda;
-    @Getter
-    @Setter
     private boolean usarComplementoAdendaVW;
-    @Getter
-    @Setter
     private boolean usarComplementoAdendaAudi;
-    @Getter
-    @Setter
     private boolean adendaProductos;
-    @Getter
-    @Setter
     private boolean adendaServicios;
-    @Getter
-    @Setter
     private String tipoAdenda;
-    @Getter
-    @Setter
     private String clienteAddenda; //1 volkswagwn 2 audi
-    @Getter
-    @Setter
     private FacturaVWData factura;
-    @Getter
-    @Setter
     private String codigoImpuestoAdenda;
-    @Getter
-    @Setter
     private FacturaAudiData facturaAudi;
 
-    @Getter
-    @Setter
     private boolean servicioComercioExterior;
-    @Getter
-    @Setter
     private boolean servAdendaVW;
-    @Getter
-    @Setter
     private boolean servAdendaAudi;
-    @Getter
-    @Setter
     private boolean servAdenda;
 
     private ServiciosDisponibles serviciosDisponibles;
 
-    @Getter
-    @Setter
     private List<CatalogoAdenda> catalogoAdendaList;
 
 

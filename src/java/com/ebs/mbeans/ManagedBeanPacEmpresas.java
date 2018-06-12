@@ -12,18 +12,16 @@ import fe.db.MPacMEmpresa;
 import fe.model.dao.EmpresaDAO;
 import fe.model.dao.LogAccesoDAO;
 import fe.model.dao.PacDAO;
-import lombok.Getter;
-import lombok.Setter;
 
-import java.io.IOException;
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.io.IOException;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
@@ -45,8 +43,6 @@ public class ManagedBeanPacEmpresas implements Serializable {
     private String appContext;
 
 
-    @Getter
-    @Setter
     private int idEmpresaSelected = -1;
     //Modelos
     private List<MPacMEmpresa> listPacsEmpresa;
@@ -54,8 +50,6 @@ public class ManagedBeanPacEmpresas implements Serializable {
     private List<MEmpresa> empresas;
     private List<MPac> pacs;
     private int currentOperation = -1;
-    @Getter
-    @Setter
     private boolean booStatus = false;
     private LogAccesoDAO daoLog;
     private EmpresaDAO daoEmp;
@@ -390,4 +384,19 @@ public class ManagedBeanPacEmpresas implements Serializable {
     }
 
 
+    public int getIdEmpresaSelected() {
+        return this.idEmpresaSelected;
+    }
+
+    public boolean isBooStatus() {
+        return this.booStatus;
+    }
+
+    public void setIdEmpresaSelected(int idEmpresaSelected) {
+        this.idEmpresaSelected = idEmpresaSelected;
+    }
+
+    public void setBooStatus(boolean booStatus) {
+        this.booStatus = booStatus;
+    }
 }

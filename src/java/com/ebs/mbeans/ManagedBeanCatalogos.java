@@ -8,7 +8,6 @@ package com.ebs.mbeans;
 
 import fe.db.*;
 import fe.model.dao.*;
-import lombok.Getter;
 import mx.com.ebs.emision.factura.vo.catalogos.CatalogosBean;
 
 import javax.annotation.PostConstruct;
@@ -25,24 +24,17 @@ public class ManagedBeanCatalogos implements Serializable {
     private List<MCcodigopostal> cps;
 
     //tassa de TrasladadosRetenciones
-    @Getter
     private List<MImpuestos> ivaTasasTraslados;
-    @Getter
     private List<MImpuestos> iepsTasasTraslados;
-    @Getter
     private List<MImpuestos> ivaTasasRetenciones;
-    @Getter
     private List<MImpuestos> isrTasasRetenciones;
 
     /*Impuestos retenidos
     private List<CatalogosBean> ivaTasasRets;
     private List<CatalogosBean> isrTasasRets;
     */
-    @Getter
     private List<CatalogosBean> factoresRets;
-    @Getter
     private List<CatalogosBean> factoresIsrRet;
-    @Getter
     private List<CatalogosBean> factoresAll;
 
     private List<MCformapago> cfs;
@@ -379,5 +371,33 @@ public class ManagedBeanCatalogos implements Serializable {
 
     public void setDescCp(String descCp) {
         this.descCp = descCp;
+    }
+
+    public List<MImpuestos> getIvaTasasTraslados() {
+        return this.ivaTasasTraslados;
+    }
+
+    public List<MImpuestos> getIepsTasasTraslados() {
+        return this.iepsTasasTraslados;
+    }
+
+    public List<MImpuestos> getIvaTasasRetenciones() {
+        return this.ivaTasasRetenciones;
+    }
+
+    public List<MImpuestos> getIsrTasasRetenciones() {
+        return this.isrTasasRetenciones;
+    }
+
+    public List<CatalogosBean> getFactoresRets() {
+        return this.factoresRets;
+    }
+
+    public List<CatalogosBean> getFactoresIsrRet() {
+        return this.factoresIsrRet;
+    }
+
+    public List<CatalogosBean> getFactoresAll() {
+        return this.factoresAll;
     }
 }
