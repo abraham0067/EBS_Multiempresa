@@ -9,6 +9,20 @@
         <element id="directory" name="lib">
           <element id="library" level="project" name="antlr:antlr:2.7.7" />
           <element id="library" level="project" name="joda-time:joda-time:2.9.9" />
+          <element id="library" level="project" name="AddendaVolksWagen" />
+          <element id="library" level="project" name="jersey-client" />
+          <element id="library" level="project" name="javax.ws.rs-api-2.0" />
+          <element id="library" level="project" name="jersey-common" />
+          <element id="library" level="project" name="jersey-container-servlet" />
+          <element id="library" level="project" name="cglib-2.2.0-b21" />
+          <element id="library" level="project" name="eclipselink" />
+          <element id="library" level="project" name="feProcess.3.4.047" />
+          <element id="library" level="project" name="poi-ooxml-3.9_1" />
+          <element id="library" level="project" name="poi-3.9" />
+          <element id="library" level="project" name="xmlbeans" />
+          <element id="library" level="project" name="poi-ooxml-schemas-3.9" />
+          <element id="library" level="project" name="jxl" />
+          <element id="library" level="project" name="lib" />
         </element>
         <element id="file-copy" path="$PROJECT_DIR$/web/WEB-INF/web.xml" />
       </element>

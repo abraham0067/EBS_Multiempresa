@@ -6,6 +6,7 @@
                 xmlns:f="http://xmlns.jcp.org/jsf/core"
                 xmlns:h="http://xmlns.jcp.org/jsf/html"
                 xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
                 xmlns:fn="http://java.sun.com/jsp/jstl/functions"
                 xmlns:pe="http://primefaces.org/ui/extensions">
 
@@ -91,8 +92,11 @@
                     <p:commandButton value="Descargar Reporte" update="messages" onclick="PF('confirmDR').show()" >
                         <!--Confirm dialog is not yet supported in no-ajax buttons, action or actionListener are not fired, this feature will be available in next versions(<5.3)-->
                     </p:commandButton>
-                    <p:commandButton value="Descargar Facturas" update="messages" onclick="PF('confirmDF').show()" >
-                    </p:commandButton>
+                    <p:commandButton value="Descargar Facturas" update="messages" onclick="PF('confirmDF').show()" ></p:commandButton>
+                    <c:if test="#{managedBeanConsultaCFDI.cancelar eq true }">
+                        <p:commandButton value="Cancelar CFDI" onclick="PF('confirmCancel').show()" rendered="#{managedBeanConsultaCFDI.esClienteEmpresa eq false}" ></p:commandButton>
+                    </c:if>
+                    <!--<p:commandButton value="ip" actionListener="#{managedBeanConsultaPagos.obtenerIp}"/>-->
                 </f:facet>
             </p:panelGrid>
             <pe:blockUI widgetVar="blockUIWidget" target="formContent:registrosCFDI">
@@ -115,6 +119,25 @@
                 <p:commandButton title="no" 
                                  value="No" 
                                  oncomplete="PF('confirmDR').hide()"/>
+            </p:confirmDialog>
+
+            <!--Confirm dialog para  cancelar la factura-->
+            <p:confirmDialog message="¿Esta seguro de cancelar la factura?"
+                             showEffect="fade"
+                             hideEffect="fade"
+                             styleClass="dialogBoxCustom"
+                             widgetVar="confirmCancel"
+            >
+                <p:commandButton title="si"
+                                 value="Si"
+                                 ajax="true"
+                                 update="formContent:registrosCFDI, messages"
+                                 actionListener="#{managedBeanConsultaPagos.cancelar()}"
+                                 onclick="PF('confirmCancel').hide();PF('statusDialog').show();"
+                                 oncomplete="PF('confirmCancel').hide();PF('statusDialog').hide();" />
+                <p:commandButton title="no"
+                                 value="No"
+                                 oncomplete="PF('confirmCancel').hide()"/>
             </p:confirmDialog>
 
             <!--Confirm dialog para  extraer descargar facturas-->

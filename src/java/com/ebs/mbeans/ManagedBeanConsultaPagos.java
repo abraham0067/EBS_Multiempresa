@@ -5,11 +5,24 @@
  */
 package com.ebs.mbeans;
 
+import com.ebs.catalogos.TiposComprobante;
+import com.ebs.catalogos.TiposDocumento;
 import com.ebs.clienteFEWS.ClienteFEWS;
 import com.ebs.model.LazyMPagoDataModel;
-import fe.db.*;
-import fe.model.dao.*;
+import com.ebs.util.ZipperFacturasCfdi33;
+import fe.db.MAcceso;
+import fe.db.MArchivosCfd;
+import fe.db.MCfdPagos;
+import fe.db.MEmpresa;
+import fe.db.MOtroPagos;
+import fe.model.dao.ArchivosPagosDAO;
+import fe.model.dao.AutoPagosDao;
+import fe.model.dao.ConfigDAO;
+import fe.model.dao.EmpresaDAO;
+import fe.model.dao.MaterialDAO;
 import fe.model.util.Material;
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -23,6 +36,7 @@ import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.io.IOException;
 import java.io.OutputStream;
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
@@ -33,21 +47,41 @@ import java.util.List;
 public class ManagedBeanConsultaPagos implements Serializable {
 
     //Parametros
+    @Getter
+    @Setter
     private int empresaIdFiltro = -1;
     private Integer[] idsEmpresasAsignadas;
 
+    @Getter
+    @Setter
     private String strEstatus;
+    @Getter
+    @Setter
     private String tipBusq;//-1 indica que no existe el tipo de busqueda
+    @Getter
+    @Setter
     private boolean booTipoBusqueda;//Bandera para activar o desactivar la casilla del parametro
+    @Getter
+    @Setter
     private String paramBusq;//Parametro de busqueda
+    @Getter
+    @Setter
     private Date datDesde;//Fecha Inicial
+    @Getter
+    @Setter
     private Date datHasta;//Fecha Final
 
     private String contentName;
     private String archivoSubFileName;
     private String archivoSubContentType;
+    @Getter
+    @Setter
     private List<MArchivosCfd> archivosCFDI;
+    @Getter
+    @Setter
     private List<MCfdPagos> listMap;//USADO EN LA CANCELACION
+    @Getter
+    @Setter
     private List<MEmpresa> listEmpresas;
     private EmpresaDAO daoEmp;
     private ConfigDAO DAOCong;
@@ -57,20 +91,34 @@ public class ManagedBeanConsultaPagos implements Serializable {
     private ArchivosPagosDAO daoArch;
     private MaterialDAO matDao;
     private MCfdPagos cfd;
+    @Getter
+    @Setter
     private List<MCfdPagos> listCFDS;
     /*@Getter
     @Setter
     private List<MCfdPagos> listCFDSAux;*/
+    @Getter
+    @Setter
     private List<Integer> listCFDSAux;
     /*@Getter
     @Setter
     private List<MCfdPagos> selectedCFDS;//Donde se guardaran los cfdi extraidos del listmap*/
+    @Getter
+    @Setter
     private List<Integer> selectedCFDS;//Donde se guardaran los cfdi extraidos del listmap
+    @Getter
+    @Setter
     private MCfdPagos selectedMCFD;//FACTURA axiliar
     //private List<MapearCfdArchi> listMapMCA;//Usaoo en el View
+    @Getter
+    @Setter
     private LazyDataModel<MCfdPagos> listMapMCA;
+    @Getter
+    @Setter
     private List<MCfdPagos> listMapMCASelecteds;
     private SimpleDateFormat sdfDateFormatter;
+    @Getter
+    @Setter
     private FileUpload archivo;//Cambiar a multiples archivos
     //Materiales en un FACTURA
     private Material materialData;
@@ -424,141 +472,5 @@ public class ManagedBeanConsultaPagos implements Serializable {
         } else {
             booTipoBusqueda = true;
         }
-    }
-
-    public int getEmpresaIdFiltro() {
-        return this.empresaIdFiltro;
-    }
-
-    public String getStrEstatus() {
-        return this.strEstatus;
-    }
-
-    public String getTipBusq() {
-        return this.tipBusq;
-    }
-
-    public boolean isBooTipoBusqueda() {
-        return this.booTipoBusqueda;
-    }
-
-    public String getParamBusq() {
-        return this.paramBusq;
-    }
-
-    public Date getDatDesde() {
-        return this.datDesde;
-    }
-
-    public Date getDatHasta() {
-        return this.datHasta;
-    }
-
-    public List<MArchivosCfd> getArchivosCFDI() {
-        return this.archivosCFDI;
-    }
-
-    public List<MCfdPagos> getListMap() {
-        return this.listMap;
-    }
-
-    public List<MEmpresa> getListEmpresas() {
-        return this.listEmpresas;
-    }
-
-    public List<MCfdPagos> getListCFDS() {
-        return this.listCFDS;
-    }
-
-    public List<Integer> getListCFDSAux() {
-        return this.listCFDSAux;
-    }
-
-    public List<Integer> getSelectedCFDS() {
-        return this.selectedCFDS;
-    }
-
-    public MCfdPagos getSelectedMCFD() {
-        return this.selectedMCFD;
-    }
-
-    public LazyDataModel<MCfdPagos> getListMapMCA() {
-        return this.listMapMCA;
-    }
-
-    public List<MCfdPagos> getListMapMCASelecteds() {
-        return this.listMapMCASelecteds;
-    }
-
-    public FileUpload getArchivo() {
-        return this.archivo;
-    }
-
-    public void setEmpresaIdFiltro(int empresaIdFiltro) {
-        this.empresaIdFiltro = empresaIdFiltro;
-    }
-
-    public void setStrEstatus(String strEstatus) {
-        this.strEstatus = strEstatus;
-    }
-
-    public void setTipBusq(String tipBusq) {
-        this.tipBusq = tipBusq;
-    }
-
-    public void setBooTipoBusqueda(boolean booTipoBusqueda) {
-        this.booTipoBusqueda = booTipoBusqueda;
-    }
-
-    public void setParamBusq(String paramBusq) {
-        this.paramBusq = paramBusq;
-    }
-
-    public void setDatDesde(Date datDesde) {
-        this.datDesde = datDesde;
-    }
-
-    public void setDatHasta(Date datHasta) {
-        this.datHasta = datHasta;
-    }
-
-    public void setArchivosCFDI(List<MArchivosCfd> archivosCFDI) {
-        this.archivosCFDI = archivosCFDI;
-    }
-
-    public void setListMap(List<MCfdPagos> listMap) {
-        this.listMap = listMap;
-    }
-
-    public void setListEmpresas(List<MEmpresa> listEmpresas) {
-        this.listEmpresas = listEmpresas;
-    }
-
-    public void setListCFDS(List<MCfdPagos> listCFDS) {
-        this.listCFDS = listCFDS;
-    }
-
-    public void setListCFDSAux(List<Integer> listCFDSAux) {
-        this.listCFDSAux = listCFDSAux;
-    }
-
-    public void setSelectedCFDS(List<Integer> selectedCFDS) {
-        this.selectedCFDS = selectedCFDS;
-    }
-
-    public void setSelectedMCFD(MCfdPagos selectedMCFD) {
-        this.selectedMCFD = selectedMCFD;
-    }
-
-    public void setListMapMCA(LazyDataModel<MCfdPagos> listMapMCA) {
-        this.listMapMCA = listMapMCA;
-    }
-
-    public void setListMapMCASelecteds(List<MCfdPagos> listMapMCASelecteds) {
-        this.listMapMCASelecteds = listMapMCASelecteds;
-    }
-
-    public void setArchivo(FileUpload archivo) {
-        this.archivo = archivo;
     }
 }

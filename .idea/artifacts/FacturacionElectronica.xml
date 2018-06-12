@@ -3,6 +3,24 @@
     <output-path>$PROJECT_DIR$/out/artifacts/FacturacionElectronica</output-path>
     <root id="archive" name="FacturacionElectronica.war">
       <element id="artifact" artifact-name="FacturacionElectronica:war exploded" />
+      <element id="directory" name="WEB-INF">
+        <element id="directory" name="lib">
+          <element id="library" level="project" name="AddendaVolksWagen" />
+          <element id="library" level="project" name="jersey-client" />
+          <element id="library" level="project" name="javax.ws.rs-api-2.0" />
+          <element id="library" level="project" name="jersey-common" />
+          <element id="library" level="project" name="jersey-container-servlet" />
+          <element id="library" level="project" name="cglib-2.2.0-b21" />
+          <element id="library" level="project" name="eclipselink" />
+          <element id="library" level="project" name="feProcess.3.4.047" />
+          <element id="library" level="project" name="poi-ooxml-3.9_1" />
+          <element id="library" level="project" name="poi-3.9" />
+          <element id="library" level="project" name="xmlbeans" />
+          <element id="library" level="project" name="poi-ooxml-schemas-3.9" />
+          <element id="library" level="project" name="jxl" />
+          <element id="library" level="project" name="lib" />
+        </element>
+      </element>
     </root>
   </artifact>
 </component>

@@ -308,7 +308,10 @@ public class ManagedBeanLogin implements Serializable {
 //            Map.Entry entry = (Map.Entry) entries.next();
 //        }
         httpSession.invalidate();
-        numberOfActiveUsers--;
+        if (numberOfActiveUsers > 0){
+            numberOfActiveUsers--;
+        }
+
         System.out.println("Number of active users:{"+numberOfActiveUsers+ "}");
         FacesContext.getCurrentInstance().getExternalContext().invalidateSession();
         try {

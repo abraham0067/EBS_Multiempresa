@@ -39,6 +39,26 @@ public class AutoPagosDao implements Serializable {
         return cfd;
     }
 
+    public MCfdPagos findByUUID(String uuid, Integer idEmpresa) {
+
+        MCfdPagos mCfdPagos = null;
+
+        try {
+            hibManagerRO.initTransaction();
+            Criteria cr = hibManagerRO.getSession().createCriteria(MCfdPagos.class);
+            cr.add(Restrictions.eq("uuid", uuid));
+            cr.add(Restrictions.eq("empresaId", idEmpresa));
+            mCfdPagos = (MCfdPagos) cr.uniqueResult();
+            hibManagerRO.getTransaction().commit();
+        } catch (HibernateException ex) {
+            hibManagerRO.getTransaction().rollback();
+        } finally {
+            hibManagerRO.closeSession();
+        }
+
+        return  mCfdPagos;
+    }
+
     public MCfdXmlPagos findXmlByCfdiId(int id) {
         MCfdXmlPagos xml = null;
         try {
@@ -327,7 +347,7 @@ public class AutoPagosDao implements Serializable {
                     if (columna.equals("folioErp")) {
                         String[] folios = value.trim().split(",");
                         cr.add(Restrictions.in(columna.trim(), folios));
-                    }else if (columna.equals("serie")) {
+                    } else if (columna.equals("serie")) {
                         String[] series = value.trim().split(",");
                         cr.add(Restrictions.in(columna.trim(), series));
                     } else {
