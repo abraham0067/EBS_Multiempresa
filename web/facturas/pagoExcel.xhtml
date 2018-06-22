@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+<body>
+
+<ui:composition template="../templates/templateContent.xhtml">
+
+    <ui:define name="breadcrum">
+        <p:breadCrumb class="breadcrumbStyle" style="padding: 1px 1px 1px 1px;">
+            <p:menuitem value="Inicio" url="#"/>
+            <p:menuitem value="Facturas" url="#"/>
+            <p:menuitem value="Complemento de Pago por archivo" url="#"/>
+        </p:breadCrumb>
+    </ui:define>
+
+    <ui:define name="content">
+        <!--<h:form>-->
+            <!--<p:panel id="complemento" header="Complemento de pago por archivo" style="margin-bottom: 10px">-->
+                <!--<p:panelGrid columns="2" columnClasses="ui-grid-col-2, ui-grid-col-4, ui-grid-col-2, ui-grid-col-4"-->
+                             <!--layout="grid">-->
+                    <!--<p:outputLabel for="somEmisor" value="Emisor: "/>-->
+                    <!--<p:selectOneMenu id="somEmisor" value="#{managedBeanComplementoPagoArchivo.idEmpresa}">-->
+                        <!--<f:selectItems value="#{managedBeanEmpresasAsignadas.empresasAsignadas}" var="em"-->
+                                       <!--itemLabel="#{em.RFC_Empresa()}" itemValue="#{em.id}"/>-->
+                    <!--</p:selectOneMenu>-->
+                    <!--<p:outputLabel/>-->
+                    <!--<p:outputLabel/>-->
+                    <!--<p:outputLabel for="archivo" value="Archivo Excel: *"/>-->
+                    <!--<p:fileUpload id="archivo" mode="advanced"/>-->
+
+                <!--</p:panelGrid>-->
+
+            <!--</p:panel>-->
+            <!--<p:spacer width="450" height="1"/>-->
+
+            <!--<p:commandButton id="btgenera" styleClass="customButtonTwo" value="Generar documento"-->
+
+                             <!--ajax="false"-->
+                             <!---->
+
+            <!--/>-->
+        <!--</h:form>-->
+
+        <h:form id="frmPlantilla" enctype="multipart/form-data">
+            <p:growl id="msgs" showDetail="false" autoUpdate="false" life="16000" />
+            <p:panel header="Facturacion por archivo" style="margin-bottom:10px;">
+                <p:panelGrid id="pnDocumento" columns="2" columnClasses="ui-grid-col-2,ui-grid-col-4,ui-grid-col-2,ui-grid-col-4"
+                             layout="grid">
+
+                    <p:outputLabel for="somEmisor" value="Emisor: "/>
+                    <p:selectOneMenu id="somEmisor" value="#{managedBeanComplementoPagoArchivo.idEmpresa}"
+                                     style="width:98%; max-width: 100%" required="true"
+                                     requiredMessage="Debe seleccionar una empresa emisora."
+                                     filter="true" filterMatchMode="contains" panelStyle="width:550px;">
+                        <f:selectItem itemLabel="Seleccionar empresa emisora" itemValue="" noSelectionOption="true"/>
+                        <f:selectItems value="#{managedBeanEmpresasAsignadas.empresasAsignadas}" var="em"
+                                       itemLabel="#{em.RFC_Empresa()}" itemValue="#{em.id}"/>
+
+                    </p:selectOneMenu>
+
+                    <p:outputLabel value=""/>
+                    <p:outputLabel value=""/>
+                    <p:outputLabel value=""/>
+                    <p:outputLabel value=""/>
+
+                    <p:outputLabel value="Archivo Excel: *"/>
+                    <p:fileUpload id="fuArchivo" fileUploadListener="#{managedBeanFacturacionPorArchivo.cargaArchivo}" multiple="false" mode="advanced" dragDropSupport="true"
+                                  update="messages,msgs,lbNombre,btgenera" fileLimit="1" allowTypes="/(\.|\/)(xls|xlsx)$/"  skinSimple="true" required="true" label="Elegir archivo excel">
+                    </p:fileUpload>
+                    <p:growl id="messages" showDetail="true" />
+
+                    <p:outputLabel id="lbNombre" value="#{managedBeanFacturacionPorArchivo.nombreArchivo}"/>
+                    <p:outputLabel value=""/>
+
+
+
+                    <p:outputLabel value=""/>
+                    <p:outputLabel value=""/>
+
+
+                </p:panelGrid>
+            </p:panel>
+            <p:spacer width="450" height="1"/>
+
+
+
+            <p:commandButton id="btgenera" styleClass="customButtonTwo" value="Generar documento"
+                             actionListener="#{managedBeanFacturacionPorArchivo.generarFactura}"
+                             ajax="false" update="msgs,frmPlantilla"
+                             disabled="#{managedBeanFacturacionPorArchivo.deshabilitaBotonGeneraFActura}"
+
+            />
+
+        </h:form>
+
+    </ui:define>
+</ui:composition>
+
+</body>
+</html>

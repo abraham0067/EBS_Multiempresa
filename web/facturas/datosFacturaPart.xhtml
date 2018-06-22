@@ -86,11 +86,11 @@
                 </p:selectOneMenu>
 
                 <p:inputText id="itLugarExp" value="#{managedBeanCatalogos.descCp}" style="width: 100%;" maxlength="5"
-                             title="Ingrese un codigo postal para buscar y seleccionelo en la lista que esta justo del lado derecho de este campo.">
+                             title="Ingrese un código postal para buscar y seleccionelo en la lista que esta justo del lado derecho de este campo.">
                     <p:ajax event="change" process="@this,itLugarExp"
                             listener="#{managedBeanCatalogos.buscarCodigoPostal(managedBeanCatalogos.descCp)}"
                             update="somCodPost"/>
-                    <p:watermark value="Codigo Postal" for="itLugarExp"/>
+                    <p:watermark value="Código Postal" for="itLugarExp"/>
                     <p:tooltip id="toolTipDescCP" for="itLugarExp" showEvent="focus" hideEvent="blur"/>
                 </p:inputText>
                 <p:selectOneMenu id="somCodPost" value="#{managedBeanFacturacionManual.codigoPostal}" style="width:80%;"

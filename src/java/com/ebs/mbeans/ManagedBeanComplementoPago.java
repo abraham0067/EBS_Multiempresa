@@ -648,7 +648,9 @@ public class ManagedBeanComplementoPago implements Serializable {
                             //
                         }
                         docRelTempPago.setImpPagado(pagoTempContainer.getMonto());
-                        docRelTempPago.setImpSaldoInsoluto(auxSaldoAnterior - pagoTempContainer.getMonto());
+                        double aux = FloatsNumbersUtil.round(auxSaldoAnterior - pagoTempContainer.getMonto(), 2);
+                        //docRelTempPago.setImpSaldoInsoluto(auxSaldoAnterior - pagoTempContainer.getMonto());
+                        docRelTempPago.setImpSaldoInsoluto(aux);
                         disabledBttnAgregarDoctoRel = false;
                     } else {
                         FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN,
@@ -681,7 +683,8 @@ public class ManagedBeanComplementoPago implements Serializable {
         }
 
         //saldoDisponibleEmisorMonedaDR = saldoDisponibleEmisor / docRelTempPago.getTipoCambioDR();
-        docRelTempPago.setImpSaldoInsoluto(docRelTempPago.getImpSaldoAnt() - docRelTempPago.getImpPagado());
+        double aux = FloatsNumbersUtil.round(docRelTempPago.getImpSaldoAnt() - docRelTempPago.getImpPagado(), 2);
+        docRelTempPago.setImpSaldoInsoluto(aux);
     }
 
     public void agregarDocRelTempPago() {
@@ -1557,9 +1560,9 @@ public class ManagedBeanComplementoPago implements Serializable {
 
 
         if (pagos.size() != 1) {
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
-                    "Por favor agrege un pago al documento.", ""));
-            return false;
+//            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+//                    "Por favor agrege un pago al documento.", ""));
+//            return false;
         }
         if (cfdiRelacionados.size() > 2) {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,

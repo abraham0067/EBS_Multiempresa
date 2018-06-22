@@ -36,14 +36,19 @@
         <managed-bean-scope>session</managed-bean-scope>
     </managed-bean>
     <managed-bean>
+        <managed-bean-name>managedBeanComplementoPagoArchivo</managed-bean-name>
+        <managed-bean-class>com.ebs.mbeans.ManagedBeanComplementoPagoArchivo</managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
+    </managed-bean>
+    <managed-bean>
         <managed-bean-name>managedBeanFacturacionManual</managed-bean-name>
         <managed-bean-class>com.ebs.mbeans.ManagedBeanFacturacionManual</managed-bean-class>
-        <managed-bean-scope>view</managed-bean-scope>
+        <managed-bean-scope>session</managed-bean-scope>
     </managed-bean>
     <managed-bean>
         <managed-bean-name>managedBeanComplementoPago</managed-bean-name>
         <managed-bean-class>com.ebs.mbeans.ManagedBeanComplementoPago</managed-bean-class>
-        <managed-bean-scope>view</managed-bean-scope>
+        <managed-bean-scope>session</managed-bean-scope>
     </managed-bean>
     <!--LOCALES-->
     <application>

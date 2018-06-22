@@ -325,7 +325,7 @@
 
                     <p:panelGrid columns="4"
                                  columnClasses="ui-grid-col-2, ui-grid-col-4, ui-grid-col-2, ui-grid-col-4"
-                                 style="width: 100%;" styleClass="ui-noborder">
+                                 style="width: 100%;" styleClass="ui-noborder" id="dataAddenda">
 
 
                         <p:outputLabel for="itClienteAdenda" value="Cliente addenda*" />
@@ -335,7 +335,7 @@
                                            itemValue="#{catAdenda.idTipoAdenda}" itemLabel="#{catAdenda.adenda}"/>
                            <!-- <f:selectItem itemLabel="Volkswagen" itemValue="1" rendered="#{managedBeanFacturacionManual.servAdendaVW}"/>
                             <f:selectItem itemLabel="Audi" itemValue="2" rendered="#{managedBeanFacturacionManual.servAdendaAudi}"/>-->
-                            <p:ajax event="change" listener="#{managedBeanFacturacionManual.usarAddenda()}" process="@this"/>
+                            <p:ajax event="change" listener="#{managedBeanFacturacionManual.usarAddenda()}" process="@this" update="tipoAdenda"/>
                         </p:selectOneMenu>
 
 
@@ -347,30 +347,40 @@
                             <f:selectItem itemLabel="Servicio" itemValue="SERV" />
                             <p:ajax event="change"
                                     listener="#{managedBeanFacturacionManual.handleChangeTipoAdenda()}"
-                                    process="@this,tipoAdenda,msgs" update="@this,tipoAdenda,msgs"/>
+                                    process="@this" update="@this,tipoAdenda,msgs"/>
                         </p:selectOneMenu>
                         <p:outputLabel for="itNumProv" value="Numero de Proveedor:"/>
-                        <p:inputText id="itNumProv" value="#{managedBeanFacturacionManual.numeroProveedor}"
-                                     required="true">
+                        <p:inputText id="itNumProv" value="#{managedBeanFacturacionManual.dataProveedorAdenda.numero}">
                             <p:ajax event="change" process="itNumProv"/>
                         </p:inputText>
-                        <p:outputLabel for="itOrdComp" value="Orden(es) de Compra(Separar con ,):"/>
-                        <p:inputText id="itOrdComp" value="#{managedBeanFacturacionManual.ordenCompraInput}"
-                                    required="true">
+                        <p:outputLabel for="itOrdComp" value="Orden de Compra:"/>
+                        <p:inputText id="itOrdComp" value="#{managedBeanFacturacionManual.ordenCompraInput}">
                             <p:ajax event="change" process="itOrdComp"/>
                         </p:inputText>
                     </p:panelGrid>
                    <p:panelGrid columns="4"
                                 columnClasses="ui-grid-col-2, ui-grid-col-4, ui-grid-col-2, ui-grid-col-4"
                                 style="width: 100%;" styleClass="ui-noborder">
+
+                       <p:outputLabel for="itReferenciaProveedor" value="Referencia proveedor"/>
+                       <p:inputText id="itReferenciaProveedor" value="#{managedBeanFacturacionManual.dataProveedorAdenda.referencia}"/>
+
+
+                       <p:outputLabel for="itNombreProvedor" value="Nombre proveedor"/>
+                       <p:inputText id="itNombreProvedor" value="#{managedBeanFacturacionManual.dataProveedorAdenda.nombre}"/>
                        <p:outputLabel for="itCodigoImpuesto" value="Código impuesto"/>
                        <p:inputText id="itCodigoImpuesto" value="#{managedBeanFacturacionManual.codigoImpuestoAdenda}"/>
                        <p:outputLabel for="itCodigoDestino" value="Código destino"/>
                        <p:inputText id="itCodigoDestino" value="#{managedBeanFacturacionManual.dataReferenciaAdenda.codigoDestino}"/>
-                       <p:outputLabel for="itReferenciaProveedor" value="Referencia proveedor"/>
-                       <p:inputText id="itReferenciaProveedor" value="#{managedBeanFacturacionManual.dataReferenciaAdenda.referenciaProvedor}"/>
+
+
+
                        <p:outputLabel for="itRemision" value="Remisión"/>
                        <p:inputText id="itRemision" value="#{managedBeanFacturacionManual.dataReferenciaAdenda.remision}"/>
+
+
+
+
                        <p:outputLabel for="itNombreSolicitante" value="Nombre del solicitante"/>
                        <p:inputText id="itNombreSolicitante" value="#{managedBeanFacturacionManual.dataReferenciaAdenda.nombreSolicitante}"/>
 
@@ -563,8 +573,8 @@
             <p:spacer width="450" height="1"/>
             <p:commandButton value="Generar documento"
                              styleClass="customButtonTwo"
-                             process="pfDatosEmiRec:, pgDatosFactura:, pgCompTipoRel:, @this"
-                             update="msgs, frmManual, pfDatosEmiRec:, pgDatosFactura:, pgCompTipoRel:"
+                             process="pfDatosEmiRec:, pgDatosFactura:, pgCompTipoRel:,flsAddenda:, dataAddenda:, @this"
+                             update="msgs, frmManual, pfDatosEmiRec:, pgDatosFactura:, pgCompTipoRel:, flsAddenda:, dataAddenda:"
                              action="#{managedBeanFacturacionManual.generarFactura()}"
                              onstart="PF('statusDialog').show()" oncomplete="handleFactResponse(xhr, status, args)">
             </p:commandButton>

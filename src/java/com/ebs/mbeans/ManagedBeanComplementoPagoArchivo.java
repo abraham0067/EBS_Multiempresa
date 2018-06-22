@@ -20,8 +20,6 @@ import org.primefaces.model.UploadedFile;
 
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
-import javax.faces.bean.ManagedBean;
-import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -31,7 +29,8 @@ import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class ManagedBeanFacturacionPorArchivo implements Serializable {
+public class ManagedBeanComplementoPagoArchivo implements Serializable {
+
     private int idEmpresaUsuario;
     //Contexto
     private HttpServletRequest httpServletRequest;
@@ -59,7 +58,7 @@ public class ManagedBeanFacturacionPorArchivo implements Serializable {
     /**
      * Creates a new instance of ManagedBeanPlantillas
      */
-    public ManagedBeanFacturacionPorArchivo() {
+    public ManagedBeanComplementoPagoArchivo() {
     }
 
     @PostConstruct
@@ -124,7 +123,7 @@ public class ManagedBeanFacturacionPorArchivo implements Serializable {
                 String respuestaServicio = null;
                 LeerDatosExcel genComprobanteData = new LeerDatosExcel(uploadedFile.getInputstream());
                 ComprobanteData comprobanteData = genComprobanteData.getComprobanteData();
-               // comprobanteData = agregarDatosComprobante(comprobanteData);
+                // comprobanteData = agregarDatosComprobante(comprobanteData);
                 System.out.println("emisor: " + comprobanteData.getEmisor().getRfc());
                 if(genComprobanteData.getRFC().equalsIgnoreCase(empresaEmisora.getRfcOrigen())){
                     respuestaServicio = new ClienteFacturaManual().exeGenFactura(comprobanteData, m.getClaveWS(), ambiente, DEBUG);
@@ -257,54 +256,5 @@ public class ManagedBeanFacturacionPorArchivo implements Serializable {
         this.empresaEmisora = empresaEmisora;
     }
 
-    /*public ComprobanteData agregarDatosComprobante(ComprobanteData comprobanteData){
 
-        ReceptorDAO receptorDao = new ReceptorDAO();
-        MEmpresa emisor = daoEmpresas.BuscarEmpresaRFC(comprobanteData.getEmisor().getRfc());
-        MReceptor receptor = receptorDao.BuscarReceptorRfc(comprobanteData.getReceptor().getRfc());
-        final String RFC_EXTRANJERO = "XEXX010101000";
-
-        // ==============  1---- Datos del Emisor  ===============================================================================================================
-        EmisorData emisor12Data = (EmisorData) comprobanteData.getEmisor();
-        Direccion12Data direccionFiscal12 = new Direccion12Data();
-        direccionFiscal12.setCalle(Limpiador.cleanString(emisor.getDireccion().getCalle()));
-        direccionFiscal12.setColonia(Limpiador.cleanString(emisor.getDireccion().getColonia()));
-        direccionFiscal12.setCP(Limpiador.cleanString(emisor.getDireccion().getCp()));
-        direccionFiscal12.setEstado(Limpiador.cleanString(emisor.getDireccion().getEstado()));
-        direccionFiscal12.setLocalidad(Limpiador.cleanString(emisor.getDireccion().getLocalidad()));
-        direccionFiscal12.setMunicipio(Limpiador.cleanString(emisor.getDireccion().getMunicipio()));
-        direccionFiscal12.setNoExterior(Limpiador.cleanString(emisor.getDireccion().getNoExterior()));
-        direccionFiscal12.setNoInterior(Limpiador.cleanString(emisor.getDireccion().getNoInterior()));
-        direccionFiscal12.setPais(Limpiador.cleanString(emisor.getDireccion().getPais()));
-        direccionFiscal12.setReferencia("Ninguna");
-
-        emisor12Data.setRfc(Limpiador.cleanString(emisor.getRfcOrigen()));
-        emisor12Data.setNombre(Limpiador.cleanString(emisor.getRazonSocial().replace(".", "")));// <---------------- Se carga el nombre del emisor
-        emisor12Data.setDireccionFiscalEmisor(direccionFiscal12);
-        comprobanteData.setEmisor(emisor12Data);
-        // ===============================================================================================================================================================================
-
-        // ======================================  1---- Datos del Receptor  ===============================================================================================================
-        ReceptorData receptor12Data = (ReceptorData) comprobanteData.getReceptor();
-        Direccion12Data direccionReceptorFiscal12 = new Direccion12Data();
-        direccionReceptorFiscal12.setCalle(Limpiador.cleanString(receptor.getDireccion().getCalle()));
-        direccionReceptorFiscal12.setColonia(Limpiador.cleanString(receptor.getDireccion().getColonia()));
-        direccionReceptorFiscal12.setCP(Limpiador.cleanString(receptor.getDireccion().getCp()));
-        direccionReceptorFiscal12.setEstado(Limpiador.cleanString(receptor.getDireccion().getEstado()));
-        direccionReceptorFiscal12.setLocalidad(Limpiador.cleanString(receptor.getDireccion().getLocalidad()));
-        direccionReceptorFiscal12.setMunicipio(Limpiador.cleanString(receptor.getDireccion().getMunicipio()));
-        direccionReceptorFiscal12.setNoExterior(Limpiador.cleanString(receptor.getDireccion().getNoExterior()));
-        direccionReceptorFiscal12.setNoInterior(Limpiador.cleanString(receptor.getDireccion().getNoInterior()));
-        direccionReceptorFiscal12.setPais(Limpiador.cleanString(receptor.getDireccion().getPais()));
-        direccionReceptorFiscal12.setReferencia("Ninguna");
-        receptor12Data.setRfc(Limpiador.cleanString(receptor.getRfcOrigen()));
-        receptor12Data.setNombre(Limpiador.cleanString(receptor.getRazonSocial().replace(".", "")));// <---------------- Se carga el nombre del emisor
-       // receptor12Data.setUsoCFDI(usoCfdi);
-        receptor12Data.setDireccionReceptor(direccionReceptorFiscal12);
-
-        comprobanteData.setReceptor(receptor12Data);
-        // ===============================================================================================================================================================================
-
-        return comprobanteData;
-    }*/
 }

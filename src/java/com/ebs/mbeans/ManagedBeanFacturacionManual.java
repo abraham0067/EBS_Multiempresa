@@ -125,7 +125,7 @@ public class ManagedBeanFacturacionManual implements Serializable {
 
     private List<MAddfieldsInvoice> paramsInvoice;
     private List<MAddfieldsCpto> paramsCpto;
-    private List<AdendaFe> lstAdd = new ArrayList<AdendaFe>();
+
 
 
     private int idConcepto = -1;
@@ -262,6 +262,15 @@ public class ManagedBeanFacturacionManual implements Serializable {
     private double limiteInferior = 0.0;
     private List<MTdocsFactman> tiposDocs;
     private IdGenerator idGen;
+    private boolean selectTipoAddenda;
+
+    public boolean isSelectTipoAddenda() {
+        return selectTipoAddenda;
+    }
+
+    public void setSelectTipoAddenda(boolean selectTipoAddenda) {
+        this.selectTipoAddenda = selectTipoAddenda;
+    }
 
     public boolean isCptoTmpShldAdd() {
         return this.cptoTmpShldAdd;
@@ -861,8 +870,8 @@ public class ManagedBeanFacturacionManual implements Serializable {
     private String tipoAdenda;
     private String clienteAddenda; //1 volkswagwn 2 audi
     private FacturaVWData factura;
-    private String codigoImpuestoAdenda;
     private FacturaAudiData facturaAudi;
+    private String codigoImpuestoAdenda;
 
     private boolean servicioComercioExterior;
     private boolean servAdendaVW;
@@ -1056,9 +1065,12 @@ public class ManagedBeanFacturacionManual implements Serializable {
 
         usarComplementoAdendaVW = false;
         usarComplementoAdendaAudi = false;
-        dataPartesAdenda = new ArrayList<>();
+
         dataReferenciaAdenda = new Referencias();
         dataProveedorAdenda = new Proveedor();
+        selectTipoAddenda = false;
+        factura = new FacturaVWData();
+        facturaAudi = new FacturaAudiData();
 
         servAdendaVW = serviciosDisponibles.servicioAsignado(empresa.getId(), "Adenda VOLKSWAGEN");
         servAdendaAudi = serviciosDisponibles.servicioAsignado(empresa.getId(), "Adenda AUDI");
@@ -1151,6 +1163,13 @@ public class ManagedBeanFacturacionManual implements Serializable {
             conceptosEmpresa.clear();
 
         resetComercioExterior();
+
+        //reset addenda
+
+        clienteAddenda = "-1";
+        tipoAdenda = "-1";
+        codigoImpuestoAdenda = "";
+        initAdenda();
     }
 
     public void resetComercioExterior() {
@@ -1388,6 +1407,8 @@ public class ManagedBeanFacturacionManual implements Serializable {
     private void transformarConceptosAProdServicios() {
 
         System.out.println("transforma conceptos");
+
+        dataPartesAdenda = new ArrayList<>();
 
         int posicion = 0;
         for (ConceptoFactura tmp : this.conceptosAsignados) {
@@ -1653,7 +1674,7 @@ public class ManagedBeanFacturacionManual implements Serializable {
         return cdata;
     }
 
-    public void facturaVw(String nombreProveedor, String sociedad) {
+    public void facturaVw(String sociedad) {
 
         if (tipoDocObjFact.getcTipoComprobanteByTdocId().getClave().equalsIgnoreCase("E")) {
             factura.setTipoDocumentoFiscal("CR");
@@ -1668,12 +1689,13 @@ public class ManagedBeanFacturacionManual implements Serializable {
             factura.setTipoCambio(tipoCambioDatosFacturaInput);
         }
 
-        factura.setCodigoProveedor(dataReferenciaAdenda.getCodigoProveedor());
+        factura.setCodigoProveedor(dataProveedorAdenda.getNumero());
 
-        factura.setNombreProveedor(nombreProveedor);
+        factura.setNombreProveedor(dataProveedorAdenda.getNombre());
         factura.setCodigoDestino(dataReferenciaAdenda.getCodigoDestino());
-        factura.setReferenciaProveedor(dataReferenciaAdenda.getReferenciaProvedor());
+        factura.setReferenciaProveedor(dataProveedorAdenda.getReferencia());
         factura.setRemision(dataReferenciaAdenda.getRemision());
+        factura.setCodigoImpuesto(codigoImpuestoAdenda);
 
         factura.setNombreSolicitante(dataReferenciaAdenda.getNombreSolicitante());
         factura.setCorreoSolicitante(dataReferenciaAdenda.getCorreoSolicitante());
@@ -1699,7 +1721,16 @@ public class ManagedBeanFacturacionManual implements Serializable {
             facturaAudi.tipoCambio = tipoCambioDatosFacturaInput;
         }
 
-        facturaAudi.noProveedor = dataReferenciaAdenda.getCodigoProveedor();
+        facturaAudi.noProveedor = dataProveedorAdenda.getNumero();
+
+        ArrayList<ArchivoAudiData> vArchivos = new ArrayList<ArchivoAudiData>();
+        ArchivoAudiData au = new ArchivoAudiData();
+        au.datos = "";
+        au.tipo = "";
+        vArchivos.add(au);
+
+        facturaAudi.archivo = vArchivos.toArray( new ArchivoAudiData[0]);
+
         facturaAudi.codigoDestino = dataReferenciaAdenda.getCodigoDestino();
         facturaAudi.correoSolicitante = dataReferenciaAdenda.getCorreoSolicitante();
         facturaAudi.eMail = dataReferenciaAdenda.getCorreoContacto();
@@ -1709,14 +1740,21 @@ public class ManagedBeanFacturacionManual implements Serializable {
     public void usarAddenda() {
         usarComplementoAdendaAudi = false;
         usarComplementoAdendaVW = false;
-        System.out.println("valor addenda: " + clienteAddenda);
+
         if (clienteAddenda.equalsIgnoreCase("1")) {
             usarComplementoAdendaVW = true;
+
             System.out.println("usa addenda vw");
         } else if (clienteAddenda.equalsIgnoreCase("2")) {
             System.out.println("usa addenda audi");
             usarComplementoAdendaAudi = true;
+            selectTipoAddenda = true;
+        }else if(clienteAddenda.equalsIgnoreCase("-1")){
+            usarComplementoAdendaVW = false;
+            usarComplementoAdendaAudi = false;
+
         }
+
     }
 
     public ComprobanteData addAddenda(ComprobanteData cdata) {
@@ -1732,12 +1770,14 @@ public class ManagedBeanFacturacionManual implements Serializable {
         try {
 
             if (usarComplementoAdendaVW) {
-                factura = new FacturaVWData();
-                usarComplementoAdendaVW = true;
-                facturaVw(nombreProveedor, "");
+
+                usarComplementoAdendaAudi = false;
+                facturaVw("");
+                System.out.println("usar adenda vw");
+                System.out.println("codigo: " + factura.getCodigoImpuesto());
             } else if (usarComplementoAdendaAudi) {
-                usarComplementoAdendaAudi = true;
-                facturaAudi = new FacturaAudiData();
+                usarComplementoAdendaVW = false;
+
                 facturaAudi();
             }
 
@@ -1787,7 +1827,7 @@ public class ManagedBeanFacturacionManual implements Serializable {
             System.out.println(ex.getMessage());
         }
 
-
+        List<AdendaFe> lstAdd = new ArrayList<AdendaFe>();
         if (usarComplementoAdendaVW) {
             adendaVolksWagen = new AddendaVolksWagenData(adendaProductos ? AddendaVolksWagenData.TIPO_ADENDA_VW.PMT : AddendaVolksWagenData.TIPO_ADENDA_VW.PSV);
             adendaVolksWagen.setFacturaVW(factura);
@@ -2188,6 +2228,11 @@ public class ManagedBeanFacturacionManual implements Serializable {
             );
             ((DatosComprobanteData) comprobanteData.getDatosComprobante()).setTotal(total);
             ((DatosComprobanteData) comprobanteData.getDatosComprobante()).setSubTotal(subTotal);
+
+            ((DatosComprobanteData) comprobanteData.getDatosComprobante()).setSello("Sello==");
+            ((DatosComprobanteData) comprobanteData.getDatosComprobante()).setCertificado("Certificido==");
+            ((DatosComprobanteData) comprobanteData.getDatosComprobante()).setNoCertificado("12345678901234567890");
+            ((DatosComprobanteData) comprobanteData.getDatosComprobante()).setFecha(new Date());
 
             if (tipoRelacion != null && !tipoRelacion.isEmpty() && tipoRelacion.contains("-")) {
                 CfdiRelacionadosData cfdisrel = new CfdiRelacionadosData();
@@ -2614,6 +2659,14 @@ public class ManagedBeanFacturacionManual implements Serializable {
                 res = false;
             }
         }
+
+        if(usarComplementoAdendaVW || usarComplementoAdendaAudi){
+            if(tipoAdenda.equalsIgnoreCase("NA")){
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+                        "Por favor seleccione un tipo de Addenda.", ""));
+                res = false;
+            }
+        }
         return res;
     }
 
@@ -2894,7 +2947,7 @@ public class ManagedBeanFacturacionManual implements Serializable {
         }
 
         FacesContext.getCurrentInstance().addMessage(
-                null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Ha seleccionado el tipo de adenda " + msge, ""));
+                null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Ha seleccionado el tipo de addenda " + msge, ""));
 
     }
 
