@@ -655,21 +655,21 @@ public class ManagedBeanConsultaCFDI implements Serializable {
                                     //CANCELA FACTURAS CON UUID´S ANTERIORES
                                     if (cfd.getUuid().startsWith("PRUEBA")) {
                                         if (folio2 != null && !folio2.isEmpty())
-                                            acuse = cancela.cancelaTestFolioErp2("Portal", rfcEmpresa, cfd.getSerieErp(), cfd.getFolioErp(), folio2, pswCancelacion);
+                                            acuse = cancela.cancelaTestFolioErp2("PORTAL|"+ activeUser.getUsuario() , rfcEmpresa, cfd.getSerieErp(), cfd.getFolioErp(), folio2, pswCancelacion);
                                         else
-                                            acuse = cancela.cancelaTest("Portal", rfcEmpresa, cfd.getSerieErp(), cfd.getFolioErp(), pswCancelacion);
+                                            acuse = cancela.cancelaTest("PORTAL|"+ activeUser.getUsuario(), rfcEmpresa, cfd.getSerieErp(), cfd.getFolioErp(), pswCancelacion);
                                     } else
-                                        acuse = cancela.cancelaTestUuid("Portal", rfcEmpresa, cfd.getUuid(), pswCancelacion);
+                                        acuse = cancela.cancelaTestUuid("PORTAL|"+ activeUser.getUsuario(), rfcEmpresa, cfd.getUuid(), pswCancelacion);
 
 
                                 } else {
                                     System.out.print("Cancelando->Produccion");
-                                    acuse = new CancelaCFDI().cancelaUuid("Portal", rfcEmpresa, cfd.getUuid(), pswCancelacion);
+                                    acuse = new CancelaCFDI().cancelaUuid("PORTAL|"+ activeUser.getUsuario(), rfcEmpresa, cfd.getUuid(), pswCancelacion);
                                 }
 
                             } else {
                                 System.out.print("Cancelando->Produccion");
-                                acuse = new CancelaCFDI().cancelaUuid("Portal", rfcEmpresa, cfd.getUuid(), pswCancelacion);
+                                acuse = new CancelaCFDI().cancelaUuid("PORTAL|"+ activeUser.getUsuario(), rfcEmpresa, cfd.getUuid(), pswCancelacion);
                             }
 
                             /*

@@ -54,6 +54,9 @@ public class MLogApp implements Serializable {
 	@Column(name = "TRACE", nullable = true)
 	private String trace = "";
 
+	@Column(name = "ESTATUS", nullable = false, length = 255)
+	private int estatus = 0;
+
 	/**
 	 * @return the id
 	 */
@@ -193,8 +196,16 @@ public class MLogApp implements Serializable {
 	public String FechaF() {
 		return new SimpleDateFormat("dd-MM-yyyy HH:mm:ss").format(fecha);
 	}
-        
-//        public void escapeSqlAndHtmlCharacters(){
+
+	public int getEstatus() {
+		return estatus;
+	}
+
+	public void setEstatus(int estatus) {
+		this.estatus = estatus;
+	}
+
+	//        public void escapeSqlAndHtmlCharacters(){
 //            this.clase = (this.clase != null)? StringEscapeUtils.escapeSql(this.clase) : "";
 //            this.clase = (this.clase != null)? StringEscapeUtils.escapeHtml(this.clase) : "";
 //        }

@@ -30,6 +30,7 @@
         <subMenu name="Logs" title="Logs" perfil="2048" icon="no" nivel="3" position="7">
             <menuEntry name="Logacceso" title="Log Acceso" url="/admin/logs/logAcceso.xhtml" icon="no"	perfil="4096" nivel="4" position="1" />
             <menuEntry name="log" title="Log de proceso de Facturas" url="/admin/logs/logProcFact.xhtml" perfil="131072"  icon="no" nivel="4" position="2" />
+            <menuEntry name="logCancelacionA" title="Log de Cancelacion" url="/admin/logs/logProcCancelacionA.xhtml" perfil="536870912"  icon="no" nivel="4" position="2" />
         </subMenu>
         <subMenu name="myAcc" title="Mi cuenta" icon="fa fa-fw fa-user" nivel="3" position="8">
             <menuEntry name="modPass" title="Cambio de Contraseña" url="/admin/cuentas/cambioPass.xhtml" icon="no" nivel="4" position="1" />

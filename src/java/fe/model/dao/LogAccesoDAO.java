@@ -223,4 +223,85 @@ public class LogAccesoDAO implements Serializable {
         return ListlogAcc;
     }
 
+    @SuppressWarnings("unchecked")
+    public List<MLogAcceso> ListaDeTodoLogdefecha(Integer idacceso, int idempresa, Date fecha, Integer tipoServicio, int first, int pageSize)
+            throws Exception {
+        List<MLogAcceso> ListlogAcc = null;
+        try {
+            hibManagerRO.initTransaction();
+            Criteria logs = hibManagerRO.getSession().createCriteria(MLogAcceso.class);
+            if (idempresa <= 0) {
+                MAcceso acceso = (MAcceso) hibManagerRO.getSession().get(MAcceso.class, idacceso);
+                if (acceso.getEmpresas() != null
+                        && !acceso.getEmpresas().isEmpty()) {
+                    Integer[] idem = new Integer[acceso.getEmpresas().size()];
+                    for (int i = 0; i < acceso.getEmpresas().size(); i++) {
+                        idem[i] = acceso.getEmpresas().get(i).getId();
+                    }
+                    Criteria cr = hibManagerRO.getSession().createCriteria(MAcceso.class);
+                    cr.add(Restrictions.in("empresa.id", idem));
+
+                    List<MAcceso> Listaacces = cr.list();
+                    if (Listaacces != null) {
+                        Integer[] idsac = new Integer[Listaacces.size()];
+                        for (int j = 0; j < Listaacces.size(); j++) {
+                            idsac[j] = Listaacces.get(j).getId();
+                        }
+                        logs.add(Restrictions.in("acceso.id", idsac));
+                    }
+                }
+            } else {
+                Criteria cr = hibManagerRO.getSession().createCriteria(MAcceso.class);
+                cr.add(Restrictions.eq("empresa.id", idempresa));
+
+                List<MAcceso> Listaacces = cr.list();
+                if (Listaacces != null) {
+                    Integer[] idsac = new Integer[Listaacces.size()];
+                    for (int j = 0; j < Listaacces.size(); j++) {
+                        idsac[j] = Listaacces.get(j).getId();
+                    }
+                    logs.add(Restrictions.in("acceso.id", idsac));
+                }
+            }
+
+            if (fecha != null) {
+                Calendar dia = Calendar.getInstance();
+                dia.setTime(fecha);
+                dia.set(Calendar.HOUR, 0);
+                dia.set(Calendar.MINUTE, 0);
+                dia.set(Calendar.SECOND, 0);
+                Date FechaI = dia.getTime();
+                dia.set(Calendar.HOUR, 23);
+                dia.set(Calendar.MINUTE, 59);
+                dia.set(Calendar.SECOND, 59);
+                Date FechaF = dia.getTime();
+                logs.add(Expression.ge("fecha", FechaI));
+                logs.add(Expression.le("fecha", FechaF));
+            }
+            logs.addOrder(Order.desc("fecha"));
+
+            //paginacion
+            logs.setProjection(Projections.rowCount());
+            rowCount = (Integer) logs.uniqueResult();
+            //Reset
+            logs.setProjection(null);
+            logs.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
+
+            //Pagination
+            logs.setFirstResult(first);
+            logs.setMaxResults(pageSize);
+
+            ListlogAcc = logs.list();
+            hibManagerRO.getTransaction().commit();
+        } catch (HibernateException e) {
+            hibManagerRO.getTransaction().rollback();
+            e.printStackTrace(System.err);
+        } finally {
+            hibManagerRO.closeSession();
+        }
+        return ListlogAcc;
+    }
+
+
+
 }

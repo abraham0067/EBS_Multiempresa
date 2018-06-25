@@ -25,6 +25,7 @@ public class LazyLogsAppDataModel extends LazyDataModel<MLogApp> {
     private int idEmpresa;
     private String serie;
     private String folioErp;
+    private String tipoServicio;
     private Date datFecha;
     private LogAPPDAO daoApp;
 
@@ -41,6 +42,16 @@ public class LazyLogsAppDataModel extends LazyDataModel<MLogApp> {
         this.setRowCount(0);
     }
 
+    public LazyLogsAppDataModel(int idAcceso, int idEmpresa, String serie, String folioErp, String tipoServicio, Date datFecha) {
+        this.idAcceso = idAcceso;
+        this.idEmpresa = idEmpresa;
+        this.serie = serie;
+        this.folioErp = folioErp;
+        this.tipoServicio = tipoServicio;
+        this.datFecha = datFecha;
+        this.setRowCount(0);
+    }
+
     @Override
     public Object getRowKey(MLogApp object) {
         return object.getId();
@@ -53,7 +64,8 @@ public class LazyLogsAppDataModel extends LazyDataModel<MLogApp> {
         }
         //Sort
         //Get data
-        dataSource = daoApp.BusquedaPorParametros(idAcceso, idEmpresa, serie, folioErp, datFecha, first, pageSize);
+        dataSource = daoApp.BusquedaPorParametros(idAcceso, idEmpresa, serie, folioErp, tipoServicio, datFecha, first, pageSize);
+
         //Total rows found
         int dataSourceSize = daoApp.rowCount;
         this.setRowCount(dataSourceSize);

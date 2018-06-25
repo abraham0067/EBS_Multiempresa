@@ -6,6 +6,7 @@
         <!-- Pool de conexiones con permisos de solo lectura(SELECT) -->
         <!--JNDI-->
         <property name="connection.datasource">java:comp/env/jdbc/Emision_apl</property>
+
         <!-- using the configuration defined in this file-->
 
         <property name="connection.driver_class">com.mysql.jdbc.Driver</property>

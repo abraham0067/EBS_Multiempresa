@@ -15,7 +15,7 @@
             <p:menuitem value="Administraci&oacute;n" url="#" />
             <p:menuitem value="Catalogos" url="#" />
             <p:menuitem value="Logs" url="#" />
-            <p:menuitem value="Log proceso de Facturas" url="#" />
+            <p:menuitem value="Log proceso de Cancelacion" url="#" />
         </p:breadCrumb>
     </ui:define>
 
@@ -23,13 +23,13 @@
         <ui:debug />
         <h:form id="frmLogAcceso" >
             <p:growl id="messages" showDetail="false" sticky="false" autoUpdate="true" life="16000" />
-            <p:panelGrid columns="8" style="width: 100%;" 
+            <p:panelGrid columns="8" style="width: 100%;"
                          columnClasses="ui-grid-col-2,ui-grid-col-1,ui-grid-col-3,ui-grid-col-2,ui-grid-col-1,ui-grid-col-1,ui-grid-col-1,ui-grid-col-1"
                          layout="grid">
                 <p:outputLabel/>
 
                 <p:outputLabel value="Empresa:" for="somEmpresas"/>
-                <p:selectOneMenu id="somEmpresas" value="#{managedBeanLogs.idEmpresaSelected}" style="width: 80%;" 
+                <p:selectOneMenu id="somEmpresas" value="#{ManagedBeanLogsCancelacionAutomatica.idEmpresaSelected}" style="width: 80%;"
                                  filter="true" filterMatchMode="contains">
                     <f:selectItem itemLabel="Elige una empresa(Opcional)" itemValue="0" />
                     <f:selectItems value="#{managedBeanEmpresasAsignadas.empresasAsignadas}" var="emp" itemLabel="#{emp.RFC_Empresa()}" itemValue="#{emp.id}"/>
@@ -41,23 +41,32 @@
                 <p:outputLabel/>
                 <p:outputLabel/>
                 <p:outputLabel/>
+                <p:outputLabel value="Serie:" for="itSerie"/>
+                <p:inputText id="itSerie" value="#{ManagedBeanLogsCancelacionAutomatica.serie}" maxlength="10"/>
 
-                <p:inputText id="itSerie" value="#{managedBeanLogs.serie}" maxlength="10">
-                    <p:watermark value="Serie" for="itSerie" />
-                </p:inputText>
-                <p:inputText id="itFolioErp" value="#{managedBeanLogs.folioErp}"  maxlength="75">
-                    <p:watermark value="Folio ERP" for="itFolioErp" />
-                </p:inputText>
-                <p:calendar id="clFecha" value="#{managedBeanLogs.fecha}" navigator="true" pattern="dd-MM-yyyy" mask="true" >
-                    <p:watermark value="Fecha" for="clFecha" />
-                </p:calendar>
+                <p:outputLabel value="Folio ERP:" for="itFolioErp"/>
+                <p:inputText id="itFolioErp" value="#{ManagedBeanLogsCancelacionAutomatica.folioErp}"/>
+
                 <p:outputLabel/>
                 <p:outputLabel/>
                 <p:outputLabel/>
+                <p:outputLabel/>
+
+                <p:outputLabel value="Fecha:" for="clFecha"/>
+                <p:calendar id="clFecha" value="#{ManagedBeanLogsCancelacionAutomatica.fecha}" navigator="true" pattern="dd-MM-yyyy" mask="true" />
+
+                <p:outputLabel for="somEstatus" value="Estatus:"/>
+                <p:selectOneMenu id="somEstatus" label="Estatus"  value="#{ManagedBeanLogsCancelacionAutomatica.tipoServicio}" style="width: 180px;"
+                                 requiredMessage="El parametro Estatus es obligatorio.">
+                    <f:selectItem itemLabel="Todas" itemValue="-1" />
+                    <f:selectItem itemLabel="MANUAL" itemValue="1" />
+                    <f:selectItem itemLabel="AUTOMATICO" itemValue="2" />
+                    <p:ajax event="change" process="@parent"/>
+                </p:selectOneMenu>
 
                 <f:facet name="footer">
-                    <p:commandButton id="cbBuscar" value="Buscar" icon="fa fa-fw fa-search" actionListener="#{managedBeanLogs.buscarLogsApp()}" update="frmContent:dtListLogsPF,somEmpresas"/>
-                    <p:commandButton id="cbClean" value="Limpiar" ajax="true"  actionListener="#{managedBeanLogs.limpiarFiltros()}"
+                    <p:commandButton id="cbBuscar" value="Buscar" icon="fa fa-fw fa-search" actionListener="#{ManagedBeanLogsCancelacionAutomatica.buscarLogsApp()}" update="frmContent:dtListLogsPF,somEmpresas"/>
+                    <p:commandButton id="cbClean" value="Limpiar" ajax="true"  actionListener="#{ManagedBeanLogsCancelacionAutomatica.limpiarFiltros()}"
                                      update="frmContent:dtListLogsPF,somEmpresas, itSerie, itFolioErp, clFecha"
                                      process="somEmpresas, itSerie, itFolioErp, clFecha, @this"/>
                 </f:facet>
@@ -71,14 +80,14 @@
 
     <ui:define name="content">
         <h:form id="frmContent" >
-            <p:dataTable id="dtListLogsPF" value="#{managedBeanLogs.listaLogApp}" var="tmp" resizableColumns="false" 
+            <p:dataTable id="dtListLogsPF" value="#{ManagedBeanLogsCancelacionAutomatica.listaLogApp}" var="tmp" resizableColumns="false"
                          resizeMode="expand" scrollRows="18" scrollHeight="520" scrollable="false"  liveScroll="false" rowKey="#{tmp.id}"
-                         selection="#{managedBeanLogs.logApp}" selectionMode="single" emptyMessage="..." style="font-size: 11px;" 
+                         selection="#{ManagedBeanLogsCancelacionAutomatica.logApp}" selectionMode="single" emptyMessage="..." style="font-size: 11px;"
                          paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} pages {NextPageLink} {LastPageLink}"
                          paginator="true" rowsPerPageTemplate="30,50,100" lazy="true" rows="30"
                          disabledTextSelection="false">
                 <f:facet name="header" >
-                    Se encontraron #{managedBeanLogs.listaLogApp.rowCount} registros.
+                    Se encontraron #{ManagedBeanLogsCancelacionAutomatica.listaLogApp.rowCount} registros.
                 </f:facet>
                 <p:column headerText="Empresa" class="customCell" width="150" style="text-align: left;">
                     <p:outputLabel value="#{tmp.empresa.RFC_Empresa()}" />
@@ -90,13 +99,13 @@
                     <p:outputLabel value="#{tmp.serie}"/>
                 </p:column>
                 <p:column headerText="Fecha" class="customCell" width="100">
-                    <p:outputLabel value="#{tmp.FechaF()}" />                           
+                    <p:outputLabel value="#{tmp.FechaF()}" />
                 </p:column>
-                <p:column headerText="Error" class="customCell" style="text-align: left;">
-                    <p:outputLabel value="#{tmp.error}" />                           
+                <p:column headerText="Mensaje" class="customCell" style="text-align: left;">
+                    <p:outputLabel value="#{tmp.error}" />
                 </p:column>
                 <f:facet name="footer">
-                    Se encontraron #{managedBeanLogs.listaLogApp.rowCount} registros.
+                    Se encontraron #{ManagedBeanLogsCancelacionAutomatica.listaLogApp.rowCount} registros.
                 </f:facet>
             </p:dataTable>
             <p:blockUI block="dtListLogsPF" trigger="dtListLogsPF" >

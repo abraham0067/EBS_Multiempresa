@@ -30,6 +30,7 @@ public class MLogAcceso implements Serializable {
     private Date fecha;
     private String mensaje = "";
 
+
     protected MLogAcceso() {
     }
 
@@ -45,6 +46,8 @@ public class MLogAcceso implements Serializable {
         this.fecha = fecha;
         this.mensaje = mensaje;
     }
+
+
 
     @Id
     //@SequenceGenerator(name = "SLogAcceso", sequenceName = "SECUENCIA_LOG_ACCESO", initialValue = 1, allocationSize = 1)
@@ -103,7 +106,8 @@ public class MLogAcceso implements Serializable {
     public String FechaFU() {
         return new SimpleDateFormat("dd-MM-yyyy HH:mm:ss").format(fecha);
     }
-    
+
+
 //    public void escapeSqlAndHtmlCharacters(){
 //        this.mensaje  = (this.mensaje != null)?StringEscapeUtils.escapeSql(this.mensaje) : "";
 //        this.mensaje  = (this.mensaje != null)?StringEscapeUtils.escapeHtml(this.mensaje) : "";

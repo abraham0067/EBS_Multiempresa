@@ -70,7 +70,7 @@ public class LogAPPDAO implements Serializable {
         return ListLogs;
     }
 
-    @SuppressWarnings("unchecked")
+    /*@SuppressWarnings("unchecked")
     public List<MLogApp> BusquedaListaLogsApp(Integer iduser, int idempresa, Date fecha) {
         List<MLogApp> ListLogs = null;
         try {
@@ -119,10 +119,16 @@ public class LogAPPDAO implements Serializable {
             hibManagerRO.closeSession();
         }
         return ListLogs;
-    }
+    }*/
+
 
     @SuppressWarnings("unchecked")
     public List<MLogApp> BusquedaPorParametros(Integer iduser, int idempresa, String serie, String folioErp, Date fecha, int first, int pageSize) {
+        return BusquedaPorParametros(iduser, idempresa, serie, folioErp,"N", fecha, first, pageSize);
+    }
+
+    @SuppressWarnings("unchecked")
+    public List<MLogApp> BusquedaPorParametros(Integer iduser, int idempresa, String serie, String folioErp, String tipoServicio,  Date fecha, int first, int pageSize) {
         List<MLogApp> ListLogs = null;
         try {
             hibManagerRO.initTransaction();
@@ -131,14 +137,16 @@ public class LogAPPDAO implements Serializable {
             if (idempresa > 0) {
                 cr.add(Restrictions.eq("empresa.id", idempresa));
             } else {
-                MAcceso acceso = (MAcceso) hibManagerRO.getSession().get(MAcceso.class, iduser);
-                if (acceso != null && acceso.getEmpresas() != null
-                        && !acceso.getEmpresas().isEmpty()) {
-                    Integer[] idemps = new Integer[acceso.getEmpresas().size()];
-                    for (int i = 0; i < acceso.getEmpresas().size(); i++) {
-                        idemps[i] = acceso.getEmpresas().get(i).getId();
+                if(tipoServicio.equals("N")){
+                    MAcceso acceso = (MAcceso) hibManagerRO.getSession().get(MAcceso.class, iduser);
+                    if (acceso != null && acceso.getEmpresas() != null
+                            && !acceso.getEmpresas().isEmpty()) {
+                        Integer[] idemps = new Integer[acceso.getEmpresas().size()];
+                        for (int i = 0; i < acceso.getEmpresas().size(); i++) {
+                            idemps[i] = acceso.getEmpresas().get(i).getId();
+                        }
+                        cr.add(Restrictions.in("empresa.id", idemps));
                     }
-                    cr.add(Restrictions.in("empresa.id", idemps));
                 }
             }
 
@@ -165,6 +173,13 @@ public class LogAPPDAO implements Serializable {
                 cr.add(Expression.ge("fecha", FechaI));
                 cr.add(Expression.le("fecha", FechaF));
             }
+
+            if(!tipoServicio.equals("N")) {
+                cr.add(Restrictions.eq("origen",2));
+                if(!tipoServicio.equals("-1"))
+                    cr.add(Restrictions.eq("estatus", Integer.valueOf(tipoServicio)));
+            }
+
             cr.addOrder(Order.desc("fecha"));
             //paginacion
             cr.setProjection(Projections.rowCount());
@@ -187,5 +202,6 @@ public class LogAPPDAO implements Serializable {
         }
         return ListLogs;
     }
+
 
 }

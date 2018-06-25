@@ -186,9 +186,16 @@
         </description>
         <managed-bean-name>managedBeanLogs</managed-bean-name>
         <managed-bean-class>com.ebs.mbeans.ManagedBeanLogs</managed-bean-class>
-
         <managed-bean-scope>view</managed-bean-scope>
     </managed-bean>
+    <managed-bean>
+        <description>ManagedBean para logs CANCELACION AUTOMATICA
+        </description>
+        <managed-bean-name>ManagedBeanLogsCancelacionAutomatica</managed-bean-name>
+        <managed-bean-class>com.ebs.mbeans.ManagedBeanLogsCancelacionAutomatica</managed-bean-class>
+        <managed-bean-scope>view</managed-bean-scope>
+    </managed-bean>
+
     <managed-bean>
         <description>Control cambio password
         </description>
