@@ -93,9 +93,13 @@
                         <!--Confirm dialog is not yet supported in no-ajax buttons, action or actionListener are not fired, this feature will be available in next versions(<5.3)-->
                     </p:commandButton>
                     <p:commandButton value="Descargar Facturas" update="messages" onclick="PF('confirmDF').show()" ></p:commandButton>
+
+                    <!--
                     <c:if test="#{managedBeanConsultaCFDI.cancelar eq true }">
                         <p:commandButton value="Cancelar CFDI" onclick="PF('confirmCancel').show()" rendered="#{managedBeanConsultaCFDI.esClienteEmpresa eq false}" ></p:commandButton>
                     </c:if>
+                    -->
+
                     <!--<p:commandButton value="ip" actionListener="#{managedBeanConsultaPagos.obtenerIp}"/>-->
                 </f:facet>
             </p:panelGrid>
