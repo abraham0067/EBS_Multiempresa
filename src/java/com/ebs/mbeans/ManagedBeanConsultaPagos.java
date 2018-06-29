@@ -21,8 +21,6 @@ import fe.model.dao.ConfigDAO;
 import fe.model.dao.EmpresaDAO;
 import fe.model.dao.MaterialDAO;
 import fe.model.util.Material;
-import lombok.Getter;
-import lombok.Setter;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -47,41 +45,41 @@ import java.util.List;
 public class ManagedBeanConsultaPagos implements Serializable {
 
     //Parametros
-    @Getter
-    @Setter
+    
+    
     private int empresaIdFiltro = -1;
     private Integer[] idsEmpresasAsignadas;
 
-    @Getter
-    @Setter
+    
+    
     private String strEstatus;
-    @Getter
-    @Setter
+    
+    
     private String tipBusq;//-1 indica que no existe el tipo de busqueda
-    @Getter
-    @Setter
+    
+    
     private boolean booTipoBusqueda;//Bandera para activar o desactivar la casilla del parametro
-    @Getter
-    @Setter
+    
+    
     private String paramBusq;//Parametro de busqueda
-    @Getter
-    @Setter
+    
+    
     private Date datDesde;//Fecha Inicial
-    @Getter
-    @Setter
+    
+    
     private Date datHasta;//Fecha Final
 
     private String contentName;
     private String archivoSubFileName;
     private String archivoSubContentType;
-    @Getter
-    @Setter
+    
+    
     private List<MArchivosCfd> archivosCFDI;
-    @Getter
-    @Setter
+    
+    
     private List<MCfdPagos> listMap;//USADO EN LA CANCELACION
-    @Getter
-    @Setter
+    
+    
     private List<MEmpresa> listEmpresas;
     private EmpresaDAO daoEmp;
     private ConfigDAO DAOCong;
@@ -91,34 +89,34 @@ public class ManagedBeanConsultaPagos implements Serializable {
     private ArchivosPagosDAO daoArch;
     private MaterialDAO matDao;
     private MCfdPagos cfd;
-    @Getter
-    @Setter
+    
+    
     private List<MCfdPagos> listCFDS;
-    /*@Getter
-    @Setter
+    /*
+    
     private List<MCfdPagos> listCFDSAux;*/
-    @Getter
-    @Setter
+    
+    
     private List<Integer> listCFDSAux;
-    /*@Getter
-    @Setter
+    /*
+    
     private List<MCfdPagos> selectedCFDS;//Donde se guardaran los cfdi extraidos del listmap*/
-    @Getter
-    @Setter
+    
+    
     private List<Integer> selectedCFDS;//Donde se guardaran los cfdi extraidos del listmap
-    @Getter
-    @Setter
+    
+    
     private MCfdPagos selectedMCFD;//FACTURA axiliar
     //private List<MapearCfdArchi> listMapMCA;//Usaoo en el View
-    @Getter
-    @Setter
+    
+    
     private LazyDataModel<MCfdPagos> listMapMCA;
-    @Getter
-    @Setter
+    
+    
     private List<MCfdPagos> listMapMCASelecteds;
     private SimpleDateFormat sdfDateFormatter;
-    @Getter
-    @Setter
+    
+    
     private FileUpload archivo;//Cambiar a multiples archivos
     //Materiales en un FACTURA
     private Material materialData;
@@ -472,5 +470,325 @@ public class ManagedBeanConsultaPagos implements Serializable {
         } else {
             booTipoBusqueda = true;
         }
+    }
+
+    public int getEmpresaIdFiltro() {
+        return empresaIdFiltro;
+    }
+
+    public void setEmpresaIdFiltro(int empresaIdFiltro) {
+        this.empresaIdFiltro = empresaIdFiltro;
+    }
+
+    public Integer[] getIdsEmpresasAsignadas() {
+        return idsEmpresasAsignadas;
+    }
+
+    public void setIdsEmpresasAsignadas(Integer[] idsEmpresasAsignadas) {
+        this.idsEmpresasAsignadas = idsEmpresasAsignadas;
+    }
+
+    public String getStrEstatus() {
+        return strEstatus;
+    }
+
+    public void setStrEstatus(String strEstatus) {
+        this.strEstatus = strEstatus;
+    }
+
+    public String getTipBusq() {
+        return tipBusq;
+    }
+
+    public void setTipBusq(String tipBusq) {
+        this.tipBusq = tipBusq;
+    }
+
+    public boolean isBooTipoBusqueda() {
+        return booTipoBusqueda;
+    }
+
+    public void setBooTipoBusqueda(boolean booTipoBusqueda) {
+        this.booTipoBusqueda = booTipoBusqueda;
+    }
+
+    public String getParamBusq() {
+        return paramBusq;
+    }
+
+    public void setParamBusq(String paramBusq) {
+        this.paramBusq = paramBusq;
+    }
+
+    public Date getDatDesde() {
+        return datDesde;
+    }
+
+    public void setDatDesde(Date datDesde) {
+        this.datDesde = datDesde;
+    }
+
+    public Date getDatHasta() {
+        return datHasta;
+    }
+
+    public void setDatHasta(Date datHasta) {
+        this.datHasta = datHasta;
+    }
+
+    public String getContentName() {
+        return contentName;
+    }
+
+    public void setContentName(String contentName) {
+        this.contentName = contentName;
+    }
+
+    public String getArchivoSubFileName() {
+        return archivoSubFileName;
+    }
+
+    public void setArchivoSubFileName(String archivoSubFileName) {
+        this.archivoSubFileName = archivoSubFileName;
+    }
+
+    public String getArchivoSubContentType() {
+        return archivoSubContentType;
+    }
+
+    public void setArchivoSubContentType(String archivoSubContentType) {
+        this.archivoSubContentType = archivoSubContentType;
+    }
+
+    public List<MArchivosCfd> getArchivosCFDI() {
+        return archivosCFDI;
+    }
+
+    public void setArchivosCFDI(List<MArchivosCfd> archivosCFDI) {
+        this.archivosCFDI = archivosCFDI;
+    }
+
+    public List<MCfdPagos> getListMap() {
+        return listMap;
+    }
+
+    public void setListMap(List<MCfdPagos> listMap) {
+        this.listMap = listMap;
+    }
+
+    public List<MEmpresa> getListEmpresas() {
+        return listEmpresas;
+    }
+
+    public void setListEmpresas(List<MEmpresa> listEmpresas) {
+        this.listEmpresas = listEmpresas;
+    }
+
+    public EmpresaDAO getDaoEmp() {
+        return daoEmp;
+    }
+
+    public void setDaoEmp(EmpresaDAO daoEmp) {
+        this.daoEmp = daoEmp;
+    }
+
+    public ConfigDAO getDAOCong() {
+        return DAOCong;
+    }
+
+    public void setDAOCong(ConfigDAO DAOCong) {
+        this.DAOCong = DAOCong;
+    }
+
+    public String getIds() {
+        return ids;
+    }
+
+    public void setIds(String ids) {
+        this.ids = ids;
+    }
+
+    public int getAsig() {
+        return asig;
+    }
+
+    public void setAsig(int asig) {
+        this.asig = asig;
+    }
+
+    public AutoPagosDao getDaoCFDI() {
+        return daoCFDI;
+    }
+
+    public void setDaoCFDI(AutoPagosDao daoCFDI) {
+        this.daoCFDI = daoCFDI;
+    }
+
+    public ArchivosPagosDAO getDaoArch() {
+        return daoArch;
+    }
+
+    public void setDaoArch(ArchivosPagosDAO daoArch) {
+        this.daoArch = daoArch;
+    }
+
+    public MaterialDAO getMatDao() {
+        return matDao;
+    }
+
+    public void setMatDao(MaterialDAO matDao) {
+        this.matDao = matDao;
+    }
+
+    public MCfdPagos getCfd() {
+        return cfd;
+    }
+
+    public void setCfd(MCfdPagos cfd) {
+        this.cfd = cfd;
+    }
+
+    public List<MCfdPagos> getListCFDS() {
+        return listCFDS;
+    }
+
+    public void setListCFDS(List<MCfdPagos> listCFDS) {
+        this.listCFDS = listCFDS;
+    }
+
+    public List<Integer> getListCFDSAux() {
+        return listCFDSAux;
+    }
+
+    public void setListCFDSAux(List<Integer> listCFDSAux) {
+        this.listCFDSAux = listCFDSAux;
+    }
+
+    public List<Integer> getSelectedCFDS() {
+        return selectedCFDS;
+    }
+
+    public void setSelectedCFDS(List<Integer> selectedCFDS) {
+        this.selectedCFDS = selectedCFDS;
+    }
+
+    public MCfdPagos getSelectedMCFD() {
+        return selectedMCFD;
+    }
+
+    public void setSelectedMCFD(MCfdPagos selectedMCFD) {
+        this.selectedMCFD = selectedMCFD;
+    }
+
+    public LazyDataModel<MCfdPagos> getListMapMCA() {
+        return listMapMCA;
+    }
+
+    public void setListMapMCA(LazyDataModel<MCfdPagos> listMapMCA) {
+        this.listMapMCA = listMapMCA;
+    }
+
+    public List<MCfdPagos> getListMapMCASelecteds() {
+        return listMapMCASelecteds;
+    }
+
+    public void setListMapMCASelecteds(List<MCfdPagos> listMapMCASelecteds) {
+        this.listMapMCASelecteds = listMapMCASelecteds;
+    }
+
+    public SimpleDateFormat getSdfDateFormatter() {
+        return sdfDateFormatter;
+    }
+
+    public void setSdfDateFormatter(SimpleDateFormat sdfDateFormatter) {
+        this.sdfDateFormatter = sdfDateFormatter;
+    }
+
+    public FileUpload getArchivo() {
+        return archivo;
+    }
+
+    public void setArchivo(FileUpload archivo) {
+        this.archivo = archivo;
+    }
+
+    public Material getMaterialData() {
+        return materialData;
+    }
+
+    public void setMaterialData(Material materialData) {
+        this.materialData = materialData;
+    }
+
+    public String getNumCajas() {
+        return NumCajas;
+    }
+
+    public void setNumCajas(String numCajas) {
+        NumCajas = numCajas;
+    }
+
+    public String getMaterialtxt() {
+        return Materialtxt;
+    }
+
+    public void setMaterialtxt(String materialtxt) {
+        Materialtxt = materialtxt;
+    }
+
+    public String getRecibotxt() {
+        return Recibotxt;
+    }
+
+    public void setRecibotxt(String recibotxt) {
+        Recibotxt = recibotxt;
+    }
+
+    public String getReciboFechatxt() {
+        return ReciboFechatxt;
+    }
+
+    public void setReciboFechatxt(String reciboFechatxt) {
+        ReciboFechatxt = reciboFechatxt;
+    }
+
+    public MAcceso getActiveUser() {
+        return activeUser;
+    }
+
+    public void setActiveUser(MAcceso activeUser) {
+        this.activeUser = activeUser;
+    }
+
+    public HttpServletRequest getHttpServletRequest() {
+        return httpServletRequest;
+    }
+
+    public void setHttpServletRequest(HttpServletRequest httpServletRequest) {
+        this.httpServletRequest = httpServletRequest;
+    }
+
+    public FacesContext getFaceContext() {
+        return faceContext;
+    }
+
+    public void setFaceContext(FacesContext faceContext) {
+        this.faceContext = faceContext;
+    }
+
+    public String getAppContext() {
+        return appContext;
+    }
+
+    public void setAppContext(String appContext) {
+        this.appContext = appContext;
+    }
+
+    public boolean isDebug() {
+        return debug;
+    }
+
+    public void setDebug(boolean debug) {
+        this.debug = debug;
     }
 }
