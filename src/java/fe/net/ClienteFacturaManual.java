@@ -159,6 +159,7 @@ public class ClienteFacturaManual {
             byte[] cdires = null;
             byte[] des = null;
 
+
             //Xml de timbrado/
             //byte[] xmls = Zipper.compress("cfdi", xml.getBytes());
             //Xml de impresion
