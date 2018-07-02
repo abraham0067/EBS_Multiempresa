@@ -102,15 +102,24 @@ public class ClienteFacturaManual {
             ///Convierte a string con encoding ISO-8859-1 para soportar los acentos
             /// se reemplaza el string de ISO-8859-1 por UTF-8
             ///Ser escapan los caracteres no soportados en UTF-8
+           // XMLOutputter xout = new XMLOutputter();
+
             XMLOutputter xout = new XMLOutputter();
+            xout.setFormat(xout.getFormat().setEncoding("ISO-8859-1"));
+            ByteArrayOutputStream bout = new ByteArrayOutputStream();
+            xout.output(docp, bout);
+
+            String xmlPrint = new String(bout.toByteArray());
+            xmlPrint = xmlPrint.replaceAll("ISO-8859-1", "UTF-8");
+            xmlPrint = charUnicode.getTextEncoded2(xmlPrint);
 
 //            xout.setFormat(xout.getFormat().setEncoding("ISO-8859-1"));
 
-            ByteArrayOutputStream bout = new ByteArrayOutputStream();
-            ByteArrayOutputStream boutp = new ByteArrayOutputStream();
+       //     ByteArrayOutputStream bout = new ByteArrayOutputStream();
+          //  ByteArrayOutputStream boutp = new ByteArrayOutputStream();
 
-            xout.output(doc, bout);
-            xout.output(docp, boutp);
+//            xout.output(doc, bout);
+  //          xout.output(docp, boutp);
 
 //            String xmlPrint = new String(bout.toByteArray());
 //            xmlPrint = xmlPrint.replaceAll("ISO-8859-1", "UTF-8");
@@ -125,14 +134,22 @@ public class ClienteFacturaManual {
 //            xml = xml.replaceAll("ISO-8859-1", "UTF-8");
 //            xml = charUnicode.getTextEncoded2(xml);
 
-            String xml = new String(bout.toByteArray());
-            String xmlp = new String(boutp.toByteArray());
+//            String xml = new String(bout.toByteArray());
+//            String xmlp = new String(boutp.toByteArray());
+//            xml = charUnicode.getTextEncoded2(xml);
+//            xmlp = charUnicode.getTextEncoded2(xmlp);
+
+            XMLOutputter xoutXml = new XMLOutputter();
+            xoutXml.setFormat(xoutXml.getFormat().setEncoding("ISO-8859-1"));
+            ByteArrayOutputStream boutXml = new ByteArrayOutputStream();
+            xoutXml.output(doc, boutXml);
+            String xml = new String(boutXml.toByteArray());
+            xml = xml.replaceAll("ISO-8859-1", "UTF-8");
             xml = charUnicode.getTextEncoded2(xml);
-            xmlp = charUnicode.getTextEncoded2(xmlp);
 
             if(debug) {
                 System.out.println(">>>>>>>>>> FACTURACION MANUAL XML_SAT :  <<< \n" + xml + "\n >>>");
-                System.out.println(">>>>>>>>>> FACTURACION MANUAL XML_PRINT :  <<< \n" + xmlp + "\n >>>");
+                System.out.println(">>>>>>>>>> FACTURACION MANUAL XML_PRINT :  <<< \n" + xmlPrint + "\n >>>");
             }
 //            byte[] cdires = com.ebs.fe.wsgi.cliet.Cliente.genInvoice(Zipper.compress("cfdi", xml.getBytes()), clave);
             /**
@@ -146,7 +163,7 @@ public class ClienteFacturaManual {
             //byte[] xmls = Zipper.compress("cfdi", xml.getBytes());
             //Xml de impresion
             //byte[] xmlp = Zipper.compress("xml_p", xml.getBytes());
-            byte[] both = getZipBytes(xml, xmlp);//Empaquetamos xml y xmlp en un solo zip
+            byte[] both = getZipBytes(xml, xmlPrint);//Empaquetamos xml y xmlp en un solo zip
             resp = generaTimbrado(both, clave, ambiente);
 
         } catch (ComprobanteException ce) {
