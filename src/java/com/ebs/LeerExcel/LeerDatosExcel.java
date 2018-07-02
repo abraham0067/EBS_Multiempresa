@@ -850,6 +850,7 @@ public class LeerDatosExcel {
                 ));
         ((DatosComprobanteData) comprobanteData.getDatosComprobante()).setSello("qQSvHZPzRB7eT6f9dJs3GepVl82eq4aOiI4b2hK+YSTcaJXgrDm8GfmZyUMnJ5XLs/TZDtAeafF5W1oyEygqva5fA3Ga5agq9HKHMEZx2qCOgOB+97C26StVKUdGD3jcPCh64AEgXLdCftIPwiRXP6eAr0IeeaujjVdEobvuxyo=");
         ((DatosComprobanteData) comprobanteData.getDatosComprobante()).setNoCertificado("00001000000103168809");//Mas de 20 caracteres
+        ((DatosComprobanteData) comprobanteData.getDatosComprobante()).setCertificado("Certificado de prueba");
         // ================================================================================================================================================================================
 
         List<Concepto> listaConceptoData = new ArrayList<>();

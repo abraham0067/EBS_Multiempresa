@@ -169,7 +169,7 @@
                 <ui:include src="/facturas/compComercioExterior/complementoComercioExteriorPart.xhtml"/>
                 <p:fieldset legend="Comentarios" toggleable="true" toggleSpeed="500" collapsed="false">
                     <p:panelGrid class="panelCentered" columns="1" style="width: 50%; text-align: center;">
-                        <p:inputTextarea id="itaComentarios" autoResize="true" cols="50" rows="5" maxlength="300"
+                        <p:inputTextarea id="itaComentarios" autoResize="true" cols="50" rows="5" maxlength="1500"
                                          value="#{managedBeanFacturacionManual.comentarios}">
                             <p:ajax event="change" process="@this,itaComentarios"/>
                         </p:inputTextarea>
