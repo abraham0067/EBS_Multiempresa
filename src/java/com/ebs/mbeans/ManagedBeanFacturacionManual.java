@@ -8,6 +8,7 @@ import com.ebs.exceptions.BadImpuestoTypeException;
 import com.ebs.helpers.LambdasHelper;
 import com.ebs.util.FloatsNumbersUtil;
 import com.ebs.util.IdGenerator;
+import com.ebs.util.TimeZoneCP;
 import fe.audi.*;
 import fe.db.*;
 import fe.model.dao.*;
@@ -1773,8 +1774,6 @@ public class ManagedBeanFacturacionManual implements Serializable {
 
                 usarComplementoAdendaAudi = false;
                 facturaVw("");
-                System.out.println("usar adenda vw");
-                System.out.println("codigo: " + factura.getCodigoImpuesto());
             } else if (usarComplementoAdendaAudi) {
                 usarComplementoAdendaVW = false;
 
@@ -1832,11 +1831,11 @@ public class ManagedBeanFacturacionManual implements Serializable {
             adendaVolksWagen = new AddendaVolksWagenData(adendaProductos ? AddendaVolksWagenData.TIPO_ADENDA_VW.PMT : AddendaVolksWagenData.TIPO_ADENDA_VW.PSV);
             adendaVolksWagen.setFacturaVW(factura);
             lstAdd.add(adendaVolksWagen);
-            System.out.println("Entro agregar adenda vw");
+
 
         } else if (usarComplementoAdendaAudi) {
             lstAdd.add(facturaAudi);
-            System.out.println("Entro agregar adenda audi");
+
         }
 
         cdata.setAdendas(lstAdd);
@@ -2353,6 +2352,17 @@ public class ManagedBeanFacturacionManual implements Serializable {
 
 
             ((AdditionalData) getComprobanteData().getAdditional()).setPlantilla(PLANTILLAGRAL);//PLANTILLA CFDIV33
+            // =========================================== Datos dummy para que las validaciones iniciales del proceso de captura manual, no genere errores de datos==========================
+
+            ((DatosComprobanteData) comprobanteData.getDatosComprobante()).setFecha(
+                    (new TimeZoneCP().getUTC(
+                            comprobanteData.getDatosComprobante().getLugarExpedicion().getClave())
+                    ));
+            ((DatosComprobanteData) comprobanteData.getDatosComprobante()).setSello("qQSvHZPzRB7eT6f9dJs3GepVl82eq4aOiI4b2hK+YSTcaJXgrDm8GfmZyUMnJ5XLs/TZDtAeafF5W1oyEygqva5fA3Ga5agq9HKHMEZx2qCOgOB+97C26StVKUdGD3jcPCh64AEgXLdCftIPwiRXP6eAr0IeeaujjVdEobvuxyo=");
+            ((DatosComprobanteData) comprobanteData.getDatosComprobante()).setNoCertificado("00001000000103168809");//Mas de 20 caracteres
+            ((DatosComprobanteData) comprobanteData.getDatosComprobante()).setCertificado("Certificado de prueba");
+            // ================================================================================================================================================================================
+
 
             agregarEmailCliente();
 
@@ -2931,7 +2941,7 @@ public class ManagedBeanFacturacionManual implements Serializable {
     public void handleChangeTipoAdenda() {
 
         String msge = "";
-        System.out.println("Tipo adenda: " + tipoAdenda);
+
         adendaServicios = false;
         adendaServicios = false;
 
@@ -3324,7 +3334,7 @@ public class ManagedBeanFacturacionManual implements Serializable {
                         break;
                     case RFC_VW:
                         setKeyReceptorAddenda(empresasConAddenda.get(RFC_VW));//
-                        System.out.println("Adenda vw");
+
                         break;
                     default:
                         setKeyReceptorAddenda(-1);//set not found

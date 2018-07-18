@@ -3,10 +3,12 @@ package fe.net;
 import com.ebs.fe.wsgi.prd.ClientePrd;
 import com.ebs.fe.wsgi.test.ClienteTest;
 import com.ebs.fe.wsgi.util.Zipper;
+import com.ebs.util.TimeZoneCP;
 import fe.sat.ComprobanteException;
 import fe.sat.complementos.ComplementoException;
 import fe.sat.v33.CFDIFactory33;
 import fe.sat.v33.ComprobanteData;
+import fe.sat.v33.DatosComprobanteData;
 import fe.xml.CharUnicode;
 import org.jdom.Document;
 import org.jdom.output.XMLOutputter;
@@ -95,6 +97,22 @@ public class ClienteFacturaManual {
             //serializeObjectToFile(cmp);
             CFDIFactory33 cfdi = new CFDIFactory33();
             CharUnicode charUnicode = new CharUnicode();
+
+
+            // =========================================== Datos dummy para que las validaciones iniciales del proceso de captura manual, no genere errores de datos==========================
+
+            ((DatosComprobanteData) cmp.getDatosComprobante()).setFecha(
+                    (new TimeZoneCP().getUTC(
+                            cmp.getDatosComprobante().getLugarExpedicion().getClave())
+                    ));
+            ((DatosComprobanteData) cmp.getDatosComprobante()).setSello("qQSvHZPzRB7eT6f9dJs3GepVl82eq4aOiI4b2hK+YSTcaJXgrDm8GfmZyUMnJ5XLs/TZDtAeafF5W1oyEygqva5fA3Ga5agq9HKHMEZx2qCOgOB+97C26StVKUdGD3jcPCh64AEgXLdCftIPwiRXP6eAr0IeeaujjVdEobvuxyo=");
+            ((DatosComprobanteData) cmp.getDatosComprobante()).setNoCertificado("00001000000103168809");//Mas de 20 caracteres
+            ((DatosComprobanteData) cmp.getDatosComprobante()).setCertificado("Certizficado de prueba");
+            // ================================================================================================================================================================================
+
+
+
+
 
             Document doc = cfdi.buildComprobanteDocConAddenda(cmp);// TODO: 12/06/2017 CHECK feConfig.xml NOT FOUND EXCENTION
             Document docp = cfdi.buildComprobanteDocPrintConAddenda(cmp);
