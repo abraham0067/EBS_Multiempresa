@@ -14,7 +14,7 @@ import com.ebs.vistas.VistaCfdiOtro;
 import fe.db.MAcceso;
 import fe.db.MArchivosCfd;
 import fe.db.MCfd;
-import fe.db.MConfig;
+import fe.db.MConfig; 
 import fe.db.MEmpresa;
 import fe.db.MOtro;
 import fe.db.MapearCfdArchi;
