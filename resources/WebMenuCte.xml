@@ -13,7 +13,7 @@
         <!--Menu para la generacion automatica de facturas excel-->
         <menuEntry name="Excel" title="Facturacion Excel" url="/facturas/facturaExcel.xhtml"  icon="fa fa-fw fa-file-excel-o" perfil="268435456" nivel="3" position="10" />
         <!--Menu para la generacion automatica de pagos excel-->
-        <!--<menuEntry name="Excel" title="Complemento de Pago Excel" url="/facturas/pagoExcel.xhtml"  icon="fa fa-fw fa-file-excel-o" perfil="536870912" nivel="3" position="11" />-->
+        <menuEntry name="Excel" title="Complemento de Pago Excel" url="/facturas/pagoExcel.xhtml"  icon="fa fa-fw fa-file-excel-o" perfil="1073741824" nivel="3" position="11" />
     </subMenu>
     <subMenu name="administracion" title="Administración" perfil="4" nivel="2"  icon="fa fa-fw fa-wrench" position="2">
         <menuEntry name="empresa" title="Empresa" url="/admin/administracionEmpresas.xhtml" icon="no" perfil="8" nivel="3" position="1" />
