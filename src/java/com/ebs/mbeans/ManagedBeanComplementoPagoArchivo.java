@@ -113,15 +113,15 @@ public class ManagedBeanComplementoPagoArchivo implements Serializable {
             ComplementoPagoExcel genComprobanteData = new ComplementoPagoExcel(uploadedFile.getInputstream());
             EmpresaDAO daoEmp = new EmpresaDAO();
             DetallePagosDao daoPagos = new DetallePagosDao();
-            double saldoDisponibleEmisor = genComprobanteData.getPagoTempContainer().getMonto();
+            //double saldoDisponibleEmisor = genComprobanteData.getPagoTempContainer().getMonto();
             List<PagoData> pagos = genComprobanteData.getListPago();
             CfdiDAO daoCFD = new CfdiDAO();
-            MCfd mcfdi = daoCFD.findByUUID(genComprobanteData.getDocRelTempPago().getIdDocumento().trim(), idEmpresa);
+
 
             if (uploadedFile != null) {
                 FacesContext.getCurrentInstance().addMessage("frmManual", new FacesMessage(FacesMessage.SEVERITY_INFO, "Generando facturacion por archivo excel", ""));
 
-                System.out.println("COMIENZA LA GENERACION :  " + uploadedFile.getFileName());
+                System.out.println("COMIENZA LA GENERACION DE PAGO:  " + uploadedFile.getFileName());
                 PintarLog.println("Apunto de llamar al servicio de factura automatica desde el servidor");
 
                 empresaEmisora = daoEmpresas.BuscarEmpresaId(this.idEmpresa);
@@ -147,13 +147,15 @@ public class ManagedBeanComplementoPagoArchivo implements Serializable {
                     if (checkRespuestaServicio(respuestaServicio)) {
 
                         // TODO: 09/10/2017  UPDATE data on BD
-                        MEmpresa emisor = daoEmp.BuscarEmpresaId(idEmpresa);
-                        emisor.setImpSaldoDisponible(saldoDisponibleEmisor);
-                        daoEmp.GuardarOActualizaEmpresa(emisor);
+//                        MEmpresa emisor = daoEmp.BuscarEmpresaId(idEmpresa);
+//                        emisor.setImpSaldoDisponible(saldoDisponibleEmisor);
+//                        daoEmp.GuardarOActualizaEmpresa(emisor);
                         // TODO: 09/10/2017 GUARDAR ACTUALIZACIONES DE CADA PAGO
                         for (Pago pg : pagos) {
+
                             for (DoctoRelacionado dr : pg.getDoctoRelacionado()) {
                                 String uuid = dr.getIdDocumento();
+                                MCfd mcfdi = daoCFD.findByUUID(uuid, idEmpresa);
                                 MPagos pago = daoPagos.getPagoPendienteByUuid(uuid);
 
                                 if (pago != null) {

@@ -70,6 +70,7 @@ public class ComplementoPagoExcel {
         docsRelPago = new ArrayList<>();
         initComprobanteAsPago();
         readXLSFile(excelFile);
+        generarFactura();
     }
 
 //    public ComplementoPagoExcel() throws IOException {
@@ -129,7 +130,6 @@ public class ComplementoPagoExcel {
                 if (cell.getColumnIndex() == 0) {
                     switch ((int) cell.getNumericCellValue()) {
                         case 10: //Emisor
-                            System.out.println("emisor");
                             datosEmisor(cell, cells);
                             break;
                         case 20://DIRECCION EMISOR
@@ -145,7 +145,6 @@ public class ComplementoPagoExcel {
                             comprobantesRelacionados(cell, cells);
                             break;
                         case 60://Información pago
-                            System.out.println("Info pago");
                             informacionPago(cell, cells);
                             cont = 1;
                             //contDocrel = 0;
@@ -158,8 +157,6 @@ public class ComplementoPagoExcel {
                             datosSpei(cell, cells);
                             break;
                         case 90://Documento relacionado
-                            System.out.println("doc rel");
-
                             documentoRelacionado(cell, cells);
                             contDocrel++;
                             break;
@@ -172,7 +169,6 @@ public class ComplementoPagoExcel {
         }
 
         if((cont == 0) && !flag && (contDocrel > 0)){
-            System.out.println("Agrega ultimo");
             listaDoctosRel.add(docsRelPago);
         }
     }
@@ -264,23 +260,19 @@ public class ComplementoPagoExcel {
                 case 2://Nombre
                     receptorData.setNombre(cell.getStringCellValue());
                     break;
-                case 3://CLAVE USO CFDI
-                    catUso.setClave(cell.getStringCellValue());
-                    break;
-                case 4://DESCRIPCIÓN USO CFDI
-                    catUso.setDescripcion(cell.getStringCellValue());
-                    break;
-                case 5://CLAVE RESIDENCIA FISCAL
+                case 3://CLAVE RESIDENCIA FISCAL
                     catResidencia.setClave(cell.getStringCellValue());
                     break;
-                case 6://DESCRIPCION RESIDENCIA FISCAL
+                case 4://DESCRIPCION RESIDENCIA FISCAL
                     catResidencia.setDescripcion(cell.getStringCellValue());
                     break;
-                case 7://NUM REG ID TRIB
+                case 5://NUM REG ID TRIB
                     receptorData.setNumRegIdTrib(readValue(cell));
                     break;
             }
         }
+        catUso.setClave("P01");
+        catUso.setDescripcion("Por definir");
         receptorData.setUsoCFDI(catUso);
         receptorData.setResidenciaFiscal(catResidencia);
     }
@@ -296,15 +288,15 @@ public class ComplementoPagoExcel {
             switch (cell.getColumnIndex()) {
                 case 1://Tipo de Relación
                     clave = readValue(cell);
-                    System.out.println("clave: " + clave);
+
                     break;
                 case 2://Descripción
                     descripcion = readValue(cell);
-                    System.out.println("descripcion: " + descripcion);
+
                     break;
                 case 3://UUID
                     uuid = readValue(cell);
-                    System.out.println("uuid: " + uuid);
+
                     break;
             }
         }
@@ -359,7 +351,7 @@ public class ComplementoPagoExcel {
         }
 
         ((DatosComprobanteData) comprobanteData.getDatosComprobante()).setLugarExpedicion(lugarExpedicion);
-        System.out.println("clave" + catMoneda.getClave());
+
         pagoTempContainer.setMonedaP(catMoneda);
     }
 
@@ -428,16 +420,14 @@ public class ComplementoPagoExcel {
         }
 
         pagoTempContainer.setTipoCadPago(catCadPago);
-        System.out.println("spei: " + catCadPago.getClave());
     }
 
     public void documentoRelacionado(XSSFCell cell, Iterator cells) {
-        System.out.println("cont:" +cont);
-        System.out.println("cont dr: " + contDocrel);
+
 
         if(cont == 1 && flag){
             listaDoctosRel.add(docsRelPago);
-            System.out.println("reinicia datos");
+
             pagos.add(pagoTempContainer);
             docsRelPago = new ArrayList<>();
             pagoTempContainer = new PagoData();
@@ -592,7 +582,7 @@ public class ComplementoPagoExcel {
 
     private ComprobanteData agregarPagosAlComprobante(List<PagoData> pagos, ComprobanteData tmpComp) {
         List<Pago> tempList = new ArrayList<>(pagos);
-//        tempList.forEach(p -> {
+        tempList.forEach(p -> {
 //            if (p.getTipoCadPago() == null ||
 //                    p.getTipoCadPago().getClave() == null ||
 //                    p.getTipoCadPago().getClave().isEmpty()) {
@@ -600,28 +590,31 @@ public class ComplementoPagoExcel {
 //                ((PagoData) p).setSelloPago(null);
 //                ((PagoData) p).setCertPago(null);
 //                ((PagoData) p).setCadPago(null);
-//                p.getDoctoRelacionado().forEach(dr -> {
-//                    ///Si monedas son iguales
-//                    if (dr.getMonedaDR().getClave().equalsIgnoreCase(p.getMonedaP().getClave())) {
-//                        if (dr.getMonedaDR().getClave().equalsIgnoreCase(MXN_STR)) {
-//                            ((DoctoRelacionadoData) dr).setTipoCambioDR(null);
-//                        }
-//                    } else {///son monedas diferentes
-//                        if (dr.getMonedaDR().getClave().equalsIgnoreCase("MXN")) {
-//                            ((DoctoRelacionadoData) dr).setTipoCambioDR(1.0);
-//                        } else {
-//                            ///DEJAR EL TIPO DE CAMBIO CALCULADO
-//                        }
-//                    }
-//                });
+//
 //            }
-//            if (p.getTipoCadPago() == null || p.getNumOperacion().isEmpty()) {
-//                ((PagoData) p).setNumOperacion(null);
-//            }
-//            if (p.getMonedaP().getClave().equalsIgnoreCase(MXN_STR)) {
-//                ((PagoData) p).setTipoCambioP(null);
-//            }
-//        });
+
+            p.getDoctoRelacionado().forEach(dr -> {
+                ///Si monedas son iguales
+                if (dr.getMonedaDR().getClave().equalsIgnoreCase(p.getMonedaP().getClave())) {
+                    if (dr.getMonedaDR().getClave().equalsIgnoreCase(MXN_STR)) {
+                        ((DoctoRelacionadoData) dr).setTipoCambioDR(null);
+                    }
+                } else {///son monedas diferentes
+                    if (dr.getMonedaDR().getClave().equalsIgnoreCase("MXN")) {
+                        ((DoctoRelacionadoData) dr).setTipoCambioDR(1.0);
+                    } else {
+                        ///DEJAR EL TIPO DE CAMBIO CALCULADO
+                    }
+                }
+            });
+
+            if (p.getTipoCadPago() == null || p.getNumOperacion().isEmpty()) {
+                ((PagoData) p).setNumOperacion(null);
+            }
+            if (p.getMonedaP().getClave().equalsIgnoreCase(MXN_STR)) {
+                ((PagoData) p).setTipoCambioP(null);
+            }
+        });
         Pagos mispagos = new PagosData();
         ((PagosData) mispagos).setPagos(tempList);
         tmpComp.getComplementosFe().add((PagosData) mispagos);
@@ -648,45 +641,14 @@ public class ComplementoPagoExcel {
         comprobanteData.setEmisor(emisorDataFactura);
         comprobanteData.setReceptor(receptorData);
 
-        // ((DatosComprobanteData) comprobanteData.getDatosComprobante()).setLugarExpedicion(lugarExpedicion);
-        // ((DatosComprobanteData) comprobanteData.getDatosComprobante()).setSerie(folio.getId());
         ((DatosComprobanteData) comprobanteData.getDatosComprobante()).setFolio("1");
         ((DatosComprobanteData) comprobanteData.getDatosComprobante()).setFolioErp("");
         ((DatosComprobanteData) comprobanteData.getDatosComprobante()).setFecha(Calendar.getInstance().getTime());
 
-//        List<DoctoRelacionado> tempList = new ArrayList<>();
-//        tempList.addAll(docsRelPago);
-//        pagoTempContainer.setDoctoRelacionado(tempList);
-
-        //pagos.add(pagoTempContainer);
-
-        System.out.println("tam: " + pagos.size());
-//        for(int i = 0; i < pagos.size(); i++){
-//
-//            List<DoctoRelacionado> tempList2 = new ArrayList<>();
-//            tempList2 = tempList.subList(i, i+1);
-//
-//            pagos.get(i).setDoctoRelacionado(tempList2);
-//        }
-
         for (int k = 0; k< pagos.size(); k++){
-
-           // List<DoctoRelacionado> tempList2 = new ArrayList<>();
-
-            System.out.println("tam k: " + k + " " + listaDoctosRel.get(k).size());
-            //tempList2.addAll(listaDoctosRel.get(k));
-//            for (int m = 0; m < listaDoctosRel.get(k).size(); m++) {
-//
-//                System.out.println("uuid: " + listaDoctosRel.get(k).get(m).getIdDocumento());
-//            }
 
             pagos.get(k).setDoctoRelacionado(listaDoctosRel.get(k+1));
         }
-
-
-
-        System.out.println("doctos list: " + listaDoctosRel.size());
-
 
         this.comprobanteData = agregarPagosAlComprobante(pagos, this.comprobanteData);
 

@@ -41,12 +41,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-//import fe.model.fmanual.DocRelacionadoContainer;
-//import fe.model.fmanual.PagoContainer;
 
-/**
- * Created by eflores on 19/07/2017.
- */
 public class ManagedBeanComplementoPago implements Serializable {
 
     //Parametro obtenido por get

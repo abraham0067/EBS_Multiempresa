@@ -70,12 +70,12 @@
                     <p:outputLabel value=""/>
 
                     <p:outputLabel value="Archivo Excel: *"/>
-                    <p:fileUpload id="fuArchivo" fileUploadListener="#{managedBeanFacturacionPorArchivo.cargaArchivo}" multiple="false" mode="advanced" dragDropSupport="true"
+                    <p:fileUpload id="fuArchivo" fileUploadListener="#{managedBeanComplementoPagoArchivo.cargaArchivo}" multiple="false" mode="advanced" dragDropSupport="true"
                                   update="messages,msgs,lbNombre,btgenera" fileLimit="1" allowTypes="/(\.|\/)(xls|xlsx)$/"  skinSimple="true" required="true" label="Elegir archivo excel">
                     </p:fileUpload>
                     <p:growl id="messages" showDetail="true" />
 
-                    <p:outputLabel id="lbNombre" value="#{managedBeanFacturacionPorArchivo.nombreArchivo}"/>
+                    <p:outputLabel id="lbNombre" value="#{managedBeanComplementoPagoArchivo.nombreArchivo}"/>
                     <p:outputLabel value=""/>
 
 
@@ -91,9 +91,9 @@
 
 
             <p:commandButton id="btgenera" styleClass="customButtonTwo" value="Generar documento"
-                             actionListener="#{managedBeanFacturacionPorArchivo.generarFactura}"
+                             actionListener="#{managedBeanComplementoPagoArchivo.generarFactura}"
                              ajax="false" update="msgs,frmPlantilla"
-                             disabled="#{managedBeanFacturacionPorArchivo.deshabilitaBotonGeneraFActura}"
+                             disabled="#{managedBeanComplementoPagoArchivo.deshabilitaBotonGeneraFActura}"
 
             />
 
