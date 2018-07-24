@@ -121,7 +121,7 @@ public class ManagedBeanComplementoPagoArchivo implements Serializable {
             if (uploadedFile != null) {
                 FacesContext.getCurrentInstance().addMessage("frmManual", new FacesMessage(FacesMessage.SEVERITY_INFO, "Generando facturacion por archivo excel", ""));
 
-                System.out.println("COMIENZA LA GENERACION:  " + uploadedFile.getFileName());
+                System.out.println("COMIENZA LA GENERACION :  " + uploadedFile.getFileName());
                 PintarLog.println("Apunto de llamar al servicio de factura automatica desde el servidor");
 
                 empresaEmisora = daoEmpresas.BuscarEmpresaId(this.idEmpresa);
