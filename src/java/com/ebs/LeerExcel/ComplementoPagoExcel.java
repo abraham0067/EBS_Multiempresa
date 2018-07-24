@@ -70,7 +70,6 @@ public class ComplementoPagoExcel {
         docsRelPago = new ArrayList<>();
         initComprobanteAsPago();
         readXLSFile(excelFile);
-       // generarFactura();
     }
 
 //    public ComplementoPagoExcel() throws IOException {

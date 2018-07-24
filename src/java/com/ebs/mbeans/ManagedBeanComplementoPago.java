@@ -340,7 +340,6 @@ public class ManagedBeanComplementoPago implements Serializable {
         //Para dar formato a los numeros, de lo contrario se usario la comma como separador
         simbolos.setDecimalSeparator('.');
         df = new DecimalFormat("####.##", simbolos);
-
         tipoRelacionCfdis = "";
         cfdiRelacionados = new ArrayList<>();
         cfdiRelacionadosSelection = new ArrayList<>();
