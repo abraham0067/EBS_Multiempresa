@@ -1,13 +1,18 @@
 package com.ebs.LeerExcel;
 
+import com.ebs.util.TimeZoneCP;
+import fe.sat.ComprobanteException;
 import fe.sat.Direccion12Data;
-import fe.sat.complementos.v33.DoctoRelacionadoData;
-import fe.sat.complementos.v33.PagoData;
+import fe.sat.complementos.ComplementoException;
+import fe.sat.complementos.v33.*;
 import fe.sat.v33.*;
+import fe.xml.CharUnicode;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.jdom.Document;
+import org.jdom.output.XMLOutputter;
 
 import java.io.*;
 import java.math.BigDecimal;
@@ -20,6 +25,14 @@ import java.util.List;
 public class ComplementoPagoExcel {
 
     int cont = 0;
+    int contDocrel = 0;
+    private List<Integer> numDR = new ArrayList<>();
+    boolean flag = false;
+
+    List<DoctoRelacionado> tempList = new ArrayList<>();
+
+    List<List<DoctoRelacionado>> listaDoctosRel = new ArrayList<List<DoctoRelacionado>>();
+
     //--------------------------------EMISOR-------------------------------//
     private EmisorData emisorDataFactura;
     private Direccion12Data direccionFiscal12;
@@ -35,19 +48,40 @@ public class ComplementoPagoExcel {
     private List<PagoData> pagos;
 
 
-    private DoctoRelacionadoData docRelTempPago;
-    private List<DoctoRelacionadoData> docsRelPago;
+    private DoctoRelacionado docRelTempPago;
+    private List<DoctoRelacionado> docsRelPago;
 
     private ComprobanteData comprobanteData;
 
-    public ComplementoPagoExcel() {
+    private final String MXN_STR = "MXN";
+    private final String PLANTILLAGRAL = "CFDIV33CP";//PLantilla complemento de pago
+
+//    public static void main(String[] args) throws Exception {
+//        ComplementoPagoExcel cpe = new ComplementoPagoExcel();
+//        InputStream excelFile = new FileInputStream("C:\\test\\pago.xlsx");
+//        cpe.readXLSFile(excelFile);
+//        cpe.generarFactura();
+//    }
+
+    public ComplementoPagoExcel(InputStream excelFile) throws IOException {
         pagoTempContainer = new PagoData();
         pagos = new ArrayList<>();
-        docRelTempPago = new DoctoRelacionadoData();
+        //docRelTempPago = new DoctoRelacionadoData();
         docsRelPago = new ArrayList<>();
         initComprobanteAsPago();
-
+        readXLSFile(excelFile);
+       // generarFactura();
     }
+
+//    public ComplementoPagoExcel() throws IOException {
+//        pagoTempContainer = new PagoData();
+//        pagos = new ArrayList<>();
+//        //docRelTempPago = new DoctoRelacionadoData();
+//        docsRelPago = new ArrayList<>();
+//        initComprobanteAsPago();
+//        // readXLSFile(excelFile);
+//        // generarFactura();
+//    }
 
 
     private String readValueInt(XSSFCell cell) {
@@ -81,8 +115,6 @@ public class ComplementoPagoExcel {
 
         //InputStream excelFile = new FileInputStream(name);
         XSSFWorkbook wb = new XSSFWorkbook(excelFile);
-        boolean flag = false;
-        cont = -1;
 
         XSSFSheet sheet = wb.getSheetAt(0);
         XSSFCell cell;
@@ -98,6 +130,7 @@ public class ComplementoPagoExcel {
                 if (cell.getColumnIndex() == 0) {
                     switch ((int) cell.getNumericCellValue()) {
                         case 10: //Emisor
+                            System.out.println("emisor");
                             datosEmisor(cell, cells);
                             break;
                         case 20://DIRECCION EMISOR
@@ -113,7 +146,11 @@ public class ComplementoPagoExcel {
                             comprobantesRelacionados(cell, cells);
                             break;
                         case 60://Información pago
+                            System.out.println("Info pago");
                             informacionPago(cell, cells);
+                            cont = 1;
+                            //contDocrel = 0;
+                            flag = true;
                             break;
                         case 70://Forma de pago
                             formaPago(cell, cells);
@@ -122,13 +159,22 @@ public class ComplementoPagoExcel {
                             datosSpei(cell, cells);
                             break;
                         case 90://Documento relacionado
-                            docuementoRelacioando(cell, cells);
+                            System.out.println("doc rel");
+
+                            documentoRelacionado(cell, cells);
+                            contDocrel++;
                             break;
                         default:
                             break;
                     }
                 }
             }
+
+        }
+
+        if((cont == 0) && !flag && (contDocrel > 0)){
+            System.out.println("Agrega ultimo");
+            listaDoctosRel.add(docsRelPago);
         }
     }
 
@@ -280,7 +326,7 @@ public class ComplementoPagoExcel {
     public void informacionPago(XSSFCell cell, Iterator cells) {
 
         CatalogoData lugarExpedicion = new CatalogoData();
-        CatalogoData  catMoneda = new CatalogoData();
+        CatalogoData catMoneda = new CatalogoData();
 
         while (cells.hasNext()) {
             cell = (XSSFCell) cells.next();
@@ -289,7 +335,7 @@ public class ComplementoPagoExcel {
                     ((DatosComprobanteData) comprobanteData.getDatosComprobante()).setSerie(readValue(cell));
                     break;
                 case 2://Lugar de expedicion
-                    lugarExpedicion.setClave(readValue(cell));
+                    lugarExpedicion.setClave(readValueInt(cell));
                     break;
                 case 3://Descripcion
                     lugarExpedicion.setDescripcion(cell.getStringCellValue());
@@ -298,7 +344,7 @@ public class ComplementoPagoExcel {
                     pagoTempContainer.setFechaPago(cell.getDateCellValue());
                     break;
                 case 5://Moneda pago
-                  catMoneda.setClave(readValue(cell));
+                    catMoneda.setClave(readValue(cell));
                     break;
                 case 6://Descripción
                     catMoneda.setDescripcion(cell.getStringCellValue());
@@ -314,99 +360,158 @@ public class ComplementoPagoExcel {
         }
 
         ((DatosComprobanteData) comprobanteData.getDatosComprobante()).setLugarExpedicion(lugarExpedicion);
+        System.out.println("clave" + catMoneda.getClave());
         pagoTempContainer.setMonedaP(catMoneda);
     }
 
     public void formaPago(XSSFCell cell, Iterator cells) {
 
+        CatalogoData catPago = new CatalogoData();
+
         while (cells.hasNext()) {
             cell = (XSSFCell) cells.next();
             switch (cell.getColumnIndex()) {
                 case 1://Forma de pago
-
+                    catPago.setClave(readValue(cell));
                     break;
                 case 2://Descripcion
-
+                    catPago.setDescripcion(readValue(cell));
                     break;
                 case 3://Numero de operacion
-
+                    pagoTempContainer.setNumOperacion(readValue(cell));
                     break;
                 case 4://RfcEmisorCtaOrd
-
+                    pagoTempContainer.setRfcEmisorCtaOrd(readValue(cell));
                     break;
                 case 5://NomBancoOrdExt
+                    pagoTempContainer.setNomBancoOrdExt(readValue(cell));
                     break;
                 case 6://CtaOrdenante
+                    pagoTempContainer.setCtaOrdenante(readValue(cell));
                     break;
                 case 7://RfcEmisorCtaBen
+                    pagoTempContainer.setRfcEmisorCtaBen(readValue(cell));
                     break;
                 case 8://CtaBeneficiario
+                    pagoTempContainer.setCtaBeneficiario(readValue(cell));
                     break;
 
             }
         }
+
+        pagoTempContainer.setFormaDePagoP(catPago);
     }
 
     public void datosSpei(XSSFCell cell, Iterator cells) {
+
+        CatalogoData catCadPago = new CatalogoData();
 
         while (cells.hasNext()) {
             cell = (XSSFCell) cells.next();
             switch (cell.getColumnIndex()) {
                 case 1://TipoCadPago
-
+                    catCadPago.setClave(readValue(cell));
                     break;
                 case 2://Descripcion
-
+                    catCadPago.setDescripcion(readValue(cell));
                     break;
                 case 3://CertPago
-
+                    pagoTempContainer.setCertPago(readValue(cell));
                     break;
                 case 4://CadPago
-
+                    pagoTempContainer.setCadPago(readValue(cell));
                     break;
                 case 5://SelloPago
+                    pagoTempContainer.setSelloPago(readValue(cell));
                     break;
 
             }
         }
+
+        pagoTempContainer.setTipoCadPago(catCadPago);
+        System.out.println("spei: " + catCadPago.getClave());
     }
 
-    public void docuementoRelacioando(XSSFCell cell, Iterator cells) {
+    public void documentoRelacionado(XSSFCell cell, Iterator cells) {
+        System.out.println("cont:" +cont);
+        System.out.println("cont dr: " + contDocrel);
+
+        if(cont == 1 && flag){
+            listaDoctosRel.add(docsRelPago);
+            System.out.println("reinicia datos");
+            pagos.add(pagoTempContainer);
+            docsRelPago = new ArrayList<>();
+            pagoTempContainer = new PagoData();
+            numDR.add(contDocrel);
+            contDocrel = 0;
+            cont = 0;
+            flag = false;
+        }
+
+
+        docRelTempPago = new DoctoRelacionadoData();
+        CatalogoData catMoneda = new CatalogoData();
+        CatalogoData catTipoCambio = new CatalogoData();
+        CatalogoData metodoPago = new CatalogoData();
 
         while (cells.hasNext()) {
             cell = (XSSFCell) cells.next();
+
             switch (cell.getColumnIndex()) {
                 case 1://UUID
-
+                    ((DoctoRelacionadoData)docRelTempPago).setIdDocumento(readValue(cell));
                     break;
                 case 2://Serie
-
+                    ((DoctoRelacionadoData)docRelTempPago).setSerie(readValue(cell));
                     break;
                 case 3://Folio
-
+                    ((DoctoRelacionadoData)docRelTempPago).setFolio(readValue(cell));
                     break;
                 case 4://Moneda dr
-
+                    catMoneda.setClave(readValue(cell));
                     break;
                 case 5://Descripcion
+                    catMoneda.setDescripcion(readValue(cell));
                     break;
                 case 6://Tipo Cambio dr
+
+                    String aux = readValue(cell);
+
+                    if (aux.equalsIgnoreCase("")) {
+                        ((DoctoRelacionadoData)docRelTempPago).setTipoCambioDR(null);
+                    } else {
+                        ((DoctoRelacionadoData)docRelTempPago).setTipoCambioDR(cell.getNumericCellValue());
+                    }
+
                     break;
-                case 7://Descripción
+                case 7://Metodo de pago dr
+                    metodoPago.setClave(cell.getStringCellValue());
                     break;
-                case 8://Metodo de pago dr
+                case 8://Descripción
+                    metodoPago.setDescripcion(cell.getStringCellValue());
                     break;
                 case 9://Numero de parcialidad
+                    ((DoctoRelacionadoData)docRelTempPago).setNumParcialidad(Integer.parseInt(readValueInt(cell)));
                     break;
                 case 10://Importe saldo anterior
+                    ((DoctoRelacionadoData)docRelTempPago).setImpSaldoAnt(cell.getNumericCellValue());
                     break;
                 case 11://importe saldo pagado
+                    ((DoctoRelacionadoData)docRelTempPago).setImpPagado(cell.getNumericCellValue());
                     break;
                 case 12://importe saldo insoluto
+                    ((DoctoRelacionadoData)docRelTempPago).setImpSaldoInsoluto(cell.getNumericCellValue());
                     break;
 
             }
         }
+
+        ((DoctoRelacionadoData)docRelTempPago).setMetodoDePagoDR(metodoPago);
+        ((DoctoRelacionadoData)docRelTempPago).setMonedaDR(catMoneda);
+        docsRelPago.add(docRelTempPago);
+
+        //tempList.addAll(docsRelPago);
+
     }
 
     /**
@@ -486,13 +591,191 @@ public class ComplementoPagoExcel {
         comprobanteData.setComplemementosFe(new ArrayList<>());
     }
 
+    private ComprobanteData agregarPagosAlComprobante(List<PagoData> pagos, ComprobanteData tmpComp) {
+        List<Pago> tempList = new ArrayList<>(pagos);
+//        tempList.forEach(p -> {
+//            if (p.getTipoCadPago() == null ||
+//                    p.getTipoCadPago().getClave() == null ||
+//                    p.getTipoCadPago().getClave().isEmpty()) {
+//                ((PagoData) p).setTipoCadPago(null);
+//                ((PagoData) p).setSelloPago(null);
+//                ((PagoData) p).setCertPago(null);
+//                ((PagoData) p).setCadPago(null);
+//                p.getDoctoRelacionado().forEach(dr -> {
+//                    ///Si monedas son iguales
+//                    if (dr.getMonedaDR().getClave().equalsIgnoreCase(p.getMonedaP().getClave())) {
+//                        if (dr.getMonedaDR().getClave().equalsIgnoreCase(MXN_STR)) {
+//                            ((DoctoRelacionadoData) dr).setTipoCambioDR(null);
+//                        }
+//                    } else {///son monedas diferentes
+//                        if (dr.getMonedaDR().getClave().equalsIgnoreCase("MXN")) {
+//                            ((DoctoRelacionadoData) dr).setTipoCambioDR(1.0);
+//                        } else {
+//                            ///DEJAR EL TIPO DE CAMBIO CALCULADO
+//                        }
+//                    }
+//                });
+//            }
+//            if (p.getTipoCadPago() == null || p.getNumOperacion().isEmpty()) {
+//                ((PagoData) p).setNumOperacion(null);
+//            }
+//            if (p.getMonedaP().getClave().equalsIgnoreCase(MXN_STR)) {
+//                ((PagoData) p).setTipoCambioP(null);
+//            }
+//        });
+        Pagos mispagos = new PagosData();
+        ((PagosData) mispagos).setPagos(tempList);
+        tmpComp.getComplementosFe().add((PagosData) mispagos);
+        return tmpComp;
+
+    }
+
+    private ComprobanteData agregarParamsComprobante(ComprobanteData comprobanteData, List<String> params) {
+        AdditionalData additionalData = new AdditionalData();
+        additionalData.setParam(new String[]{"Orden Interna ", "Centro Beneficio"});
+        comprobanteData.setAdditional(additionalData);
+        String[] datosCliente = new String[3];
+        datosCliente[0] = "" + (Integer.parseInt(params.get(0)) > 0 ? params.get(0) : 0);
+        datosCliente[1] = "";
+        datosCliente[2] = "";
+        ((AdditionalData) comprobanteData.getAdditional()).setParam(datosCliente);
+        ((AdditionalData) comprobanteData.getAdditional()).setPlantilla(PLANTILLAGRAL);  //CFDIV33CP
+        return comprobanteData;
+    }
+
+
     public void generarFactura() {
+
+        comprobanteData.setEmisor(emisorDataFactura);
+        comprobanteData.setReceptor(receptorData);
 
         // ((DatosComprobanteData) comprobanteData.getDatosComprobante()).setLugarExpedicion(lugarExpedicion);
         // ((DatosComprobanteData) comprobanteData.getDatosComprobante()).setSerie(folio.getId());
         ((DatosComprobanteData) comprobanteData.getDatosComprobante()).setFolio("1");
         ((DatosComprobanteData) comprobanteData.getDatosComprobante()).setFolioErp("");
         ((DatosComprobanteData) comprobanteData.getDatosComprobante()).setFecha(Calendar.getInstance().getTime());
+
+//        List<DoctoRelacionado> tempList = new ArrayList<>();
+//        tempList.addAll(docsRelPago);
+//        pagoTempContainer.setDoctoRelacionado(tempList);
+
+        //pagos.add(pagoTempContainer);
+
+        System.out.println("tam: " + pagos.size());
+//        for(int i = 0; i < pagos.size(); i++){
+//
+//            List<DoctoRelacionado> tempList2 = new ArrayList<>();
+//            tempList2 = tempList.subList(i, i+1);
+//
+//            pagos.get(i).setDoctoRelacionado(tempList2);
+//        }
+
+        for (int k = 0; k< pagos.size(); k++){
+
+           // List<DoctoRelacionado> tempList2 = new ArrayList<>();
+
+            System.out.println("tam k: " + k + " " + listaDoctosRel.get(k).size());
+            //tempList2.addAll(listaDoctosRel.get(k));
+//            for (int m = 0; m < listaDoctosRel.get(k).size(); m++) {
+//
+//                System.out.println("uuid: " + listaDoctosRel.get(k).get(m).getIdDocumento());
+//            }
+
+            pagos.get(k).setDoctoRelacionado(listaDoctosRel.get(k+1));
+        }
+
+
+
+        System.out.println("doctos list: " + listaDoctosRel.size());
+
+
+        this.comprobanteData = agregarPagosAlComprobante(pagos, this.comprobanteData);
+
+        //----------------------------------------------------------------------------------------
+        // PAREMETROS ADICIONALES
+        //----------------------------------------------------------------------------------------
+        this.comprobanteData = agregarParamsComprobante(comprobanteData, new ArrayList<String>() {{
+            add("0");
+        }});
+
+
+        exeGenFactura(this.comprobanteData);
+
+    }
+
+    public ComprobanteData getComprobanteData() {
+        return comprobanteData;
+    }
+
+    public PagoData getPagoTempContainer(){return pagoTempContainer;}
+
+    public DoctoRelacionadoData getDocRelTempPago(){return ((DoctoRelacionadoData)docRelTempPago);}
+
+    public List<PagoData> getListPago(){return pagos;}
+
+    public String getRFC() {
+        return emisorDataFactura.getRfc();
+    }
+
+
+    public String exeGenFactura(ComprobanteData cmp) {
+        String resp = "---";
+        try {
+            //serializeObjectToFile(cmp);
+            CFDIFactory33 cfdi = new CFDIFactory33();
+            CharUnicode charUnicode = new CharUnicode();
+
+            Document doc = cfdi.buildComprobanteDocConAddenda(cmp);// TODO: 12/06/2017 CHECK feConfig.xml NOT FOUND EXCENTION
+            Document docp = cfdi.buildComprobanteDocPrintConAddenda(cmp);
+
+            ///Convierte a string con encoding ISO-8859-1 para soportar los acentos
+            /// se reemplaza el string de ISO-8859-1 por UTF-8
+            ///Ser escapan los caracteres no soportados en UTF-8
+            // XMLOutputter xout = new XMLOutputter();
+
+            XMLOutputter xout = new XMLOutputter();
+            xout.setFormat(xout.getFormat().setEncoding("ISO-8859-1"));
+            ByteArrayOutputStream bout = new ByteArrayOutputStream();
+            xout.output(docp, bout);
+
+            String xmlPrint = new String(bout.toByteArray());
+            xmlPrint = xmlPrint.replaceAll("ISO-8859-1", "UTF-8");
+            xmlPrint = charUnicode.getTextEncoded2(xmlPrint);
+
+            XMLOutputter xoutXml = new XMLOutputter();
+            xoutXml.setFormat(xoutXml.getFormat().setEncoding("ISO-8859-1"));
+            ByteArrayOutputStream boutXml = new ByteArrayOutputStream();
+            xoutXml.output(doc, boutXml);
+            String xml = new String(boutXml.toByteArray());
+            xml = xml.replaceAll("ISO-8859-1", "UTF-8");
+            xml = charUnicode.getTextEncoded2(xml);
+
+
+            System.out.println(">>>>>>>>>> FACTURACION MANUAL XML_SAT :  <<< \n" + xml + "\n >>>");
+            System.out.println(">>>>>>>>>> FACTURACION MANUAL XML_PRINT :  <<< \n" + xmlPrint + "\n >>>");
+
+//            byte[] cdires = com.ebs.fe.wsgi.cliet.Cliente.genInvoice(Zipper.compress("cfdi", xml.getBytes()), clave);
+            /**
+             * com.ebs.fe.wsgi.client.TestCliente.genInvoice(Zipper.compress("cfdi",
+             * xml.getBytes()),clave);
+             */
+
+
+        } catch (ComprobanteException ce) {
+            ce.printStackTrace();
+            resp = "Error---" + ce.getMessage();
+        } catch (ComplementoException e) {
+            e.printStackTrace();
+            resp = "Error--" + e.getMessage();
+        } catch (IOException e) {
+            e.printStackTrace();
+            resp = "Error-" + e.getMessage();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            resp = "Error-:...." + e.getMessage();
+        }
+        return resp;
     }
 
 }

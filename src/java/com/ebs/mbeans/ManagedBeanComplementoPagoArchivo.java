@@ -1,15 +1,13 @@
 package com.ebs.mbeans;
 
+import com.ebs.LeerExcel.ComplementoPagoExcel;
 import com.ebs.LeerExcel.LeerDatosExcel;
-import fe.db.MAcceso;
-import fe.db.MConfig;
-import fe.db.MEmpresa;
-import fe.db.MEmpresaMTimbre;
-import fe.model.dao.ConfigDAO;
-import fe.model.dao.EmpresaDAO;
-import fe.model.dao.EmpresaTimbreDAO;
-import fe.model.dao.LogAccesoDAO;
+import fe.db.*;
+import fe.model.dao.*;
 import fe.net.ClienteFacturaManual;
+import fe.sat.complementos.v33.DoctoRelacionado;
+import fe.sat.complementos.v33.Pago;
+import fe.sat.complementos.v33.PagoData;
 import fe.sat.v33.ComprobanteData;
 import mx.com.ebs.emision.factura.utilierias.PintarLog;
 import org.jdom.Document;
@@ -26,6 +24,7 @@ import javax.servlet.http.HttpSession;
 import java.io.ByteArrayInputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -108,7 +107,17 @@ public class ManagedBeanComplementoPagoArchivo implements Serializable {
     }
 
     public void generarFactura() {
+
         try {
+
+            ComplementoPagoExcel genComprobanteData = new ComplementoPagoExcel(uploadedFile.getInputstream());
+            EmpresaDAO daoEmp = new EmpresaDAO();
+            DetallePagosDao daoPagos = new DetallePagosDao();
+            double saldoDisponibleEmisor = genComprobanteData.getPagoTempContainer().getMonto();
+            List<PagoData> pagos = genComprobanteData.getListPago();
+            CfdiDAO daoCFD = new CfdiDAO();
+            MCfd mcfdi = daoCFD.findByUUID(genComprobanteData.getDocRelTempPago().getIdDocumento().trim(), idEmpresa);
+
             if (uploadedFile != null) {
                 FacesContext.getCurrentInstance().addMessage("frmManual", new FacesMessage(FacesMessage.SEVERITY_INFO, "Generando facturacion por archivo excel", ""));
 
@@ -121,10 +130,11 @@ public class ManagedBeanComplementoPagoArchivo implements Serializable {
 
 
                 String respuestaServicio = null;
-                LeerDatosExcel genComprobanteData = new LeerDatosExcel(uploadedFile.getInputstream());
+
                 ComprobanteData comprobanteData = genComprobanteData.getComprobanteData();
                 // comprobanteData = agregarDatosComprobante(comprobanteData);
                 System.out.println("emisor: " + comprobanteData.getEmisor().getRfc());
+
                 if(genComprobanteData.getRFC().equalsIgnoreCase(empresaEmisora.getRfcOrigen())){
                     respuestaServicio = new ClienteFacturaManual().exeGenFactura(comprobanteData, m.getClaveWS(), ambiente, DEBUG);
                 }else{
@@ -135,6 +145,47 @@ public class ManagedBeanComplementoPagoArchivo implements Serializable {
 
                 if (respuestaServicio != null) {
                     if (checkRespuestaServicio(respuestaServicio)) {
+
+                        // TODO: 09/10/2017  UPDATE data on BD
+                        MEmpresa emisor = daoEmp.BuscarEmpresaId(idEmpresa);
+                        emisor.setImpSaldoDisponible(saldoDisponibleEmisor);
+                        daoEmp.GuardarOActualizaEmpresa(emisor);
+                        // TODO: 09/10/2017 GUARDAR ACTUALIZACIONES DE CADA PAGO
+                        for (Pago pg : pagos) {
+                            for (DoctoRelacionado dr : pg.getDoctoRelacionado()) {
+                                String uuid = dr.getIdDocumento();
+                                MPagos pago = daoPagos.getPagoPendienteByUuid(uuid);
+
+                                if (pago != null) {
+                                    pago.setImpSaldoAnterior(dr.getImpSaldoInsoluto());
+                                    pago.setNumParcialidad(dr.getNumParcialidad());
+                                    daoPagos.savePago(pago);
+
+                                } else {
+                                    pago = new MPagos();
+                                    if (mcfdi != null) {
+                                        pago.setCfdiId(mcfdi.getId());
+                                    } else {
+                                        pago.setCfdiId(0);
+                                    }
+                                    pago.setUuid(dr.getIdDocumento());
+                                    pago.setNumParcialidad(dr.getNumParcialidad());
+                                    pago.setImpSaldoAnterior(dr.getImpSaldoInsoluto());
+                                    if (dr.getImpSaldoInsoluto() == 0.0) {
+                                        pago.setPagado(true);
+                                    }
+                                    pago.setEmpId(idEmpresa);
+                                    pago.setMoneda(dr.getMonedaDR().getClave());
+
+                                    pago.setFecha(pg.getFechaPago());
+                                    daoPagos.savePago(pago);
+
+                                }
+
+                            }
+                        }
+
+
                         FacesContext.getCurrentInstance().addMessage("", new FacesMessage(FacesMessage.SEVERITY_INFO, "La factura se genero correctamente.", ""));
                     } else {
                         //Show all to user

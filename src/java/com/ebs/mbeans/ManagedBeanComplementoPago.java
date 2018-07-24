@@ -1528,7 +1528,7 @@ public class ManagedBeanComplementoPago implements Serializable {
 
                 } else {
                     FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
-                            "Por favor eliga un xml valido", "Info"));
+                            "Por favor elija un xml valido", "Info"));
                     pagoTempContainer.setCadPago("");
                     pagoTempContainer.setCertPago("");
                     pagoTempContainer.setSelloPago("");
@@ -1542,7 +1542,7 @@ public class ManagedBeanComplementoPago implements Serializable {
 
         } else {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
-                    "Por favor eliga un xml valido", "Info"));
+                    "Por favor elija un xml valido", "Info"));
         }
 
 
