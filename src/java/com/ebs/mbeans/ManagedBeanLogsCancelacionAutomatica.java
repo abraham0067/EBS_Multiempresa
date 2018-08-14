@@ -12,7 +12,9 @@ import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 /**
  * @author Eduardo C. Flores Ambrosio <Eduardo at EB&S>
@@ -36,10 +38,13 @@ public class ManagedBeanLogsCancelacionAutomatica implements Serializable {
     private String serie;
     private String folioErp;
 
-    private int idEmpresaSelected;
+    private int idEmpresaSelected = -1;
     private LogAPPDAO daoApp;
 
     private String tipoServicio;
+    private String noCliente;
+    private boolean esClienteEmpresa;
+    private Integer[] idsEmpresasAsignadas;///Separados por comas
 
     /**
      * Creates a new instance of ManagedBeanLogs
@@ -55,17 +60,48 @@ public class ManagedBeanLogsCancelacionAutomatica implements Serializable {
         appContext = httpServletRequest.getContextPath();
         //fecha = new Date();
         daoApp = new LogAPPDAO();
-        idEmpresaSelected = 0;
+        //idEmpresaSelected = 0;
         serie = "";
         folioErp = "";
         tipoServicio = "-1";
+        cargarEmpresasUsuario();
         buscarLogsApp();///Preload data on render
+    }
+
+    public void cargarEmpresasUsuario() {
+        ///Cargamos ids empresas asociadas al usuario
+        List<Integer> lista = new ArrayList<>();
+
+        noCliente = mAcceso.getCliente();
+        String tipoUser = mAcceso.getPerfil().getTipoUser();
+        if (tipoUser.equalsIgnoreCase("CLIENTE") && (noCliente != null && !noCliente.isEmpty())) {
+            esClienteEmpresa = true;
+        } else {
+            esClienteEmpresa = false;
+            noCliente = "";
+        }
+
+        mAcceso.getEmpresas().forEach(emp -> {
+            lista.add(emp.getId());
+        });
+        idsEmpresasAsignadas = lista.toArray(new Integer[lista.size()]);
+
+
     }
 
     public void buscarLogsApp() {
         try {
+            Integer[] idsBusqueda = {-1};
+            if (idEmpresaSelected > 0) {
+                idsBusqueda = new Integer[1];
+                idsBusqueda[0] = idEmpresaSelected;
+            } else {
+                idsBusqueda = idsEmpresasAsignadas;
+            }
+
+            System.out.println("EMPRESA: " + mAcceso.getEmpresa().getId());
             //Lazy loading
-            listaLogApp = new LazyLogsAppDataModel(mAcceso.getId(), idEmpresaSelected, serie, folioErp, tipoServicio, fecha);
+            listaLogApp = new LazyLogsAppDataModel(mAcceso.getId(), idsBusqueda, serie, folioErp, tipoServicio, fecha);
         } catch (Exception e1) {
             e1.printStackTrace();
         }
@@ -212,5 +248,21 @@ public class ManagedBeanLogsCancelacionAutomatica implements Serializable {
 
     public void setTipoServicio(String tipoServicio) {
         this.tipoServicio = tipoServicio;
+    }
+
+    public boolean isEsClienteEmpresa() {
+        return esClienteEmpresa;
+    }
+
+    public void setEsClienteEmpresa(boolean esClienteEmpresa) {
+        this.esClienteEmpresa = esClienteEmpresa;
+    }
+
+    public Integer[] getIdsEmpresasAsignadas() {
+        return idsEmpresasAsignadas;
+    }
+
+    public void setIdsEmpresasAsignadas(Integer[] idsEmpresasAsignadas) {
+        this.idsEmpresasAsignadas = idsEmpresasAsignadas;
     }
 }

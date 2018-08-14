@@ -92,7 +92,8 @@ public class ManagedBeanLogs implements Serializable {
     public void buscarLogsApp() {
             try {
                 //Lazy loading
-                listaLogApp = new LazyLogsAppDataModel(mAcceso.getId(), idEmpresaSelected, serie, folioErp, fecha);
+                Integer []idsEmpresaSelected = {idEmpresaSelected};
+                listaLogApp = new LazyLogsAppDataModel(mAcceso.getId(), idsEmpresaSelected, serie, folioErp, fecha);
             } catch (Exception e1) {
                 e1.printStackTrace();            
             }

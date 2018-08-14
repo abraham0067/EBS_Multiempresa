@@ -124,31 +124,48 @@ public class LogAPPDAO implements Serializable {
 
     @SuppressWarnings("unchecked")
     public List<MLogApp> BusquedaPorParametros(Integer iduser, int idempresa, String serie, String folioErp, Date fecha, int first, int pageSize) {
-        return BusquedaPorParametros(iduser, idempresa, serie, folioErp,"N", fecha, first, pageSize);
+        Integer[]idempresas = {idempresa};
+        return BusquedaPorParametros(iduser, idempresas, serie, folioErp,"N", fecha, first, pageSize);
     }
 
     @SuppressWarnings("unchecked")
-    public List<MLogApp> BusquedaPorParametros(Integer iduser, int idempresa, String serie, String folioErp, String tipoServicio,  Date fecha, int first, int pageSize) {
+    public List<MLogApp> BusquedaPorParametros(Integer iduser, Integer[] idempresa, String serie, String folioErp, String tipoServicio,  Date fecha, int first, int pageSize) {
         List<MLogApp> ListLogs = null;
         try {
             hibManagerRO.initTransaction();
             Criteria cr = hibManagerRO.getSession().createCriteria(MLogApp.class);
             cr.add(Restrictions.isNotNull("empresa"));
-            if (idempresa > 0) {
-                cr.add(Restrictions.eq("empresa.id", idempresa));
-            } else {
-                if(tipoServicio.equals("N")){
-                    MAcceso acceso = (MAcceso) hibManagerRO.getSession().get(MAcceso.class, iduser);
-                    if (acceso != null && acceso.getEmpresas() != null
-                            && !acceso.getEmpresas().isEmpty()) {
-                        Integer[] idemps = new Integer[acceso.getEmpresas().size()];
-                        for (int i = 0; i < acceso.getEmpresas().size(); i++) {
-                            idemps[i] = acceso.getEmpresas().get(i).getId();
-                        }
-                        cr.add(Restrictions.in("empresa.id", idemps));
+
+            MAcceso usuario = (MAcceso) hibManagerRO.getSession().get(MAcceso.class, iduser);
+            if (idempresa == null || idempresa.length == 0) {
+                if (usuario.getEmpresas() != null && !usuario.getEmpresas().isEmpty()) {
+                    Integer[] idsemp = new Integer[usuario.getEmpresas().size()];
+                    for (int z = 0; z < usuario.getEmpresas().size(); z++) {
+                        idsemp[z] = usuario.getEmpresas().get(z).getId();
                     }
+                    cr.add(Restrictions.in("empresa.id", idsemp));
                 }
+            } else {
+                cr.add(Restrictions.in("empresa.id", idempresa));
             }
+
+//            if (idempresa > 0) {
+//                cr.add(Restrictions.eq("empresa.id", idempresa));
+//            } else {
+//                //if(tipoServicio.equals("N")){
+//                    MAcceso acceso = (MAcceso) hibManagerRO.getSession().get(MAcceso.class, iduser);
+//                    if (acceso != null && acceso.getEmpresas() != null
+//                            && !acceso.getEmpresas().isEmpty()) {
+//                        Integer[] idemps = new Integer[acceso.getEmpresas().size()];
+//                        for (int i = 0; i < acceso.getEmpresas().size(); i++) {
+//                            idemps[i] = acceso.getEmpresas().get(i).getId();
+//                        }
+//                        cr.add(Restrictions.in("empresa.id", idemps));
+//                    }
+//                //}
+//            }
+
+
 
             if(serie!= null && !serie.isEmpty()){
                 cr.add(Restrictions.isNotNull("serie"));

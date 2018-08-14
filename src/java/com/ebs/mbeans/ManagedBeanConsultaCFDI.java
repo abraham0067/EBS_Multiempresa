@@ -6,33 +6,25 @@
 package com.ebs.mbeans;
 
 import com.ebs.CancelacionCFDI.*;
-import com.ebs.catalogos.TiposComprobante;
-import com.ebs.catalogos.TiposDocumento;
 import com.ebs.clienteFEWS.ClienteFEWS;
 import com.ebs.model.LazyCfdiDataModel;
 import com.ebs.vistas.VistaCfdiOtro;
 import fe.db.MAcceso;
 import fe.db.MArchivosCfd;
 import fe.db.MCfd;
-import fe.db.MConfig; 
+import fe.db.MConfig;
 import fe.db.MEmpresa;
 import fe.db.MOtro;
 import fe.db.MapearCfdArchi;
 import fe.model.dao.*;
-import fe.model.util.CrearZIPFacturas;
 import fe.model.util.Material;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
-import org.joda.time.Days;
-import org.joda.time.LocalDateTime;
-
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import javax.annotation.PostConstruct;
@@ -41,16 +33,14 @@ import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
-
 import org.primefaces.component.fileupload.FileUpload;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.LazyDataModel;
-import sun.util.resources.cldr.mg.LocaleNames_mg;
+
 
 public class ManagedBeanConsultaCFDI implements Serializable {
 
@@ -60,9 +50,6 @@ public class ManagedBeanConsultaCFDI implements Serializable {
     private Integer[] idsEmpresasAsignadas;///Separados por comas
     //Parametros
     private String strEstatus;
-
-
-    
     private int empresaIdFiltro = -1;
     /*
             opciones.add(new SelectItem("numeroFactura", "Numero Factura"));
@@ -77,33 +64,16 @@ public class ManagedBeanConsultaCFDI implements Serializable {
      */
     
     private String numeroFactura;
-    
     private String folioErp;
-    
     private String rfc;
-    
     private String serie;
-    
     private String noCliente;
-    
     private boolean esClienteEmpresa;
-
-    
     private String razonSocial;
-
-    
     private Date datDesde;//Fecha Inicial
-    
     private Date datHasta;//Fecha Final
-
-
-    
     private String numPolizaSeguro;//Parametro de busqueda de bupa mexico
-
-    
     private String UUID;
-
-
     private String contentName;
     private String archivoSubFileName;
     private String archivoSubContentType;
@@ -118,20 +88,14 @@ public class ManagedBeanConsultaCFDI implements Serializable {
     private CfdiDAO daoCFDI;
     private MaterialDAO matDao;
     private MCfd cfd;
-    
     private List<Integer> listCFDS;
-    
     private List<Integer> listCFDSAux;
     //private List<MCfd> selectedCFDS;//Donde se guardaran los cfdi extraidos del listmap
     
     private List<Integer> selectedCFDSIds;//Donde se guardaran los cfdi extraidos del listmap
     private MCfd selectedMCFD;//FACTURA axiliar
-
-    
     private LazyDataModel<VistaCfdiOtro> listMapMCA;
-    
     private List<VistaCfdiOtro> listMapMCASelecteds;
-
     private SimpleDateFormat sdfDateFormatter;
     private FileUpload archivo;//Cambiar a multiples archivos
     //Materiales en un FACTURA
@@ -154,8 +118,8 @@ public class ManagedBeanConsultaCFDI implements Serializable {
     //SUMA HASTA CANCELACION
     private final String numPerfilCancelacion = "134217728";
     private boolean cancelar = false;
-
     private LogAccesoDAO daoLog;
+    private String ipAddress;
 
     /**
      * Creates a new instance of ManagedBeanConsultaCFDI
@@ -176,6 +140,13 @@ public class ManagedBeanConsultaCFDI implements Serializable {
         numPolizaSeguro = "";
         esClienteEmpresa = false;
         UUID = "";
+
+        ipAddress = httpServletRequest.getHeader("X-FORWARDED-FOR");
+        if (ipAddress == null)
+            ipAddress = httpServletRequest.getRemoteAddr();
+
+        System.out.println("IpMaquinaExterna:" + ipAddress);
+
     }
 
     @PostConstruct
@@ -476,7 +447,7 @@ public class ManagedBeanConsultaCFDI implements Serializable {
                                 celda12.setCellValue(cfd.getUuid());
                                 currentRow++;
                             }
-                            //GET NEXT ROWS 
+                            //GET NEXT ROWS
                             tmp = daoCFDI.ListaParametrosExportLazy(
                                     activeUser.getId(),
                                     idsBusqueda,
@@ -646,31 +617,35 @@ public class ManagedBeanConsultaCFDI implements Serializable {
                             System.out.println("-----CANCELACION DESDE EL PORTAL DETECTADA------");
                             System.out.println("rfcEmpresa: " + rfcEmpresa);
                             System.out.println("CANCELANDO: " + cfd.getUuid());
+                            System.out.println("ip: " + getIpAddress());
 
-                            if (config != null && config.getDato() != null) {
-                                if (config.getValor() != null && config.getValor().trim().equalsIgnoreCase("Desarrollo")) {
-                                    System.out.print("Cancelando->Desarrollo");
-                                    CancelaCFDITest cancela = new CancelaCFDITest();
+                            if(activeUser != null && activeUser.getUsuario() != null && !activeUser.getUsuario().isEmpty()) {
+                                System.out.println("Usuario: " + activeUser.getUsuario());
 
-                                    //CANCELA FACTURAS CON UUID´S ANTERIORES
-                                    if (cfd.getUuid().startsWith("PRUEBA")) {
-                                        if (folio2 != null && !folio2.isEmpty())
-                                            acuse = cancela.cancelaTestFolioErp2("PORTAL|"+ activeUser.getUsuario() , rfcEmpresa, cfd.getSerieErp(), cfd.getFolioErp(), folio2, pswCancelacion);
-                                        else
-                                            acuse = cancela.cancelaTest("PORTAL|"+ activeUser.getUsuario(), rfcEmpresa, cfd.getSerieErp(), cfd.getFolioErp(), pswCancelacion);
-                                    } else
-                                        acuse = cancela.cancelaTestUuid("PORTAL|"+ activeUser.getUsuario(), rfcEmpresa, cfd.getUuid(), pswCancelacion);
+                                if (config != null && config.getDato() != null) {
+                                    if (config.getValor() != null && config.getValor().trim().equalsIgnoreCase("Desarrollo")) {
+                                        System.out.print("Cancelando->Desarrollo");
+                                        CancelaCFDITest cancela = new CancelaCFDITest();
 
+                                        //CANCELA FACTURAS CON UUID´S ANTERIORES
+                                        if (cfd.getUuid().startsWith("PRUEBA")) {
+                                            if (folio2 != null && !folio2.isEmpty())
+                                                acuse = cancela.cancelaTestFolioErp2("PORTAL|'" + getIpAddress() + "'|'" + activeUser.getUsuario() + "'|", rfcEmpresa, cfd.getSerieErp(), cfd.getFolioErp(), folio2, pswCancelacion);
+                                            else
+                                                acuse = cancela.cancelaTest("PORTAL|'" + getIpAddress() + "'|'" + activeUser.getUsuario() + "'|", rfcEmpresa, cfd.getSerieErp(), cfd.getFolioErp(), pswCancelacion);
+                                        } else
+                                            acuse = cancela.cancelaTestUuid("PORTAL|'" + getIpAddress() + "'|'" + activeUser.getUsuario() + "'|", rfcEmpresa, cfd.getUuid(), pswCancelacion);
+
+
+                                    } else {
+                                        System.out.print("Cancelando->Produccion");
+                                        acuse = new CancelaCFDI().cancelaUuid("PORTAL|'" + getIpAddress() + "'|'" + activeUser.getUsuario() + "'|", rfcEmpresa, cfd.getUuid(), pswCancelacion);
+                                    }
 
                                 } else {
                                     System.out.print("Cancelando->Produccion");
-                                    acuse = new CancelaCFDI().cancelaUuid("PORTAL|"+ activeUser.getUsuario(), rfcEmpresa, cfd.getUuid(), pswCancelacion);
+                                    acuse = new CancelaCFDI().cancelaUuid("PORTAL|'" + getIpAddress() + "'|'" + activeUser.getUsuario() + "'|", rfcEmpresa, cfd.getUuid(), pswCancelacion);
                                 }
-
-                            } else {
-                                System.out.print("Cancelando->Produccion");
-                                acuse = new CancelaCFDI().cancelaUuid("PORTAL|"+ activeUser.getUsuario(), rfcEmpresa, cfd.getUuid(), pswCancelacion);
-                            }
 
                             /*
                             if (config != null && config.getDato() != null) {
@@ -716,53 +691,60 @@ public class ManagedBeanConsultaCFDI implements Serializable {
                                   //      "DqOKzq1gFHIPNtYY0Z1Vr79uIyA=");
 
                             }*/
-                            String sAcuse = new String(acuse);
-                            //System.out.println("sAcuse = " + sAcuse);
-                            if (sAcuse.contains("<Error") || sAcuse.trim().length() <= 70) {
-                                System.out.println("Factura no cancelada");
+                                String sAcuse = new String(acuse);
+                                //System.out.println("sAcuse = " + sAcuse);
+                                if (sAcuse.contains("<Error") || sAcuse.trim().length() <= 70) {
+                                    System.out.println("Factura no cancelada");
 
-                                daoLog.guardaRegistro(activeUser, "El usuario '" + activeUser.getUsuario() + "' intento cancelar la factura con UUID: " + cfd.getUuid());
+                                    daoLog.guardaRegistro(activeUser, "El usuario '" + activeUser.getUsuario() + "' intento cancelar la factura con UUID: " + cfd.getUuid());
 
-                                acuse = null;
-                            }
-
-                            if (acuse != null) {
-                                String Statusacuse = new String(acuse);
-                                this.cargarCFDI();
-                                int inicio = Statusacuse.indexOf("<EstatusUUID>");
-                                if (inicio > 0) {
-                                    inicio = inicio + 13;
-                                    int fin = Statusacuse.indexOf("</EstatusUUID>");
-                                    if (fin > 0) {
-                                        String EstatusUUID = Statusacuse.substring(inicio, fin);
-                                        if (EstatusUUID != null && !EstatusUUID.trim().equals("")) {
-                                            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, metodoErroreCancel(EstatusUUID), "Error"));
-                                        } else {
-                                            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "No fue posible recuperar el error.", "Error"));
-                                        }
-
-                                        if (EstatusUUID.equals("201") || EstatusUUID.equals("202"))
-                                            daoLog.guardaRegistro(activeUser, "El usuario '" + activeUser.getUsuario() + "' cancelo la factura con UUID: " + cfd.getUuid());
-                                    }
-                                } else {
-                                    inicio = Statusacuse.indexOf("CodEstatus=");
-                                    if (inicio > 0) {
-                                        inicio = inicio + 11;
-                                        int fin = inicio + 5;
-                                        String EstatusUUID = Statusacuse.substring(inicio, fin);
-                                        if (EstatusUUID != null && !EstatusUUID.trim().equals("")) {
-                                            FacesContext.getCurrentInstance().addMessage("formOperations", new FacesMessage(FacesMessage.SEVERITY_ERROR, metodoErroreCancel(EstatusUUID), "Error"));
-                                        } else {
-                                            FacesContext.getCurrentInstance().addMessage("formOperations", new FacesMessage(FacesMessage.SEVERITY_ERROR, "No fue posible recuperar el error.", "Error"));
-                                        }
-                                    }
+                                    acuse = null;
                                 }
-                                this.setListEmpresas(daoEmp.ListaEmpresasPadres(activeUser.getId()));
-                            } else {
-                                FacesContext.getCurrentInstance().addMessage("formOperations", new FacesMessage(FacesMessage.SEVERITY_ERROR, "La factura no pudo ser cancelada.", "Error"));
-                                FacesContext.getCurrentInstance().addMessage("formOperations", new FacesMessage(FacesMessage.SEVERITY_ERROR, sAcuse, "Error"));
-                                cargarCFDI();
+
+                                if (acuse != null) {
+                                    String Statusacuse = new String(acuse);
+                                    this.cargarCFDI();
+                                    int inicio = Statusacuse.indexOf("<EstatusUUID>");
+                                    if (inicio > 0) {
+                                        inicio = inicio + 13;
+                                        int fin = Statusacuse.indexOf("</EstatusUUID>");
+                                        if (fin > 0) {
+                                            String EstatusUUID = Statusacuse.substring(inicio, fin);
+                                            if (EstatusUUID != null && !EstatusUUID.trim().equals("")) {
+                                                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, metodoErroreCancel(EstatusUUID), "Error"));
+                                            } else {
+                                                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "No fue posible recuperar el error.", "Error"));
+                                            }
+
+                                            if (EstatusUUID.equals("201") || EstatusUUID.equals("202"))
+                                                daoLog.guardaRegistro(activeUser, "El usuario '" + activeUser.getUsuario() + "' cancelo la factura con UUID: " + cfd.getUuid());
+                                        }
+                                    } else {
+                                        inicio = Statusacuse.indexOf("CodEstatus=");
+                                        if (inicio > 0) {
+                                            inicio = inicio + 11;
+                                            int fin = inicio + 5;
+                                            String EstatusUUID = Statusacuse.substring(inicio, fin);
+                                            if (EstatusUUID != null && !EstatusUUID.trim().equals("")) {
+                                                FacesContext.getCurrentInstance().addMessage("formOperations", new FacesMessage(FacesMessage.SEVERITY_ERROR, metodoErroreCancel(EstatusUUID), "Error"));
+                                            } else {
+                                                FacesContext.getCurrentInstance().addMessage("formOperations", new FacesMessage(FacesMessage.SEVERITY_ERROR, "No fue posible recuperar el error.", "Error"));
+                                            }
+                                        }
+                                    }
+                                    this.setListEmpresas(daoEmp.ListaEmpresasPadres(activeUser.getId()));
+                                } else {
+                                    FacesContext.getCurrentInstance().addMessage("formOperations", new FacesMessage(FacesMessage.SEVERITY_ERROR, "La factura no pudo ser cancelada.", "Error"));
+                                    FacesContext.getCurrentInstance().addMessage("formOperations", new FacesMessage(FacesMessage.SEVERITY_ERROR, sAcuse, "Error"));
+                                    cargarCFDI();
+                                }
+                            } else{
+                                System.out.println("Usuario inactivo " + activeUser.getUsuario());
+                                logout();
                             }
+
+
+
                         } catch (Exception e) {
                             e.printStackTrace(System.out);
                         }
@@ -925,6 +907,17 @@ public class ManagedBeanConsultaCFDI implements Serializable {
     public void updateArchivosList() {
         System.out.println(">>>>>>>>>> Uploading file list");
         this.archivosCFDI = this.daoArch.BuscarArchivoCfd_cfdId(this.selectedMCFD.getId());
+    }
+
+    public void logout() {
+        try {
+            FacesContext.getCurrentInstance().getExternalContext().invalidateSession();
+            FacesContext.getCurrentInstance().getExternalContext().redirect(appContext + "/login/login.xhtml");
+        }catch(Exception e){
+            System.out.println(">>>>>>>>>>IOException on redirectConsultaCFDI()" + e.getMessage());
+            FacesContext.getCurrentInstance().addMessage("", new FacesMessage(FacesMessage.SEVERITY_ERROR, "A ocurrido un error al intentar redireccionar.", "Error"));
+        }
+
     }
 
     /**
@@ -1444,5 +1437,13 @@ public class ManagedBeanConsultaCFDI implements Serializable {
 
     public void setDaoLog(LogAccesoDAO daoLog) {
         this.daoLog = daoLog;
+    }
+
+    public String getIpAddress() {
+        return ipAddress;
+    }
+
+    public void setIpAddress(String ipAddress) {
+        this.ipAddress = ipAddress;
     }
 }

@@ -22,7 +22,7 @@ public class LazyLogsAppDataModel extends LazyDataModel<MLogApp> {
 
     private List<MLogApp> dataSource;
     private int idAcceso;
-    private int idEmpresa;
+    private Integer[] idEmpresa;
     private String serie;
     private String folioErp;
     private String tipoServicio;
@@ -33,7 +33,7 @@ public class LazyLogsAppDataModel extends LazyDataModel<MLogApp> {
         this.setRowCount(0);
     }
     
-    public LazyLogsAppDataModel(int idAcceso, int idEmpresa, String serie, String folioErp, Date datFecha) {
+    public LazyLogsAppDataModel(int idAcceso, Integer[] idEmpresa, String serie, String folioErp, Date datFecha) {
         this.idAcceso = idAcceso;
         this.idEmpresa = idEmpresa;
         this.serie = serie;
@@ -42,7 +42,7 @@ public class LazyLogsAppDataModel extends LazyDataModel<MLogApp> {
         this.setRowCount(0);
     }
 
-    public LazyLogsAppDataModel(int idAcceso, int idEmpresa, String serie, String folioErp, String tipoServicio, Date datFecha) {
+    public LazyLogsAppDataModel(int idAcceso, Integer[] idEmpresa, String serie, String folioErp, String tipoServicio, Date datFecha) {
         this.idAcceso = idAcceso;
         this.idEmpresa = idEmpresa;
         this.serie = serie;
